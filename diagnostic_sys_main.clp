@@ -33,13 +33,33 @@
 ;;* NODE TEMPLATES *
 ;;******************
 
-  (deftemplate symptom
-    (slot name  (type SYMBOL))
-    (slot value (type SYMBOL))
-    (slot level (type SYMBOL))
+  (deftemplate sintomo
+    (slot nome    (type SYMBOL))
+    (slot valore  (type SYMBOL))
+    (slot livello (type SYMBOL))
   )
 
-  (deftemplate diagnosis
-    (slot name        (type SYMBOL))
-    (slot description (type STRING))
+  (deftemplate diagnosi
+    (slot nome        (type SYMBOL))
+    (slot descrizione (type STRING))
   )
+
+
+;;******************
+;;* CONTROL RULES  *
+;;******************
+
+(defrule inizializzazione
+  (declare (salience ?*highest-priority*))
+  =>
+  (printout t crlf crlf)
+  (printout t "*** SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI ***" crlf crlf))
+
+(defrule diagnosi-trovata
+  (declare (salience ?*highest-priority*))
+  (diagnosi ?d)
+  =>
+  (printout t crlf ">>>> Diagnosi del guasto: " ?d crlf crlf)
+  (if (yes-or-no-p "Would you like to revise the diagnosis?")
+      then (assert (revise-diagnosis))
+      else (halt)))
