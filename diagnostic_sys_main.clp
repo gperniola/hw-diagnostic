@@ -44,6 +44,10 @@
     (slot descrizione (type STRING))
   )
 
+  (deftemplate info
+    (slot nome    (type SYMBOL))
+    (slot valore  (type SYMBOL))
+  )
 
 ;;******************
 ;;* CONTROL RULES  *
