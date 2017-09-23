@@ -56,6 +56,7 @@
 (defrule inizializzazione
   (declare (salience ?*highest-priority*))
   =>
+  (assert (info (nome tipo-dispositivo) (valore sconosciuto)))
   (printout t crlf crlf)
   (printout t "*** SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI ***" crlf crlf))
 
