@@ -82,7 +82,12 @@
   =>
   (assert (info (nome tipo-dispositivo) (valore sconosciuto)))
   (printout t crlf crlf)
-  (printout t "*** SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI ***" crlf crlf))
+  (printout t   "***                                                 ***" crlf
+                "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+                "*                                                     *" crlf
+                "*     Rispondere alle domande inserendo il numero     *" crlf
+                "**       corrispondente alla risposta corretta.      **" crlf
+                "***                                                 ***" crlf crlf))
 
 (defrule diagnosi-trovata
   (declare (salience ?*highest-priority*))
