@@ -4,14 +4,14 @@
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
 
-(defmodule MAIN (export ?ALL))
+;(defmodule MAIN (export ?ALL))
 
 
 ;;****************
 ;;* DEFFUNCTIONS *
 ;;****************
 
-(deffunction MAIN::ask-question (?question ?allowed-values)
+(deffunction ask-question (?question ?allowed-values)
   (printout t ?question crlf "Risposte accettate: " ?allowed-values " : " )
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -65,6 +65,7 @@
   (diagnosi ?d)
   =>
   (printout t crlf ">>>> Diagnosi del guasto: " ?d crlf crlf)
-  (if (yes-or-no-p "Would you like to revise the diagnosis?")
-      then (assert (revise-diagnosis))
-      else (halt)))
+  (halt))
+  ; (if (yes-or-no-p "Would you like to revise the diagnosis?")
+  ;     then (assert (revise-diagnosis))
+  ;     else (halt)))
