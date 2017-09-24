@@ -11,15 +11,31 @@
 ;;* DEFFUNCTIONS *
 ;;****************
 
-(deffunction ask-question (?question ?allowed-values)
-  (printout t ?question crlf "Risposte accettate: " ?allowed-values " : " )
+; (deffunction ask-question (?question ?allowed-values)
+;   (printout t ?question crlf "Risposte accettate: " ?allowed-values " : " )
+;   (bind ?answer (read))
+;   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+;   (while (not (member ?answer ?allowed-values)) do
+;       (printout t ?question)
+;       (bind ?answer (read))
+;       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
+;   ?answer)
+
+
+(deffunction ask-question (?question $?allowed-values)
+  (printout t ?question crlf)
+  (loop-for-count (?cnt1 1 (length ?allowed-values)) do
+      (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
+  )
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-  (while (not (member ?answer ?allowed-values)) do
+  (while (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) do
       (printout t ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
-  ?answer)
+   (nth$ ?answer ?allowed-values))
+
+
 
   ; (deffunction yes-or-no-p (?question)
   ; (bind ?question (sym-cat ?question " (yes/y/no/n): "))
