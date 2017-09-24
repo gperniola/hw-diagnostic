@@ -21,12 +21,12 @@
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
   ?answer)
 
-  (deffunction yes-or-no-p (?question)
-  (bind ?question (sym-cat ?question " (yes/y/no/n): "))
-     (bind ?response (ask-question ?question yes no y n))
-     (if (or (eq ?response yes) (eq ?response y))
-         then TRUE
-         else FALSE))
+  ; (deffunction yes-or-no-p (?question)
+  ; (bind ?question (sym-cat ?question " (yes/y/no/n): "))
+  ;    (bind ?response (ask-question ?question yes no y n))
+  ;    (if (or (eq ?response yes) (eq ?response y))
+  ;        then TRUE
+  ;        else FALSE))
 
 
 ;;******************
@@ -48,6 +48,14 @@
     (slot nome    (type SYMBOL))
     (slot valore  (type SYMBOL))
   )
+
+  (deftemplate domanda
+    (slot attributo     (type SYMBOL) (default ?NONE))
+    (slot testo-domanda (type STRING) (default ?NONE))
+    (multislot risposte-valide (type SYMBOL) (default ?NONE))
+    (slot gia-chiesta   (default  FALSE))
+  )
+
 
 ;;******************
 ;;* CONTROL RULES  *
@@ -85,14 +93,23 @@
 (defrule chiedi-tipo-dispositivo
   (declare (salience ?*low-priority*))
   ?d <- (info (nome tipo-dispositivo) (valore sconosciuto))
+  ?f <- (domanda (attributo tipo-dispositivo) (testo-domanda ?domanda) (risposte-valide $?risposte))
   =>
-  (bind ?risposta (ask-question "A quale tipologia appartiene il dispositivo da riparare?" pc tablet smartphone))
+  (bind ?risposta (ask-question ?domanda ?risposte))
   (assert (info (nome tipo-dispositivo) (valore ?risposta)))
   (retract ?d)
+  (modify ?f (gia-chiesta TRUE))
 )
 
+;;********************
+;;* QUESTIONS FACTS  *
+;;********************
 
-
+(deffacts domande
+  (domanda  (attributo tipo-dispositivo)
+            (testo-domanda "A quale tipologia appartiene il dispositivo?")
+            (risposte-valide pc tablet smartphone))
+)
 
 ;;********************
 ;;* DIAGNOSIS RULES  *
