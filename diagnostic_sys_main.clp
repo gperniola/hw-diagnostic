@@ -62,10 +62,56 @@
 
 (defrule diagnosi-trovata
   (declare (salience ?*highest-priority*))
-  (diagnosi ?d)
+  (diagnosi (nome ?nome) (descrizione ?desc))
   =>
-  (printout t crlf ">>>> Diagnosi del guasto: " ?d crlf crlf)
+  (printout t crlf ">>>> Diagnosi del guasto: " ?nome " - " ?desc crlf crlf)
   (halt))
   ; (if (yes-or-no-p "Would you like to revise the diagnosis?")
   ;     then (assert (revise-diagnosis))
   ;     else (halt)))
+
+
+;;********************
+;;* INFERENCE RULES  *
+;;********************
+
+
+
+
+;;********************
+;;* QUESTIONS RULES  *
+;;********************
+
+(defrule chiedi-tipo-dispositivo
+  (declare (salience ?*low-priority*))
+  ?d <- (info (nome tipo-dispositivo) (valore sconosciuto))
+  =>
+  (bind ?risposta (ask-question "A quale tipologia appartiene il dispositivo da riparare?" pc tablet smartphone))
+  (assert (info (nome tipo-dispositivo) (valore ?risposta)))
+  (retract ?d)
+)
+
+
+
+
+;;********************
+;;* DIAGNOSIS RULES  *
+;;********************
+
+(defrule diagnosi-pc
+  (info (nome tipo-dispositivo) (valore pc))
+  =>
+  (assert (diagnosi (nome diagnosi-pc) (descrizione "Pc guasto.")))
+)
+
+(defrule diagnosi-tablet
+  (info (nome tipo-dispositivo) (valore tablet))
+  =>
+  (assert (diagnosi (nome diagnosi-tablet) (descrizione "Tablet guasto.")))
+)
+
+(defrule diagnosi-smartphone
+  (info (nome tipo-dispositivo) (valore smartphone))
+  =>
+  (assert (diagnosi (nome diagnosi-smartphone) (descrizione "Smartphone guasto.")))
+)
