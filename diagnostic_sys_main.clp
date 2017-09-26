@@ -22,10 +22,10 @@
 ;   ?answer)
 
 
-(deffunction ask-question (?question $?allowed-values)
+(deffunction ask-question (?question $?allowed-values $?descriptions)
   (printout t ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
-      (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
+      (printout t ?cnt1 ". " (nth$ ?cnt1 ?descriptions) crlf)
   )
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -69,6 +69,7 @@
     (slot attributo     (type SYMBOL) (default ?NONE))
     (slot testo-domanda (type STRING) (default ?NONE))
     (multislot risposte-valide (type SYMBOL) (default ?NONE))
+    (multislot descrizione-risposte (type STRING) (default ?NONE))
     (slot gia-chiesta   (default  FALSE))
   )
 
@@ -114,9 +115,9 @@
 (defrule chiedi-tipo-dispositivo
   (declare (salience ?*low-priority*))
   ?d <- (info (nome tipo-dispositivo) (valore sconosciuto))
-  ?f <- (domanda (attributo tipo-dispositivo) (testo-domanda ?domanda) (risposte-valide $?risposte))
+  ?f <- (domanda (attributo tipo-dispositivo) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni))
   =>
-  (bind ?risposta (ask-question ?domanda ?risposte))
+  (bind ?risposta (ask-question ?domanda ?risposte ?descrizioni))
   (assert (info (nome tipo-dispositivo) (valore ?risposta)))
   (retract ?d)
   (modify ?f (gia-chiesta TRUE))
@@ -129,8 +130,11 @@
 (deffacts domande
   (domanda  (attributo tipo-dispositivo)
             (testo-domanda "A quale tipologia appartiene il dispositivo?")
-            (risposte-valide pc tablet smartphone))
+            (risposte-valide pc-fisso pc-portatile tablet smartphone)
+            (descrizione-risposte "Pc fisso" "Pc portatile/Netbook" "Tablet" "Smartphone"))
+
 )
+
 
 ;;********************
 ;;* DIAGNOSIS RULES  *
