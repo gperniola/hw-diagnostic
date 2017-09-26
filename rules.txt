@@ -1,0 +1,21 @@
+
+
+ - Se il pc è fisso, controlla tipo problema: 	
+		1) Il pc non si accende
+		2) Il pc si accende ma il sistema operativo non si avvia
+		3) Il pc si accende ma il segnale video è assente o disturbato
+		4) Il pc si accende normalmente ma si riavvia in continuazione
+		5) Rumori provenienti dall'interno del case
+
+- Se il pc è portatile, controlla tipo problema:
+		1) Il portatile non si accende
+		2) Il portatile si accende ma il sistema operativo non si avvia
+		3) Il pc si accende ma il segnale video è assente o disturbato
+		4) Il pc si accende normalmente ma si riavvia in continuazione
+		5) Rumori provenienti dall'interno del case
+
+- Se è uno smartphone, controlla tipo problema:
+		1) Display rotto o incrinato  --> controllare accensione
+		2) Il dispositivo non si accende
+		3) Il dispositivo si accende normalmente ma surriscalda
+		
