@@ -22,10 +22,10 @@
 ;   ?answer)
 
 
-(deffunction ask-question (?question $?allowed-values $?descriptions)
+(deffunction ask-question (?question $?allowed-values)
   (printout t ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
-      (printout t ?cnt1 ". " (nth$ ?cnt1 ?descriptions) crlf)
+      (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -33,7 +33,7 @@
       (printout t ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
-   (nth$ ?answer ?allowed-values))
+   ?answer)
 
 
 
@@ -117,8 +117,8 @@
   ?d <- (info (nome tipo-dispositivo) (valore sconosciuto))
   ?f <- (domanda (attributo tipo-dispositivo) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni))
   =>
-  (bind ?risposta (ask-question ?domanda ?risposte ?descrizioni))
-  (assert (info (nome tipo-dispositivo) (valore ?risposta)))
+  (bind ?risposta (ask-question ?domanda ?descrizioni))
+  (assert (info (nome tipo-dispositivo) (valore (nth$ ?risposta ?risposte))))
   (retract ?d)
   (modify ?f (gia-chiesta TRUE))
 )
