@@ -229,6 +229,14 @@
             (descrizione-risposte "Si" "No, il problema si verifica tra l'accensione del dispositivo e l'accesso alla schermata iniziale")
   )
 
+  (domanda  (attributo riavvio-forzato)
+            (testo-domanda "Il dispositivo si riavvia forzatamente una volta acceso?")
+            (risposte-valide si no)
+            (descrizione-risposte "Si" "No")
+  )
+
+
+
 )
 
 
