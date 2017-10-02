@@ -104,8 +104,8 @@
   (declare (salience ?*highest-priority*))
   (nodo (nome diagnosi-parziale) (valore ?val))
   =>
-  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?valcrlf crlf)
-
+  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?val crlf crlf)
+)
 ;;********************
 ;;* INFERENCE RULES  *
 ;;********************
@@ -200,39 +200,39 @@
   (nodo (nome diagnosi-parziale) (valore stop-error))
   (nodo (nome installazione-nuovo-hw) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore stop-error)))
+  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw)))
 )
 
 (defrule diagnosi-parziale-alimentazione
   (or
-    (
+    (and
       (nodo (nome bluescreen) (valore no))
       (nodo (nome riavvio-forzato) (valore si))
     )
-    (
+    (and
       (nodo (nome segnali-bios) (valore no))
       (nodo (nome riavvio-forzato) (valore si))
     )
     (nodo (nome stato-accensione) (valore fallito))
   )
   =>
-  (assert (nome diagnosi-parziale) (valore alimentazione))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione)))
 )
 
 (defrule diagnosi-parziale-scheda-madre
   (or
-      (
+      (and
         (nodo (nome bluescreen) (valore no))
         (nodo (nome riavvio-forzato) (valore si))
       )
-      (
+      (and
         (nodo (nome segnali-bios) (valore no))
         (nodo (nome riavvio-forzato) (valore si))
       )
       (nodo (nome stato-accensione) (valore fallito))
   )
   =>
-  (assert (nome diagnosi-parziale) (valore alimentazione))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre)))
 )
 
 (defrule diagnosi-parziale-bios
@@ -293,45 +293,6 @@
   (retract ?ask)
 )
 
-(defrule chiedi-problema-pc
-  (declare (salience ?*low-priority*))
-  (nodo (nome tipo-dispositivo) (valore pc-fisso))
-  ?f <- (domanda (attributo problemi-pc-fisso) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
-  =>
-  (bind ?risposta (ask-question ?domanda ?descrizioni))
-  (assert (nodo (nome problema-principale) (valore (nth$ ?risposta ?risposte))(tipo info-utente)))
-  (modify ?f (gia-chiesta TRUE))
-)
-
-(defrule chiedi-problema-portatile
-  (declare (salience ?*low-priority*))
-  (nodo (nome tipo-dispositivo) (valore pc-portatile))
-  ?f <- (domanda (attributo problemi-pc-portatile) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
-  =>
-  (bind ?risposta (ask-question ?domanda ?descrizioni))
-  (assert (nodo (nome problema-principale) (valore (nth$ ?risposta ?risposte))(tipo info-utente)))
-  (modify ?f (gia-chiesta TRUE))
-)
-
-(defrule chiedi-problema-smartphone
-  (declare (salience ?*low-priority*))
-  (nodo (nome tipo-dispositivo) (valore smartphone))
-  ?f <- (domanda (attributo problemi-smartphone) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
-  =>
-  (bind ?risposta (ask-question ?domanda ?descrizioni))
-  (assert (nodo (nome problema-principale) (valore (nth$ ?risposta ?risposte))(tipo info-utente)))
-  (modify ?f (gia-chiesta TRUE))
-)
-
-(defrule chiedi-problema-tablet
-  (declare (salience ?*low-priority*))
-  (nodo (nome tipo-dispositivo) (valore tablet))
-  ?f <- (domanda (attributo problemi-tablet) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
-  =>
-  (bind ?risposta (ask-question ?domanda ?descrizioni))
-  (assert (nodo (nome problema-principale) (valore (nth$ ?risposta ?risposte))(tipo info-utente)))
-  (modify ?f (gia-chiesta TRUE))
-)
 
 ;;********************
 ;;* QUESTIONS FACTS  *
@@ -419,7 +380,7 @@
 
   (domanda  (attributo stato-video)
             (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
-            (risposte-valide si no )
+            (risposte-valide fallito ok )
             (descrizione-risposte "Si" "No")
   )
 
