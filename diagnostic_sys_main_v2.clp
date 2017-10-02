@@ -100,6 +100,12 @@
   ;     else (halt)))
 
 
+(defrule diagnosi-parziale-trovata
+  (declare (salience ?*highest-priority*))
+  (nodo (nome diagnosi-parziale) (valore ?val))
+  =>
+  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?valcrlf crlf)
+
 ;;********************
 ;;* INFERENCE RULES  *
 ;;********************
