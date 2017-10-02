@@ -381,10 +381,10 @@
             (descrizione-risposte "Si" "No")
   )
 
-  (domanda  (attributo caricamento-SO)
-            (testo-domanda "Il sistema operativo viene caricato correttamente? L'utente riesce ad accedere alla schermata iniziale?")
-            (risposte-valide ok fallito)
-            (descrizione-risposte "Si" "No, il problema si verifica tra l'accensione del dispositivo e l'accesso alla schermata iniziale")
+  (domanda  (attributo problema-boot-o-SO)
+            (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
+            (risposte-valide boot SO nessuno)
+            (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
   )
 
   (domanda  (attributo riavvio-forzato)
@@ -394,10 +394,41 @@
   )
 
   (domanda  (attributo bluescreen)
-            (testo-domanda "Il dispositivo mostra una schermata d'errore bluescreen prima di riavviarsi?")
+            (testo-domanda "Il sistema termina con un errore bluescreen?")
             (risposte-valide si no non-so)
-            (descrizione-risposte "Si" "No Non so")
+            (descrizione-risposte "Si" "No" "Non so")
   )
+
+  (domanda  (attributo installazione-nuovo-hw)
+            (testo-domanda "E' stato installato del nuovo hardware subito prima che il problema si verificasse?")
+            (risposte-valide si no non-so)
+            (descrizione-risposte "Si" "No" "Non so")
+  )
+
+  (domanda  (attributo segnali-bios)
+            (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
+            (risposte-valide si no )
+            (descrizione-risposte "Si" "No")
+  )
+
+  (domanda  (attributo stato-video)
+            (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
+            (risposte-valide si no )
+            (descrizione-risposte "Si" "No")
+  )
+
+  (domanda  (attributo display-rotto)
+            (testo-domanda "Il display del dispositivo è rotto o incrinato?")
+            (risposte-valide si no )
+            (descrizione-risposte "Si" "No")
+  )
+
+  (domanda  (attributo disturbo-video)
+            (testo-domanda "E' presente un disturbo del segnale video? [schermo nero oppure fasce colorate sul display]")
+            (risposte-valide si no )
+            (descrizione-risposte "Si" "No")
+  )
+
 
 )
 
