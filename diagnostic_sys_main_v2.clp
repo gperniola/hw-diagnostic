@@ -109,15 +109,20 @@
 )
 
 (defrule chiedi-accensione
-  (nodo(nome problema-principale) (valore accensione))
   =>
   (assert (chiedi stato-accensione))
 )
 
-(defrule chiedi-caricamento-SO
-  (nodo (nome stato-accensione) (valore ok))
+(defrule chiedi-video
   =>
-  (assert (chiedi caricamento-SO))
+  (assert (chiedi stato-video))
+)
+
+(defrule chiedi-problema-boot-o-SO
+  (nodo (nome stato-accensione) (valore ok))
+  (nodo (nome sistema-operativo) (valore windows))
+  =>
+  (assert (chiedi problema-boot-o-SO))
 )
 
 (defrule chiedi-riavvio-forzato
@@ -127,22 +132,133 @@
 )
 
 (defrule chiedi-bluescreen
-  (nodo (nome caricamento-SO) (valore ok))
-  (nodo (nome SO) (valore windows))
+  (nodo (nome problema-boot-o-SO) (valore SO))
+  (nodo (nome sistema-operativo) (valore windows))
   =>
   (assert (chiedi bluescreen))
 )
 
+(defrule chiedi-installazione-nuovo-hw
+  =>
+  (assert(chiedi installazione-nuovo-hw))
+)
+
+(defrule chiedi-segnali-bios
+  (nodo (nome problema-boot-o-SO) (valore boot))
+  =>
+  (assert (chiedi segnali-bios))
+)
+
+(defrule chiedi-display-rotto
+  (nodo (nome stato-video) (valore fallito))
+  =>
+  (assert (chiedi display-rotto))
+)
+
+(defrule chiedi-disturbo-video
+  (nodo (nome display-rotto) (valore no))
+  =>
+  (assert (chiedi disturbo-video))
+)
 
 
 
+(defrule diagnosi-parziale-connettori-video
+  (nodo (nome disturbo-video) (valore si))
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video)))
+)
+
+(defrule diagnosi-parziale-problema-pixels
+  (nodo (nome disturbo-video) (valore si))
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels)))
+)
+
+(defrule diagnosi-parziale-sostituzione-display
+  (or
+    (nodo (nome display-rotto) (valore si))
+    (nodo (nome diagnosi-parziale) (valore problema-pixels))
+  )
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display)))
+)
+
+(defrule diagnosi-parziale-stop-error
+  (nodo (nome bluescreen) (valore si))
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore stop-error)))
+)
+
+(defrule diagnosi-parziale-conflitto-hw
+  (nodo (nome diagnosi-parziale) (valore stop-error))
+  (nodo (nome installazione-nuovo-hw) (valore si))
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore stop-error)))
+)
+
+(defrule diagnosi-parziale-alimentazione
+  (or
+    (
+      (nodo (nome bluescreen) (valore no))
+      (nodo (nome riavvio-forzato) (valore si))
+    )
+    (
+      (nodo (nome segnali-bios) (valore no))
+      (nodo (nome riavvio-forzato) (valore si))
+    )
+    (nodo (nome stato-accensione) (valore fallito))
+  )
+  =>
+  (assert (nome diagnosi-parziale) (valore alimentazione))
+)
+
+(defrule diagnosi-parziale-scheda-madre
+  (or
+      (
+        (nodo (nome bluescreen) (valore no))
+        (nodo (nome riavvio-forzato) (valore si))
+      )
+      (
+        (nodo (nome segnali-bios) (valore no))
+        (nodo (nome riavvio-forzato) (valore si))
+      )
+      (nodo (nome stato-accensione) (valore fallito))
+  )
+  =>
+  (assert (nome diagnosi-parziale) (valore alimentazione))
+)
+
+(defrule diagnosi-parziale-bios
+  (nodo (nome segnali-bios) (valore si))
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore problema-bios)))
+)
+
+(defrule diagnosi-parziale-ram
+  (or
+    (nodo (nome segnali-bios) (valore si))
+    (nodo (nome diagnosi-parziale) (valore stop-error))
+  )
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore problema-ram)))
+)
+
+(defrule diagnosi-parziale-hard-disk
+  (or
+    (nodo (nome segnali-bios) (valore si))
+    (nodo (nome diagnosi-parziale) (valore stop-error))
+  )
+  =>
+  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk)))
+)
 
 
 
 (defrule deduci-SO-windows
   (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-fisso|pc-portatile))
   =>
-  (assert (nodo (nome SO) (valore windows) (tipo inferenza)))
+  (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza)))
 )
 
 (defrule deduci-SO-android
