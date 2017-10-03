@@ -35,7 +35,17 @@
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
    ?answer)
 
-
+(deffunction ask-stop-program ()
+  (printout t "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
+  (bind ?answer (read))
+  (while (not (member ?answer (create$ 1 2)))
+      (printout t "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
+      (bind ?answer (read))
+  )
+  (if (eq ?answer 2) then
+      (assert (ferma-programma))
+  )
+)
 
   ; (deffunction yes-or-no-p (?question)
   ; (bind ?question (sym-cat ?question " (yes/y/no/n): "))
@@ -104,8 +114,18 @@
   (declare (salience ?*highest-priority*))
   (nodo (nome diagnosi-parziale) (valore ?val))
   =>
-  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?val crlf crlf)
+  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?val crlf)
+  (ask-stop-program)
 )
+
+(defrule ferma-esecuzione
+  (declare (salience ?*highest-priority*))
+  (ferma-programma)
+  =>
+  (halt)
+)
+
+
 ;;********************
 ;;* INFERENCE RULES  *
 ;;********************
@@ -145,6 +165,7 @@
 )
 
 (defrule chiedi-installazione-nuovo-hw
+  (nodo (nome tipo-dispositivo) (valore ?val&pc-fisso|pc-portatile))
   =>
   (assert(chiedi installazione-nuovo-hw))
 )
@@ -299,48 +320,13 @@
 ;;********************
 
 (deffacts domande
+
+
   (domanda  (attributo tipo-dispositivo)
             (testo-domanda "A quale tipologia appartiene il dispositivo?")
             (risposte-valide pc-fisso pc-portatile tablet smartphone)
             (descrizione-risposte "Pc fisso Windows" "Pc portatile/Netbook Windows" "Tablet Android" "Smartphone Android")
-            )
-
-  (domanda  (attributo problemi-pc-fisso)
-            (testo-domanda "A quale categoria appartiene il problema principale da analizzare?")
-            (risposte-valide accensione video rumori altro)
-            (descrizione-risposte   "Accensione del dispositivo e caricamento del sistema operativo"
-                                    "Problemi con il segnale video"
-                                    "Rumori provenienti dall'interno del case"
-                                    "Altro"
-            ))
-
-  (domanda  (attributo problemi-pc-portatile)
-            (testo-domanda "A quale categoria appartiene il problema principale da analizzare?")
-            (risposte-valide accensione video rumori surriscaldamento altro)
-            (descrizione-risposte   "Accensione del dispositivo e caricamento del sistema operativo"
-                                    "Problemi con il segnale video, display rotto o incrinato"
-                                    "Rumori provenienti dall'interno del dispositivo"
-                                    "Surriscaldamento eccessivo del dispositivo"
-                                    "Altro"
-            ))
-
-  (domanda  (attributo problemi-smartphone)
-            (testo-domanda "Seleziona l'opzione più appropriata per il problema da analizzare")
-            (risposte-valide accensione video surriscaldamento altro)
-            (descrizione-risposte   "Accensione del dispositivo e caricamento del sistema operativo"
-                                    "Problemi con il segnale video, display rotto o incrinato"
-                                    "Surriscaldamento eccessivo del dispositivo"
-                                    "Altro"
-            ))
-
-  (domanda  (attributo problemi-tablet)
-            (testo-domanda "Seleziona l'opzione più appropriata per il problema da analizzare")
-            (risposte-valide accensione video surriscaldamento altro)
-            (descrizione-risposte   "Accensione del dispositivo e caricamento del sistema operativo"
-                                    "Problemi con il segnale video, display rotto o incrinato"
-                                    "Surriscaldamento eccessivo del dispositivo"
-                                    "Altro"
-            ))
+  )
 
   (domanda  (attributo stato-accensione)
             (testo-domanda "E' possibile accendere il dispositivo?")
