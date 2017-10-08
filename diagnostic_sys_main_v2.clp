@@ -10,14 +10,15 @@
 ;;****************
 
 
-(deffunction ask-question (?question $?allowed-values)
-  (printout t ?question crlf)
+(deffunction ask-question (?j ?question $?allowed-values)
+  (printout t "DOMANDA N. " ?j ":" crlf ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
+  (printout t "0. Revisiona domande precedenti." crlf)
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-  (while (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) do
+  (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0))) do
       (printout t ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
@@ -45,6 +46,7 @@
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot tipo (type SYMBOL))
+    (slot descrizione (type STRING))
   )
 
   (deftemplate diagnosi
@@ -58,7 +60,19 @@
     (multislot risposte-valide (type SYMBOL) (default ?NONE))
     (multislot descrizione-risposte (type STRING) (default ?NONE))
     (slot gia-chiesta   (default  FALSE))
+    (slot num-domanda (type INTEGER))
   )
+
+;;**********************
+;;*    INITIAL FACTS   *
+;;**********************
+(deffacts fatti-iniziali
+
+  (contatore-domande 0)
+
+)
+
+
 
 
 ;;******************
@@ -101,6 +115,15 @@
   (halt)
 )
 
+(defrule revisiona-domande
+  (declare (salience ?*highest-priority*))
+  (revisiona-domande)
+  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n&:(> ?n 0)))
+  (nodo (nome ?attr) (valore ?val) (descrizione ?descr))
+  =>
+  (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " ?descr crlf crlf)
+)
+
 
 ;;********************
 ;;*    ASK RULES     *
@@ -110,11 +133,20 @@
   ?ask <- (chiedi ?attr)
   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr)))
+  ?cont-dom <- (contatore-domande ?i)
   =>
-  (bind ?risposta (ask-question ?domanda ?descrizioni))
-  (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (tipo info-utente)))
-  (modify ?f (gia-chiesta TRUE))
-  (retract ?ask)
+  (bind ?j (+ ?i 1))
+  (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
+  (if (= ?risposta 0) then
+    (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
+    (assert (revisiona-domande))
+  else
+    (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente)))
+    (modify ?f (gia-chiesta TRUE)(num-domanda ?j))
+    (retract ?ask)
+    (retract ?cont-dom)
+    (assert (contatore-domande ?j))
+  )
 )
 
 
