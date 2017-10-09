@@ -9,6 +9,16 @@
 ;;* DEFFUNCTIONS *
 ;;****************
 
+(deffunction ask-question-revision(?n-domande-chieste)
+  (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
+  (bind ?answer (read))
+  (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+  (while (and (> ?answer ?n-domande-chieste) (< ?answer 0)) do
+    (printout t crlf "Valore inserito non valido, riprovare: ")
+    (bind ?answer (read))
+  )
+?answer)
+
 
 (deffunction ask-question (?j ?question $?allowed-values)
   (printout t "DOMANDA N. " ?j ":" crlf ?question crlf)
@@ -47,6 +57,7 @@
     (multislot valore  (type SYMBOL))
     (slot tipo (type SYMBOL))
     (slot descrizione (type STRING))
+    (multislot nodo-padre (type FACT-ADDRESS))
   )
 
   (deftemplate diagnosi
@@ -61,6 +72,7 @@
     (multislot descrizione-risposte (type STRING) (default ?NONE))
     (slot gia-chiesta   (default  FALSE))
     (slot num-domanda (type INTEGER))
+    (slot stampata (default FALSE))
   )
 
 ;;**********************
@@ -115,19 +127,49 @@
   (halt)
 )
 
-(defrule revisiona-domande
+(defrule revisiona-domande-stampa-elenco
   (declare (salience ?*highest-priority*))
   (revisiona-domande)
-  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n&:(> ?n 0)))
+  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE))
+  (not (domanda (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE)))
   (nodo (nome ?attr) (valore ?val) (descrizione ?descr))
   =>
+  (modify ?d (stampata TRUE))
   (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " ?descr crlf crlf)
 )
 
+(defrule revisiona-domande
+  (declare (salience ?*highest-priority*))
+  ?r <-(revisiona-domande)
+  (not (domanda (gia-chiesta TRUE) (stampata FALSE)))
+  (contatore-domande ?n)
+  =>
+  (printout t crlf crlf)
+  (bind ?risposta (ask-question-revision ?n))
+  (printout t crlf "**************************************" crlf crlf crlf)
+  (retract ?r)
+  (assert (annulla-stampa-domande))
+  (if (<> ?risposta 0) then
+    (assert (revisiona-da ?risposta))
+  )
+)
 
-;;********************
-;;*    ASK RULES     *
-;;********************
+(defrule annulla-stampa-domande
+  (declare (salience ?*highest-priority*))
+  (annulla-stampa-domande)
+  ?d <- (domanda (stampata TRUE))
+  =>
+  (modify ?d (stampata FALSE))
+)
+
+(defrule annulla-stampa-domande-fine
+  (declare (salience ?*highest-priority*))
+  ?a <- (annulla-stampa-domande)
+  (not (domanda (stampata TRUE)))
+  =>
+  (retract ?a)
+)
+
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
   ?ask <- (chiedi ?attr)
@@ -138,6 +180,8 @@
   (bind ?j (+ ?i 1))
   (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
   (if (= ?risposta 0) then
+    (retract ?ask)
+    (assert (chiedi ?attr)) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
     (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
     (assert (revisiona-domande))
   else
@@ -149,6 +193,9 @@
   )
 )
 
+;;********************
+;;*    ASK RULES     *
+;;********************
 
 (defrule chiedi-tipo-dispositivo
   =>
