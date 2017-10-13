@@ -172,7 +172,7 @@
 
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
-  ?ask <- (chiedi ?attr)
+  ?ask <- (nodo (nome chiedi)(valore ?attr))
   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr)))
   ?cont-dom <- (contatore-domande ?i)
@@ -181,13 +181,13 @@
   (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
   (if (= ?risposta 0) then
     (retract ?ask)
-    (assert (chiedi ?attr)) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+    (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
     (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
     (assert (revisiona-domande))
   else
-    (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente)))
+    (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
     (modify ?f (gia-chiesta TRUE)(num-domanda ?j))
-    (retract ?ask)
+    ;;(retract ?ask)
     (retract ?cont-dom)
     (assert (contatore-domande ?j))
   )
@@ -199,61 +199,61 @@
 
 (defrule chiedi-tipo-dispositivo
   =>
-  (assert (chiedi tipo-dispositivo))
+  (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
 )
 
 (defrule chiedi-accensione
   =>
-  (assert (chiedi stato-accensione))
+  (assert (nodo (nome chiedi) (valore stato-accensione)))
 )
 
 (defrule chiedi-video
   =>
-  (assert (chiedi stato-video))
+  (assert (nodo (nome chiedi) (valore stato-video)))
 )
 
 (defrule chiedi-problema-boot-o-SO
-  (nodo (nome stato-accensione) (valore ok))
-  (nodo (nome sistema-operativo) (valore windows))
+  ?p1 <- (nodo (nome stato-accensione) (valore ok))
+  ?p2 <- (nodo (nome sistema-operativo) (valore windows))
   =>
-  (assert (chiedi problema-boot-o-SO))
+  (assert (nodo (nome chiedi) (valore problema-boot-o-SO) (nodo-padre ?p1 ?p2)))
 )
 
 (defrule chiedi-riavvio-forzato
-  (nodo (nome stato-accensione) (valore ok))
+  ?p1 <- (nodo (nome stato-accensione) (valore ok))
   =>
-  (assert (chiedi riavvio-forzato))
+  (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-bluescreen
-  (nodo (nome problema-boot-o-SO) (valore SO))
-  (nodo (nome sistema-operativo) (valore windows))
+  ?p1 <- (nodo (nome problema-boot-o-SO) (valore SO))
+  ?p2 <- (nodo (nome sistema-operativo) (valore windows))
   =>
-  (assert (chiedi bluescreen))
+  (assert (nodo (nome chiedi) (valore bluescreen) (nodo-padre ?p1 ?p2)))
 )
 
 (defrule chiedi-installazione-nuovo-hw
-  (nodo (nome tipo-dispositivo) (valore ?val&pc-fisso|pc-portatile))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?val&pc-fisso|pc-portatile))
   =>
-  (assert(chiedi installazione-nuovo-hw))
+  (assert (nodo (nome chiedi) (valore installazione-nuovo-hw) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-segnali-bios
-  (nodo (nome problema-boot-o-SO) (valore boot))
+  ?p1 <- (nodo (nome problema-boot-o-SO) (valore boot))
   =>
-  (assert (chiedi segnali-bios))
+  (assert (nodo (nome chiedi) (valore segnali-bios) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-display-rotto
-  (nodo (nome stato-video) (valore fallito))
+  ?p1 <- (nodo (nome stato-video) (valore fallito))
   =>
-  (assert (chiedi display-rotto))
+  (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-disturbo-video
-  (nodo (nome display-rotto) (valore no))
+  ?p1 <- (nodo (nome display-rotto) (valore no))
   =>
-  (assert (chiedi disturbo-video))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1)))
 )
 
 
