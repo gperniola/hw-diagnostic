@@ -317,108 +317,118 @@
 ;;********************
 
 (defrule diagnosi-parziale-connettori-video
-  (nodo (nome disturbo-video) (valore si))
+  ?p1 <- (nodo (nome disturbo-video) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-problema-pixels
-  (nodo (nome disturbo-video) (valore si))
+  ?p1 <- (nodo (nome disturbo-video) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-sostituzione-display
   (or
-    (nodo (nome display-rotto) (valore si))
-    (nodo (nome diagnosi-parziale) (valore problema-pixels))
+    ?p1 <- (nodo (nome display-rotto) (valore si))
+    ?p1 <- (nodo (nome diagnosi-parziale) (valore problema-pixels))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display)))
+  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-stop-error
-  (nodo (nome bluescreen) (valore si))
+  ?p1 <- (nodo (nome bluescreen) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore stop-error)))
+  (assert (nodo (nome diagnosi-parziale) (valore stop-error) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-conflitto-hw
-  (nodo (nome diagnosi-parziale) (valore stop-error))
-  (nodo (nome installazione-nuovo-hw) (valore si))
+  ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
+  ?p2 <- (nodo (nome installazione-nuovo-hw) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw)))
+  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw) (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-parziale-alimentazione
   (or
     (and
-      (nodo (nome bluescreen) (valore no))
-      (nodo (nome riavvio-forzato) (valore si))
+      ?p1 <- (nodo (nome bluescreen) (valore no))
+      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
     )
     (and
-      (nodo (nome segnali-bios) (valore no))
-      (nodo (nome riavvio-forzato) (valore si))
+      ?p1 <- (nodo (nome segnali-bios) (valore no))
+      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
     )
-    (nodo (nome stato-accensione) (valore fallito))
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (nodo-padre ?p1 ?p2)))
+)
+
+(defrule diagnosi-parziale-alimentazione-2
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  =>
+  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-scheda-madre
   (or
       (and
-        (nodo (nome bluescreen) (valore no))
-        (nodo (nome riavvio-forzato) (valore si))
+        ?p1 <- (nodo (nome bluescreen) (valore no))
+        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
       )
       (and
-        (nodo (nome segnali-bios) (valore no))
-        (nodo (nome riavvio-forzato) (valore si))
+        ?p1 <- (nodo (nome segnali-bios) (valore no))
+        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
       )
-      (nodo (nome stato-accensione) (valore fallito))
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (nodo-padre ?p1 ?p2)))
+)
+
+(defrule diagnosi-parziale-scheda-madre-2
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  =>
+  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-bios
-  (nodo (nome segnali-bios) (valore si))
+  ?p1 <- (nodo (nome segnali-bios) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-bios)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-bios) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-ram
   (or
-    (nodo (nome segnali-bios) (valore si))
-    (nodo (nome diagnosi-parziale) (valore stop-error))
+    ?p1 <- (nodo (nome segnali-bios) (valore si))
+    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-ram)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-ram) (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-hard-disk
   (or
-    (nodo (nome segnali-bios) (valore si))
-    (nodo (nome diagnosi-parziale) (valore stop-error))
+    ?p1 <- (nodo (nome segnali-bios) (valore si))
+    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk) (nodo-padre ?p1)))
 )
 
 
 
 
 (defrule deduci-SO-windows
-  (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-fisso|pc-portatile))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-fisso|pc-portatile))
   =>
-  (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza)))
+  (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
 )
 
 (defrule deduci-SO-android
-  (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smarthpone))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smarthpone))
   =>
-  (assert (nodo (nome SO) (valore android) (tipo inferenza)))
+  (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
 )
 
 
