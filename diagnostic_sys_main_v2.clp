@@ -19,6 +19,19 @@
   )
 ?answer)
 
+(deffunction ask-question-direct (?j ?question $?allowed-values)
+  (printout t "REVISIONE DOMANDA N. " ?j ":" crlf ?question crlf)
+  (loop-for-count (?cnt1 1 (length ?allowed-values)) do
+      (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
+  )
+  (bind ?answer (read))
+  (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+  (while  (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) do
+      (printout t ?question)
+      (bind ?answer (read))
+      (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
+   ?answer)
+
 
 (deffunction ask-question (?j ?question $?allowed-values)
   (printout t "DOMANDA N. " ?j ":" crlf ?question crlf)
@@ -170,33 +183,34 @@
   (retract ?a)
 )
 
-(defrule resetta-domande
-  (declare (salience ?*highest-priority*))
-  (revisiona-da ?dom)
-  ?d <- (domanda (attributo ?attr) (num-domanda ?n&:(> ?n ?dom)) (gia-chiesta TRUE))
-  =>
-  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
-)
+;;(defrule resetta-domande
+;;  (declare (salience ?*highest-priority*))
+;;  (revisiona-da ?dom)
+;;  ?d <- (domanda (attributo ?attr) (num-domanda ?n&:(> ?n ?dom)) (gia-chiesta TRUE))
+;;  =>
+;;  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
+;;)
 
 (defrule revisiona-da
   (declare (salience ?*highest-priority*))
-  (revisiona-da ?dom)
-  ?d <- (domanda (attributo ?attr) (num-domanda ?dom) (gia-chiesta TRUE))
+  ?r <- (revisiona-da ?n)
+  ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
   ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
-  ?cont <- (contatore-domande ?c)
+  ?nodo-attributo <- (nodo (nome ?attr) (tipo info-utente))
   =>
   (assert (elimina-nodi-da ?nodo-partenza))
   ;;(retract ?nodo-partenza)
   ;;(assert (nodo (nome chiedi) (valore ?attr) (nodo-padre ?padri)))
-  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
-  (retract ?cont)
-  (assert (contatore-domande (- ?dom 1)))
+  (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
+  (modify ?nodo-attributo (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descr)))
+  (retract ?r)
+  (assert (fine-revisione))
 )
 
 (defrule elimina-nodi-da
   (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
-  ?p2 <- (nodo (nodo-padre $?x ?n $?y))
+  ?p2 <- (nodo (nodo-padre $?x ?n $?y) (tipo ?t&~info-utente))
   =>
   (assert (elimina-nodi-da ?p2))
   (retract ?p2)
@@ -204,23 +218,23 @@
 
 (defrule ferma-elimina-nodi-da
   ?p1 <- (elimina-nodi-da ?n)
-  (not (nodo (nodo-padre $?x ?n $?y)))
+  (not (nodo (nodo-padre $?x ?n $?y)(tipo ?t&~info-utente)))
   =>
   (retract ?p1)
 )
 
 (defrule fine-revisiona-domande
   (declare (salience ?*highest-priority*))
-  ?r <- (revisiona-da ?dom)
+  ?r <- (fine-revisione)
   (not (elimina-nodi da ?e))
-  (not (domanda (attributo ?attr) (num-domanda ?n&:(>= ?n ?dom)) (gia-chiesta TRUE)))
   =>
   (retract ?r)
+  (assert (revisiona-domande))
 )
 
 
 
-
+;; MEMORIZZARE RISPOSTE GIA' DATE DALL'UTENTE IN DOMANDE E RIPETERE RAGIONAMENTO DA DOMANDA DA REVISIONARE, SE RISPOSTA GIA' PRESENTE, UTILIZZARE QUELLA ANZICHE' CHIEDERE NUOVA RISPOSTA
 
 
 
@@ -306,8 +320,9 @@
 
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome display-rotto) (valore no))
+  ?p2 <- (nodo (nome stato-video) (valore fallito))
   =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1)))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 ?p2)))
 )
 
 
