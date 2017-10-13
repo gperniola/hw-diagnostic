@@ -170,9 +170,63 @@
   (retract ?a)
 )
 
+(defrule resetta-domande
+  (declare (salience ?*highest-priority*))
+  (revisiona-da ?dom)
+  ?d <- (domanda (attributo ?attr) (num-domanda ?n&:(> ?n ?dom)) (gia-chiesta TRUE))
+  =>
+  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
+)
+
+(defrule revisiona-da
+  (declare (salience ?*highest-priority*))
+  (revisiona-da ?dom)
+  ?d <- (domanda (attributo ?attr) (num-domanda ?dom) (gia-chiesta TRUE))
+  ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
+  ?cont <- (contatore-domande ?c)
+  =>
+  (assert (elimina-nodi-da ?nodo-partenza))
+  ;;(retract ?nodo-partenza)
+  ;;(assert (nodo (nome chiedi) (valore ?attr) (nodo-padre ?padri)))
+  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
+  (retract ?cont)
+  (assert (contatore-domande (- ?dom 1)))
+)
+
+(defrule elimina-nodi-da
+  (declare (salience ?*highest-priority*))
+  ?p1 <- (elimina-nodi-da ?n)
+  ?p2 <- (nodo (nodo-padre $?x ?n $?y))
+  =>
+  (assert (elimina-nodi-da ?p2))
+  (retract ?p2)
+)
+
+(defrule ferma-elimina-nodi-da
+  ?p1 <- (elimina-nodi-da ?n)
+  (not (nodo (nodo-padre $?x ?n $?y)))
+  =>
+  (retract ?p1)
+)
+
+(defrule fine-revisiona-domande
+  (declare (salience ?*highest-priority*))
+  ?r <- (revisiona-da ?dom)
+  (not (elimina-nodi da ?e))
+  (not (domanda (attributo ?attr) (num-domanda ?n&:(>= ?n ?dom)) (gia-chiesta TRUE)))
+  =>
+  (retract ?r)
+)
+
+
+
+
+
+
+
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
-  ?ask <- (nodo (nome chiedi)(valore ?attr))
+  ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr)))
   ?cont-dom <- (contatore-domande ?i)
@@ -181,7 +235,7 @@
   (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
   (if (= ?risposta 0) then
     (retract ?ask)
-    (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+    (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
     (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
     (assert (revisiona-domande))
   else
