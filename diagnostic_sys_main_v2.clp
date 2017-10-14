@@ -83,6 +83,7 @@
     (slot testo-domanda (type STRING) (default ?NONE))
     (multislot risposte-valide (type SYMBOL) (default ?NONE))
     (multislot descrizione-risposte (type STRING) (default ?NONE))
+    (slot risposta-selezionata (type INTEGER))
     (slot gia-chiesta   (default  FALSE))
     (slot num-domanda (type INTEGER))
     (slot stampata (default FALSE))
@@ -143,12 +144,11 @@
 (defrule revisiona-domande-stampa-elenco
   (declare (salience ?*highest-priority*))
   (revisiona-domande)
-  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE))
+  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE) (descrizione-risposte $?descr) (risposta-selezionata ?r-selezionata))
   (not (domanda (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE)))
-  (nodo (nome ?attr) (valore ?val) (descrizione ?descr))
   =>
   (modify ?d (stampata TRUE))
-  (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " ?descr crlf crlf)
+  (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " (nth ?r-selezionata ?descr) crlf crlf)
 )
 
 (defrule revisiona-domande
@@ -193,16 +193,18 @@
 
 (defrule revisiona-da
   (declare (salience ?*highest-priority*))
+  (not(annulla-stampa-domande))
   ?r <- (revisiona-da ?n)
   ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
   ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
-  ?nodo-attributo <- (nodo (nome ?attr) (tipo info-utente))
+  ;;?nodo-attributo <- (nodo (nome ?attr) (tipo info-utente))
   =>
   (assert (elimina-nodi-da ?nodo-partenza))
   ;;(retract ?nodo-partenza)
   ;;(assert (nodo (nome chiedi) (valore ?attr) (nodo-padre ?padri)))
   (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
-  (modify ?nodo-attributo (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descr)))
+  ;;(modify ?nodo-attributo (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descr)))
+  (modify ?d (risposta-selezionata ?risposta))
   (retract ?r)
   (assert (fine-revisione))
 )
@@ -210,21 +212,22 @@
 (defrule elimina-nodi-da
   (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
-  ?p2 <- (nodo (nodo-padre $?x ?n $?y) (tipo ?t&~info-utente))
+  ?p2 <- (nodo (nodo-padre $?x ?n $?y))
   =>
   (assert (elimina-nodi-da ?p2))
   (retract ?p2)
 )
 
 (defrule ferma-elimina-nodi-da
+  (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
-  (not (nodo (nodo-padre $?x ?n $?y)(tipo ?t&~info-utente)))
+  (not (nodo (nodo-padre $?x ?n $?y)))
   =>
   (retract ?p1)
 )
 
 (defrule fine-revisiona-domande
-  (declare (salience ?*highest-priority*))
+  (declare (salience ?*high-priority*))
   ?r <- (fine-revisione)
   (not (elimina-nodi da ?e))
   =>
@@ -253,12 +256,20 @@
     (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
     (assert (revisiona-domande))
   else
-    (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
-    (modify ?f (gia-chiesta TRUE)(num-domanda ?j))
+    ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+    (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
     ;;(retract ?ask)
     (retract ?cont-dom)
     (assert (contatore-domande ?j))
   )
+)
+
+(defrule usa-risposta-utente
+  ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
+  ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta TRUE) (risposta-selezionata ?risp))
+  (not (nodo (nome ?attr)))
+  =>
+  (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
 )
 
 ;;********************
@@ -320,9 +331,9 @@
 
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome display-rotto) (valore no))
-  ?p2 <- (nodo (nome stato-video) (valore fallito))
+  ;?p2 <- (nodo (nome stato-video) (valore fallito))
   =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 )))
 )
 
 
