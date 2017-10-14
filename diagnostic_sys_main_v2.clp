@@ -24,10 +24,11 @@
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
+  (printout t "Inserire risposta: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
   (while  (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) do
-      (printout t ?question)
+      (printout t crlf "Valore inserito non valido, riprovare: ")
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
    ?answer)
@@ -38,11 +39,12 @@
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
-  (printout t "0. Revisiona domande precedenti." crlf)
+  (printout t "0. Revisiona domande precedenti." crlf crlf)
+  (printout t "Inserire risposta: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
   (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0))) do
-      (printout t ?question)
+      (printout t crlf "Valore inserito non valido, riprovare: ")
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
    ?answer)
@@ -60,6 +62,8 @@
   )
 )
 
+
+(defmodule MAIN (export ?ALL))
 
 ;;******************
 ;;*    TEMPLATES   *
@@ -108,6 +112,7 @@
 (defrule inizializzazione
   (declare (salience ?*highest-priority*))
   =>
+  (clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -253,6 +258,7 @@
   (if (= ?risposta 0) then
     (retract ?ask)
     (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+    (clear-window)
     (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
     (assert (revisiona-domande))
   else
@@ -463,68 +469,72 @@
 ;;********************
 ;;* QUESTIONS FACTS  *
 ;;********************
-(deffacts domande
+(defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
 
 
-  (domanda  (attributo tipo-dispositivo)
-            (testo-domanda "A quale tipologia appartiene il dispositivo?")
-            (risposte-valide pc-fisso pc-portatile tablet smartphone)
-            (descrizione-risposte "Pc fisso Windows" "Pc portatile/Netbook Windows" "Tablet Android" "Smartphone Android")
+
+  (deffacts ELENCO-DOMANDE::domande
+
+
+    (domanda  (attributo tipo-dispositivo)
+              (testo-domanda "A quale tipologia appartiene il dispositivo?")
+              (risposte-valide pc-fisso pc-portatile tablet smartphone)
+              (descrizione-risposte "Pc fisso Windows" "Pc portatile/Netbook Windows" "Tablet Android" "Smartphone Android")
+    )
+
+    (domanda  (attributo stato-accensione)
+              (testo-domanda "E' possibile accendere il dispositivo?")
+              (risposte-valide ok fallito)
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo problema-boot-o-SO)
+              (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
+              (risposte-valide boot SO nessuno)
+              (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
+    )
+
+    (domanda  (attributo riavvio-forzato)
+              (testo-domanda "Il dispositivo si riavvia forzatamente più volte?")
+              (risposte-valide si no)
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo bluescreen)
+              (testo-domanda "Il sistema termina con un errore bluescreen?")
+              (risposte-valide si no non-so)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+    (domanda  (attributo installazione-nuovo-hw)
+              (testo-domanda "E' stato installato del nuovo hardware subito prima che il problema si verificasse?")
+              (risposte-valide si no non-so)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+    (domanda  (attributo segnali-bios)
+              (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
+              (risposte-valide si no )
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo stato-video)
+              (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
+              (risposte-valide fallito ok )
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo display-rotto)
+              (testo-domanda "Il display del dispositivo è rotto o incrinato?")
+              (risposte-valide si no )
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo disturbo-video)
+              (testo-domanda "E' presente un disturbo del segnale video? [schermo nero oppure fasce colorate sul display]")
+              (risposte-valide si no )
+              (descrizione-risposte "Si" "No")
+    )
+
+
   )
-
-  (domanda  (attributo stato-accensione)
-            (testo-domanda "E' possibile accendere il dispositivo?")
-            (risposte-valide ok fallito)
-            (descrizione-risposte "Si" "No")
-  )
-
-  (domanda  (attributo problema-boot-o-SO)
-            (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
-            (risposte-valide boot SO nessuno)
-            (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
-  )
-
-  (domanda  (attributo riavvio-forzato)
-            (testo-domanda "Il dispositivo si riavvia forzatamente più volte?")
-            (risposte-valide si no)
-            (descrizione-risposte "Si" "No")
-  )
-
-  (domanda  (attributo bluescreen)
-            (testo-domanda "Il sistema termina con un errore bluescreen?")
-            (risposte-valide si no non-so)
-            (descrizione-risposte "Si" "No" "Non so")
-  )
-
-  (domanda  (attributo installazione-nuovo-hw)
-            (testo-domanda "E' stato installato del nuovo hardware subito prima che il problema si verificasse?")
-            (risposte-valide si no non-so)
-            (descrizione-risposte "Si" "No" "Non so")
-  )
-
-  (domanda  (attributo segnali-bios)
-            (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
-            (risposte-valide si no )
-            (descrizione-risposte "Si" "No")
-  )
-
-  (domanda  (attributo stato-video)
-            (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
-            (risposte-valide fallito ok )
-            (descrizione-risposte "Si" "No")
-  )
-
-  (domanda  (attributo display-rotto)
-            (testo-domanda "Il display del dispositivo è rotto o incrinato?")
-            (risposte-valide si no )
-            (descrizione-risposte "Si" "No")
-  )
-
-  (domanda  (attributo disturbo-video)
-            (testo-domanda "E' presente un disturbo del segnale video? [schermo nero oppure fasce colorate sul display]")
-            (risposte-valide si no )
-            (descrizione-risposte "Si" "No")
-  )
-
-
-)
