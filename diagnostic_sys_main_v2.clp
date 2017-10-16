@@ -20,7 +20,7 @@
 ?answer)
 
 (deffunction ask-question-direct (?j ?question $?allowed-values)
-  (printout t "REVISIONE DOMANDA N. " ?j ":" crlf ?question crlf)
+  (printout t "***** REVISIONE DOMANDA N." ?j " *****" crlf ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
@@ -35,7 +35,7 @@
 
 
 (deffunction ask-question (?j ?question $?allowed-values)
-  (printout t "DOMANDA N. " ?j ":" crlf ?question crlf)
+  (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
@@ -47,6 +47,7 @@
       (printout t crlf "Valore inserito non valido, riprovare: ")
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
+  (printout t crlf crlf)
    ?answer)
 
 
@@ -62,6 +63,14 @@
   )
 )
 
+(deffunction stampa-header-revisione()
+  (clear-window)
+  (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
+)
+
+(deffunction stampa-footer-revisione()
+  (printout t crlf "***********************************************************" crlf crlf crlf)
+)
 
 (defmodule MAIN (export ?ALL))
 
@@ -146,7 +155,20 @@
   (halt)
 )
 
-(defrule revisiona-domande-stampa-elenco
+
+; STAMPA ELENCO E REVISIONE DOMANDE
+;****************************************************************************
+
+(defrule INIT-STAMPA-ELENCO-header
+  (declare (salience ?*highest-priority*))
+  ?p <- (init-revisiona-domande)
+  =>
+  (stampa-header-revisione)
+  (retract ?p)
+  (assert (revisiona-domande))
+)
+
+(defrule LOOP-STAMPA-ELENCO-domande
   (declare (salience ?*highest-priority*))
   (revisiona-domande)
   ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE) (descrizione-risposte $?descr) (risposta-selezionata ?r-selezionata))
@@ -156,7 +178,7 @@
   (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " (nth ?r-selezionata ?descr) crlf crlf)
 )
 
-(defrule revisiona-domande
+(defrule END-STAMPA-ELENCO
   (declare (salience ?*highest-priority*))
   ?r <-(revisiona-domande)
   (not (domanda (gia-chiesta TRUE) (stampata FALSE)))
@@ -164,7 +186,7 @@
   =>
   (printout t crlf crlf)
   (bind ?risposta (ask-question-revision ?n))
-  (printout t crlf "**************************************" crlf crlf crlf)
+  (stampa-footer-revisione)
   (retract ?r)
   (assert (annulla-stampa-domande))
   (if (<> ?risposta 0) then
@@ -172,7 +194,7 @@
   )
 )
 
-(defrule annulla-stampa-domande
+(defrule LOOP-STAMPA-ELENCO-reset
   (declare (salience ?*highest-priority*))
   (annulla-stampa-domande)
   ?d <- (domanda (stampata TRUE))
@@ -180,7 +202,7 @@
   (modify ?d (stampata FALSE))
 )
 
-(defrule annulla-stampa-domande-fine
+(defrule END-STAMPA-ELENCO-reset
   (declare (salience ?*highest-priority*))
   ?a <- (annulla-stampa-domande)
   (not (domanda (stampata TRUE)))
@@ -188,13 +210,10 @@
   (retract ?a)
 )
 
-;;(defrule resetta-domande
-;;  (declare (salience ?*highest-priority*))
-;;  (revisiona-da ?dom)
-;;  ?d <- (domanda (attributo ?attr) (num-domanda ?n&:(> ?n ?dom)) (gia-chiesta TRUE))
-;;  =>
-;;  (modify ?d (num-domanda 0) (gia-chiesta FALSE))
-;;)
+
+; REVISIONA DOMANDA
+;****************************************************************************
+
 
 (defrule revisiona-da
   (declare (salience ?*highest-priority*))
@@ -202,19 +221,15 @@
   ?r <- (revisiona-da ?n)
   ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
   ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
-  ;;?nodo-attributo <- (nodo (nome ?attr) (tipo info-utente))
   =>
   (assert (elimina-nodi-da ?nodo-partenza))
-  ;;(retract ?nodo-partenza)
-  ;;(assert (nodo (nome chiedi) (valore ?attr) (nodo-padre ?padri)))
   (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
-  ;;(modify ?nodo-attributo (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descr)))
   (modify ?d (risposta-selezionata ?risposta))
   (retract ?r)
   (assert (fine-revisione))
 )
 
-(defrule elimina-nodi-da
+(defrule LOOP-elimina-nodi-da
   (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
   ?p2 <- (nodo (nodo-padre $?x ?n $?y))
@@ -223,7 +238,7 @@
   (retract ?p2)
 )
 
-(defrule ferma-elimina-nodi-da
+(defrule END-elimina-nodi-da
   (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
   (not (nodo (nodo-padre $?x ?n $?y)))
@@ -231,19 +246,18 @@
   (retract ?p1)
 )
 
-(defrule fine-revisiona-domande
+(defrule END-revisiona-domande
   (declare (salience ?*high-priority*))
   ?r <- (fine-revisione)
   (not (elimina-nodi da ?e))
   =>
   (retract ?r)
-  (assert (revisiona-domande))
+  (assert (init-revisiona-domande))
 )
 
 
-
-;; MEMORIZZARE RISPOSTE GIA' DATE DALL'UTENTE IN DOMANDE E RIPETERE RAGIONAMENTO DA DOMANDA DA REVISIONARE, SE RISPOSTA GIA' PRESENTE, UTILIZZARE QUELLA ANZICHE' CHIEDERE NUOVA RISPOSTA
-
+; CHIEDI DOMANDA
+;****************************************************************************
 
 
 (defrule chiedi-domanda
@@ -258,9 +272,7 @@
   (if (= ?risposta 0) then
     (retract ?ask)
     (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
-    (clear-window)
-    (printout t crlf "***** REVISIONE DOMANDE *****" crlf)
-    (assert (revisiona-domande))
+    (assert (init-revisiona-domande))
   else
     ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
     (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
