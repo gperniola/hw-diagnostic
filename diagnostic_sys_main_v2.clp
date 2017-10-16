@@ -52,14 +52,14 @@
 
 
 (deffunction ask-stop-program ()
-  (printout t "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
+  (printout t crlf crlf "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
   (bind ?answer (read))
   (while (not (member ?answer (create$ 1 2)))
       (printout t "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
       (bind ?answer (read))
   )
   (if (eq ?answer 2) then
-      (assert (ferma-programma))
+      (halt)
   )
 )
 
@@ -141,18 +141,18 @@
 
 (defrule diagnosi-parziale-trovata
   (declare (salience ?*highest-priority*))
-  (nodo (nome diagnosi-parziale) (valore ?val))
+  (nodo (nome diagnosi-parziale) (valore ?val) (descrizione ?desc))
   =>
-  (printout t crlf ">>>> DIAGNOSI PARZIALE TROVATA: " ?val crlf)
-  (ask-stop-program)
+  (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
+  (assert(ferma-programma))
 )
 
 
 (defrule ferma-esecuzione
-  (declare (salience ?*highest-priority*))
+  (declare (salience ?*low-priority*))
   (ferma-programma)
   =>
-  (halt)
+  (ask-stop-program)
 )
 
 
@@ -363,13 +363,13 @@
 (defrule diagnosi-parziale-connettori-video
   ?p1 <- (nodo (nome disturbo-video) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video) (descrizione "Problema ai connettori video") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-problema-pixels
   ?p1 <- (nodo (nome disturbo-video) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels) (descrizione "Possibile guasto ai pixels del display") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-sostituzione-display
@@ -378,7 +378,7 @@
     ?p1 <- (nodo (nome diagnosi-parziale) (valore problema-pixels))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display) (descrizione "Necessaria sostituzione del display") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-stop-error
@@ -391,7 +391,7 @@
   ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
   ?p2 <- (nodo (nome installazione-nuovo-hw) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw) (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw) (descrizione "Conflitto tra diversi componenti hardware") (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-parziale-alimentazione
@@ -406,13 +406,13 @@
     )
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (nodo-padre ?p1 ?p2)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-parziale-alimentazione-2
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (nodo-padre ?p1)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-scheda-madre
@@ -427,19 +427,19 @@
       )
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (nodo-padre ?p1 ?p2)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-parziale-scheda-madre-2
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (nodo-padre ?p1)))
+  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-bios
   ?p1 <- (nodo (nome segnali-bios) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-bios) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-bios) (descrizione "Problema impostazioni BIOS") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-ram
@@ -448,7 +448,7 @@
     ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-ram) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-ram) (descrizione "Possibile guasto memoria RAM") (nodo-padre ?p1)))
 )
 
 (defrule diagnosi-parziale-hard-disk
@@ -457,7 +457,7 @@
     ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk) (descrizione "Possibile guasto del disco fisso") (nodo-padre ?p1)))
 )
 
 
