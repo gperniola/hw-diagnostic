@@ -108,7 +108,6 @@
 (deffacts fatti-iniziali
 
   (contatore-domande 0)
-
 )
 
 
@@ -122,6 +121,7 @@
   (declare (salience ?*highest-priority*))
   =>
   (clear-window)
+  (focus DOMANDE-GENERICHE)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -294,20 +294,56 @@
 ;;*    ASK RULES     *
 ;;********************
 
-(defrule chiedi-tipo-dispositivo
-  =>
-  (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
-)
+;******************* MODULO DOMANDE GENERICHE **********************************
 
-(defrule chiedi-accensione
-  =>
-  (assert (nodo (nome chiedi) (valore stato-accensione)))
-)
+(defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
 
-(defrule chiedi-video
-  =>
-  (assert (nodo (nome chiedi) (valore stato-video)))
-)
+    (defrule DOMANDE-GENERICHE::init
+      (declare (salience ?*highest-priority*))
+      =>
+      (set-strategy random)
+      (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
+    )
+
+    (defrule DOMANDE-GENERICHE::end
+      (declare (salience ?*lowest-priority*))
+      =>
+      (set-strategy depth)
+      (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
+      (focus MAIN)
+    )
+
+
+
+
+    (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
+      =>
+      (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
+    )
+
+    (defrule DOMANDE-GENERICHE::chiedi-accensione
+      =>
+      (assert (nodo (nome chiedi) (valore stato-accensione)))
+    )
+
+    (defrule DOMANDE-GENERICHE::chiedi-problema-principale
+      =>
+      (assert (nodo (nome chiedi) (valore problema-principale)))
+    )
+
+    (defrule DOMANDE-GENERICHE::chiedi-anni-dispositivo
+      =>
+      (assert (nodo (nome chiedi) (valore anni-dispositivo)))
+    )
+
+    (defrule DOMANDE-GENERICHE::chiedi-garanzia
+      ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
+      =>
+      (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
+    )
+    ;;REGOLA NON ATTIVALE IN QUANTO NNO CHIEDE DOMANDA IN RANDOM MODE
+
+;*******************************************************************************
 
 (defrule chiedi-problema-boot-o-SO
   ?p1 <- (nodo (nome stato-accensione) (valore ok))
@@ -490,15 +526,40 @@
 
     (domanda  (attributo tipo-dispositivo)
               (testo-domanda "A quale tipologia appartiene il dispositivo?")
-              (risposte-valide pc-fisso pc-portatile tablet smartphone)
-              (descrizione-risposte "Pc fisso Windows" "Pc portatile/Netbook Windows" "Tablet Android" "Smartphone Android")
+              (risposte-valide pc-fisso pc-portatile)
+              (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
     )
 
     (domanda  (attributo stato-accensione)
-              (testo-domanda "E' possibile accendere il dispositivo?")
+              (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
               (risposte-valide ok fallito)
-              (descrizione-risposte "Si" "No")
+              (descrizione-risposte "Si" "No, il dispositivo non si accende")
     )
+
+    (domanda  (attributo problema-principale)
+              (testo-domanda "Qual'e' la categoria che sembra più appropriata per il problema da analizzare?")
+              (risposte-valide accensione-SO video surriscaldamento altro)
+              (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
+                                    "Disturbo del segnale video, problema del display"
+                                    "Surriscaldamento eccessivo del dispositivo"
+                                    "Altro")
+    )
+
+    (domanda  (attributo anni-dispositivo)
+              (testo-domanda "Quanti anni ha il dispositivo?")
+              (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
+              (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
+    )
+
+    (domanda  (attributo garanzia)
+              (testo-domanda "Il dispositivo è ancora in garanzia?")
+              (risposte-valide si no sconosciuto)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+
+
+
 
     (domanda  (attributo problema-boot-o-SO)
               (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
@@ -507,7 +568,7 @@
     )
 
     (domanda  (attributo riavvio-forzato)
-              (testo-domanda "Il dispositivo si riavvia forzatamente più volte?")
+              (testo-domanda "Il dispositivo si riavvia forzatamente piu' volte?")
               (risposte-valide si no)
               (descrizione-risposte "Si" "No")
     )
@@ -519,7 +580,7 @@
     )
 
     (domanda  (attributo installazione-nuovo-hw)
-              (testo-domanda "E' stato installato del nuovo hardware subito prima che il problema si verificasse?")
+              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
               (risposte-valide si no non-so)
               (descrizione-risposte "Si" "No" "Non so")
     )
