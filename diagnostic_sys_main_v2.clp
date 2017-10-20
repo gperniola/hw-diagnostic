@@ -336,18 +336,22 @@
       (assert (nodo (nome chiedi) (valore anni-dispositivo)))
     )
 
-    (defrule DOMANDE-GENERICHE::chiedi-garanzia
-      ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
+    (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
       =>
-      (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
+      (assert (nodo (nome chiedi) (valore installazione-nuovo-hw))
     )
-    ;;REGOLA NON ATTIVALE IN QUANTO NNO CHIEDE DOMANDA IN RANDOM MODE
 
 ;*******************************************************************************
 
+(defrule chiedi-garanzia
+  ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
+  =>
+  (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
+)
+
 (defrule chiedi-problema-boot-o-SO
   ?p1 <- (nodo (nome stato-accensione) (valore ok))
-  ?p2 <- (nodo (nome sistema-operativo) (valore windows))
+  ?p2 <- (nodo (nome problema-principale) (valore accensione-SO))
   =>
   (assert (nodo (nome chiedi) (valore problema-boot-o-SO) (nodo-padre ?p1 ?p2)))
 )
@@ -358,18 +362,14 @@
   (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-bluescreen
+(defrule chiedi-bluescreen ;;TODO
   ?p1 <- (nodo (nome problema-boot-o-SO) (valore SO))
   ?p2 <- (nodo (nome sistema-operativo) (valore windows))
   =>
   (assert (nodo (nome chiedi) (valore bluescreen) (nodo-padre ?p1 ?p2)))
 )
 
-(defrule chiedi-installazione-nuovo-hw
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?val&pc-fisso|pc-portatile))
-  =>
-  (assert (nodo (nome chiedi) (valore installazione-nuovo-hw) (nodo-padre ?p1)))
-)
+
 
 (defrule chiedi-segnali-bios
   ?p1 <- (nodo (nome problema-boot-o-SO) (valore boot))
@@ -378,16 +378,17 @@
 )
 
 (defrule chiedi-display-rotto
-  ?p1 <- (nodo (nome stato-video) (valore fallito))
+  ?p1 <- (nodo (nome problema-principale) (valore video))
   =>
   (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome display-rotto) (valore no))
+  ?p2 <- (nodo (nome problema-principale) (valore video))
   ;?p2 <- (nodo (nome stato-video) (valore fallito))
   =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 )))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 ?p2 )))
 )
 
 
