@@ -338,7 +338,7 @@
 
     (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
       =>
-      (assert (nodo (nome chiedi) (valore installazione-nuovo-hw))
+      (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
     )
 
 ;*******************************************************************************
@@ -369,8 +369,6 @@
   (assert (nodo (nome chiedi) (valore bluescreen) (nodo-padre ?p1 ?p2)))
 )
 
-
-
 (defrule chiedi-segnali-bios
   ?p1 <- (nodo (nome problema-boot-o-SO) (valore boot))
   =>
@@ -386,16 +384,119 @@
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome display-rotto) (valore no))
   ?p2 <- (nodo (nome problema-principale) (valore video))
-  ;?p2 <- (nodo (nome stato-video) (valore fallito))
   =>
   (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 ?p2 )))
 )
 
+(defrule chiedi-alimentazione
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  =>
+  (assert (nodo (nome chiedi) (valore alimentazione-collegata)))
+)
+
+(defrule chiedi-ventole
+  ?p1 <- (nodo (nome problema-principale) (valore surriscaldamento))
+  =>
+  (assert (nodo (nome chiedi) (valore ventole) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-ronzio-alimentatore
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore ronzio-alimentatore) (nodo-padre ?p1 ?p2)))
+)
 
 
+;;******************* DESKTOP QUESTIONS ***********************************
+
+(defrule chiedi-spia-alimentatore-pcdesktop
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso))
+  =>
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
+)
+
+(defrule chiedi-interruttore-alimentatore
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+
+;;******************* LAPTOP QUESTIONS ***********************************
+
+
+
+(defrule chiedi-spia-alimentatore-pcportatile
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+(defrule chiedi-batteria-difettosa
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?p1 ?p2 ?p3)))
+)
 ;;********************
 ;;*     DIAGNOSI     *
 ;;********************
+
+(defrule diagnosi-alimentazione-disconnessa
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (descrizione "Collegare correttamente i cavi d'alimentazione e Assicurarsi
+  che ci sia passaggio di corrente, quindi verificare se il problema è risolto.") (nodo-padre ?p1 ?p2)))
+)
+
+(defrule diagnosi-batteria-difettosa
+  ?p1 <- (nodo (nome batteria-difettosa) (valore si))
+  =>
+  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (descrizione "La batteria è danneggiata. Utilizzare il dispositivo solo con l'alimentazione elettrica diretta e sostituire la batteria.") (nodo-padre ?p1)))
+)
+
+(defrule diagnosi-alimentatore-spento
+  ?p1 <- (nodo (nome interruttore-alimentatore) (valore spento))
+  ?p2 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento) (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.") (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+(defrule diagnosi-alimentatore-guasto
+?p1 <- (nodo (nome stato-accensione) (valore fallito))
+?p2 <- (nodo (nome alimentazione-collegata) (valore si))
+(or
+  ?p3 <- (nodo (nome ronzio-alimentatore) (valore si))
+  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore ?v&no|sconosciuto))
+  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
+)
+=>
+(assert (nodo (nome diagnosi) (valore alimentatore-guasto) (descrizione "L'alimentatore potrebbe essere guasto. Si consiglia di staccare il dispositivo dall'alimentazione elettrica in quanto potrebbe ulteriormente danneggiarsi.") (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+(defrule diagnosi-scheda-madre-guasta
+?p1 <- (nodo (nome stato-accensione) (valore fallito))
+?p2 <- (nodo (nome alimentazione-collegata) (valore si))
+(or
+  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore sconosciuto))
+  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
+)
+=>
+(assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito. Si consiglia di staccare il dispositivo dall'alimentazione elettrica e contattare l'assistenza tecnica.") (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+
 
 (defrule diagnosi-parziale-connettori-video
   ?p1 <- (nodo (nome disturbo-video) (valore si))
@@ -569,7 +670,7 @@
     )
 
     (domanda  (attributo riavvio-forzato)
-              (testo-domanda "Il dispositivo si riavvia forzatamente piu' volte?")
+              (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
               (risposte-valide si no)
               (descrizione-risposte "Si" "No")
     )
@@ -592,23 +693,68 @@
               (descrizione-risposte "Si" "No")
     )
 
-    (domanda  (attributo stato-video)
-              (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
-              (risposte-valide fallito ok )
-              (descrizione-risposte "Si" "No")
-    )
+    ; (domanda  (attributo stato-video)
+    ;           (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
+    ;           (risposte-valide fallito ok )
+    ;           (descrizione-risposte "Si" "No")
+    ; )
 
     (domanda  (attributo display-rotto)
-              (testo-domanda "Il display del dispositivo è rotto o incrinato?")
+              (testo-domanda "Il display del dispositivo risulta rotto o incrinato?")
               (risposte-valide si no )
               (descrizione-risposte "Si" "No")
     )
 
     (domanda  (attributo disturbo-video)
-              (testo-domanda "E' presente un disturbo del segnale video? [schermo nero oppure fasce colorate sul display]")
+              (testo-domanda "Quale di queste opzioni identifica meglio il disturbo del del segnale video?")
               (risposte-valide si no )
               (descrizione-risposte "Si" "No")
     )
 
+    (domanda  (attributo alimentazione-collegata)
+              (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa
+               elettrica e che ci sia passaggio di corrente (ad esempio testando la presa con una lampada)")
+              (risposte-valide si no )
+              (descrizione-risposte "Il cavo è collegato correttamente MA il dispositivo non si accende"
+               "Il cavo non è collegato oppure non c'e' passaggio di corrente dalla presa")
+    )
 
+    (domanda  (attributo batteria-difettosa)
+              (testo-domanda "Provare a rimuovere la batteria del dispositivo
+               e utilizzare solamente l'alimentazione elettrica diretta per avviare il dispositivo.")
+              (risposte-valide si no )
+              (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
+               "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica MA continua a non accendersi")
+    )
+
+    (domanda  (attributo interruttore-alimentatore)
+              (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia impostato su acceso. L'interrutore si trova nella parte posteriore del pc, in prossimità del cavo d'alimentazione.")
+              (risposte-valide acceso spento )
+              (descrizione-risposte "L'interrutore è correttamente acceso MA il dispositivo continua a non accendersi"
+               "L'interruttore è spento")
+    )
+
+    (domanda  (attributo ronzio-alimentatore)
+              (testo-domanda "E' possibile udire un suono simile ad un ronzio provenire dall'alimentatore quando è connesso alla rete elettrica?")
+              (risposte-valide si no )
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo spia-alimentatore-pcportatile)
+              (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia, di solito di colore verde o bianco, che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
+              (risposte-valide si no sconosciuto )
+              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
+    )
+
+    (domanda  (attributo spia-alimentatore-pcdesktop)
+              (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
+              (risposte-valide si no sconosciuto )
+              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
+    )
+
+    (domanda  (attributo ventole)
+              (testo-domanda "Le ventole nella parte posteriore del dispositivo funzionano correttamente?")
+              (risposte-valide si-tiepida si-calda no-aria no-ventole )
+              (descrizione-risposte "Si, le ventole funzionano ed emanano aria fredda/tiepida" "Si, le ventole funzionano ed emanano aria molto calda" "No, le ventole non sembrano funzionare o non emanano aria" "Il dispositivo non possiede ventole")
+    )
   )

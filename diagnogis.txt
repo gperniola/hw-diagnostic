@@ -1,0 +1,137 @@
+1. stato-accensione fallito
+2. alimentazione-collegata no
+X==>	sistemare cavi o cambiare presa elettrica
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. tipo-dispositivo desktop
+X==>	chiedi se tasto di alimentazione on
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. tasto-alimentazione no
+X==>	premere il tasto e verificare l'accensione
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. tipo-dispositivo portatile
+X==>	chiedi se batteria rimossa e tenere dispositivo su alimentazione diretta
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. batteria-rimossa no
+X==>	rimuovere la batteria e verificare l'accensione (batteria difettosa)
+
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. ronzio-alimentatore si
+X==>	Guasto alimentatore 
+
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. spia-alim no
+X==>	Alimentatore guasto
+
+
+1. stato-accensione fallito
+2. alimentazione-collegata si
+3. spia-alimentatore sconosciuto
+X==> Possibile guasto scheda madre o alimentatore
+
+
+
+
+1. problema-principale surriscaldamento
+2. ventole si-calda OR no-aria
+==>	ventole-intasate si
+
+1. problema-principale surriscaldamento
+2. ventole si-tiepida OR no-ventole
+==>	ventole-intasate no
+
+1. problema-principale surriscaldamento
+2. ventole-intasate si
+==>	pulire ventole
+
+1. problema-principale surriscaldamento
+2. ventole ventole-intasate no
+==>	smontare e pulire il dispositivo
+
+1. problema-principale surriscaldamento
+2. riavvio-forzato si
+3. anni-dispositivo NOT meno-2-anni OR IS sconosciuto
+==>	pasta cpu
+
+
+1. problema-principale video
+2. disturbo-video fasce
+3. riavvio-forzato si
+=>	problema driver o guasto vga
+
+1. problema-principale video
+2. disturbo-video fasce
+3. riavvio-forzato no
+4. monitor-esterno funzionante
+=>	monitor/display guasto
+
+1. problema-principale video
+2. disturbo-video fasce
+3. riavvio-forzato no
+4. monitor-esterno errore
+=>	problema driver o guasto vga o cavo 
+
+1. problema-principale video
+2. disturbo-video fasce
+3. riavvio-forzato no
+4. monitor-esterno no
+5. fasce-bios si
+=>	guasto monitor o guasto vga
+
+1. problema-principale video
+2. disturbo-video fasce
+3. riavvio-forzato no
+4. monitor-esterno no
+5. fasce-bios no
+=>	problema driver o guasto vga
+
+
+1. problema-principale video
+2. disturbo-video macchie
+=>	display danneggiato
+
+1. problema-principale video
+2. disturbo-video scolorimento
+3. tipo-dispositivo pc-fisso
+=> 	controllare cavi e accensione
+
+1. problema-principale video
+2. disturbo-video scolorimento
+3. tipo-dispositivo pc-portatile OR cavi-display-ok
+=> 	display difettoso
+
+1. problema-principale video
+2. disturbo-video schermo-nero
+3. tipo-dispositivo pc-fisso
+=> 	controllare cavi e accensione
+
+1. problema-principale video
+2. disturbo-video schermo-nero
+3. tipo-dispositivo pc-portatile OR cavi-display-ok
+4. monitor-esterno funzionante OR no
+=>	monitor/display guasto
+
+1. problema-principale video
+2. disturbo-video schermo-nero
+3. tipo-dispositivo pc-portatile OR cavi-display-ok
+4. monitor-esterno errore OR no
+5. blocco-cursore no
+=>	guasto vga o problema driver
+
+1. problema-principale video
+2. disturbo-video schermo-nero
+3. tipo-dispositivo pc-portatile OR cavi-display-ok
+4. monitor-esterno errore OR no
+5. blocco-cursore si
+=>	problema caricamento SO

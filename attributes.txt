@@ -1,0 +1,37 @@
+
+
+tipo-dispositivo	pc-fisso, pc-portatile
+
+stato-accensione	ok, fallito
+
+problema-principale	accensione-SO, video, surriscaldamento, altro
+
+anni-dispositivo	meno-2-anni, meno-5-anni, meno-10-anni, piu-10-anni, sconosciuto
+
+garanzia		si, no, sconosciuto
+
+problema-boot-o-SO	boot, SO, nessuno
+
+riavvio-forzato		si, no
+
+bluescreen		si, no, non-so
+
+installazione-nuovo-hw	si, no, non-so
+
+segnali-bios		si, no
+
+X stato-video		fallito, ok
+
+display-rotto		si, no
+
+disturbo-video		si, no
+
+alimentazione-collegata	si, no
+
+surriscaldamento-alimentatore	rovente, normale, freddo, sconosciuto
+
+spia-alimentatore-pcportatile 	si, no, sconosciuto
+
+spia-alimentatore-pcdesktop	si, no, sconosciuto
+
+ventole			si-tiepida, si-calda, no-aria, no-ventole
