@@ -35,11 +35,11 @@
 
 
 (deffunction ask-question (?j ?question $?allowed-values)
-  (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf)
+  (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
-  (printout t "0. Revisiona domande precedenti." crlf crlf)
+  (printout t crlf "0. Revisiona domande precedenti." crlf crlf)
   (printout t "Inserire risposta: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -121,7 +121,7 @@
   (declare (salience ?*highest-priority*))
   =>
   (clear-window)
-  (focus DOMANDE-GENERICHE)
+  ;(focus DOMANDE-GENERICHE)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -141,7 +141,7 @@
 
 (defrule diagnosi-parziale-trovata
   (declare (salience ?*highest-priority*))
-  (nodo (nome diagnosi-parziale) (valore ?val) (descrizione ?desc))
+  (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
   =>
   (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
   (assert(ferma-programma))
@@ -296,47 +296,47 @@
 
 ;******************* MODULO DOMANDE GENERICHE **********************************
 
-(defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
-
-    (defrule DOMANDE-GENERICHE::init
-      (declare (salience ?*highest-priority*))
-      =>
-      (set-strategy random)
-      (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
-    )
-
-    (defrule DOMANDE-GENERICHE::end
-      (declare (salience ?*lowest-priority*))
-      =>
-      (set-strategy depth)
-      (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
-      (focus MAIN)
-    )
-
-
+; (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
+;
+;     (defrule DOMANDE-GENERICHE::init
+;       (declare (salience ?*highest-priority*))
+;       =>
+;       (set-strategy random)
+;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
+;     )
+;
+;     (defrule DOMANDE-GENERICHE::end
+;       (declare (salience ?*lowest-priority*))
+;       =>
+;       (set-strategy depth)
+;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
+;       (focus MAIN)
+;     )
 
 
-    (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
+
+
+    (defrule chiedi-tipo-dispositivo
       =>
       (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
     )
 
-    (defrule DOMANDE-GENERICHE::chiedi-accensione
+    (defrule chiedi-accensione
       =>
       (assert (nodo (nome chiedi) (valore stato-accensione)))
     )
 
-    (defrule DOMANDE-GENERICHE::chiedi-problema-principale
+    (defrule chiedi-problema-principale
       =>
       (assert (nodo (nome chiedi) (valore problema-principale)))
     )
 
-    (defrule DOMANDE-GENERICHE::chiedi-anni-dispositivo
+    (defrule chiedi-anni-dispositivo
       =>
       (assert (nodo (nome chiedi) (valore anni-dispositivo)))
     )
 
-    (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
+    (defrule chiedi-installazione-nuovo-hw
       =>
       (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
     )
@@ -362,7 +362,7 @@
   (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-bluescreen ;;TODO
+(defrule chiedi-bluescreen
   ?p1 <- (nodo (nome problema-boot-o-SO) (valore SO))
   ?p2 <- (nodo (nome sistema-operativo) (valore windows))
   =>
@@ -375,23 +375,55 @@
   (assert (nodo (nome chiedi) (valore segnali-bios) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-display-rotto
-  ?p1 <- (nodo (nome problema-principale) (valore video))
-  =>
-  (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
-)
+; (defrule chiedi-display-rotto
+;   ?p1 <- (nodo (nome problema-principale) (valore video))
+;   =>
+;   (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
+; )
 
 (defrule chiedi-disturbo-video
-  ?p1 <- (nodo (nome display-rotto) (valore no))
-  ?p2 <- (nodo (nome problema-principale) (valore video))
+  ?p1 <- (nodo (nome problema-principale) (valore video))
   =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1 ?p2 )))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-monitor-esterno
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|schermo-nero|linee-oriz))
+  ;?p2 <- (nodo (nome riavvio-forzato) (valore no))
+  =>
+  (assert (nodo (nome chiedi) (valore monitor-esterno) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-fasce-bios
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  =>
+  (assert (nodo (nome chiedi) (valore fasce-bios) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-blocco-cursore
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  =>
+  (assert (nodo (nome chiedi) (valore blocco-cursore) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-cavi-display
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  =>
+  (assert (nodo (nome chiedi) (valore cavi-display) (nodo-padre ?p1 ?p2 )))
+)
+
+(defrule chiedi-muovere-cavi-display
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  =>
+  (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
 )
 
 (defrule chiedi-alimentazione
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   =>
-  (assert (nodo (nome chiedi) (valore alimentazione-collegata)))
+  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-ventole
@@ -450,6 +482,121 @@
 ;;********************
 ;;*     DIAGNOSI     *
 ;;********************
+
+(defrule diagnosi-cavi-display-non-connessi
+  ?p1 <- (nodo (nome cavi-display) (valore risolto))
+  =>
+  (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)
+  (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")))
+)
+
+(defrule diagnosi-display-guasto
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v1&fasce|linee-oriz))
+  ?p2 <- (nodo (nome riavvio-forzato) (valore no))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
+  ?p4 <- (nodo (nome fasce-bios) (valore si))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+)
+
+(defrule diagnosi-display-guasto-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  (or
+    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&funzionante|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+)
+
+(defrule diagnosi-display-guasto-3
+  ?p1 <- (nodo (nome disturbo-video) (valore macchie))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
+  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+)
+
+; (defrule diagnosi-display-guasto-4
+;   ?p1 <- (nodo (nome disturbo-video) (valore scolorimento))
+;   (or
+;       ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+;       ?p2 <- (nodo (nome cavi-display) (valore ok))
+;   )
+;   =>
+;   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
+;   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+; )
+
+
+(defrule diagnosi-guasto-vga
+  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
+  ?p2 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2)
+  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
+)
+
+(defrule diagnosi-guasto-vga-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  (or
+    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
+)
+
+(defrule diagnosi-problema-driver-video
+  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
+  (or
+    ?p2 <- (nodo (nome riavvio-forzato) (valore si))
+    ?p2 <- (nodo (nome monitor-esterno) (valore errore))
+    ?p2 <- (nodo (nome fasce-bios) (valore no))
+  )
+  =>
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2)
+  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
+)
+
+(defrule diagnosi-problema-driver-video-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  (or
+    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
+)
+
+(defrule diagnosi-problema-caricamento-SO
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  (or
+    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore si))
+  =>
+  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (descrizione "Potrebbe esserci un problema nel caricamento del sistema operativo dovuto a problemi di hd o corruzione file.")))
+)
+
+(defrule diagnosi-cavi-display-disconnessi
+  ?p1 <- (nodo (nome cavi-display) (valore errore))
+  =>
+  (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi) (descrizione "Collegare correttamente i cavi video del display, quindi verificare se il problema è risolto.") (nodo-padre ?p1)))
+)
+
 
 (defrule diagnosi-alimentazione-disconnessa
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
@@ -602,7 +749,7 @@
 
 
 (defrule deduci-SO-windows
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-fisso|pc-portatile))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
   =>
   (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
 )
@@ -628,7 +775,7 @@
 
     (domanda  (attributo tipo-dispositivo)
               (testo-domanda "A quale tipologia appartiene il dispositivo?")
-              (risposte-valide pc-fisso pc-portatile)
+              (risposte-valide pc-desktop pc-portatile)
               (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
     )
 
@@ -699,24 +846,57 @@
     ;           (descrizione-risposte "Si" "No")
     ; )
 
-    (domanda  (attributo display-rotto)
-              (testo-domanda "Il display del dispositivo risulta rotto o incrinato?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
-    )
+    ; (domanda  (attributo display-rotto)
+    ;           (testo-domanda "Il display del dispositivo risulta rotto o incrinato?")
+    ;           (risposte-valide si no )
+    ;           (descrizione-risposte "Si" "No")
+    ; )
 
     (domanda  (attributo disturbo-video)
-              (testo-domanda "Quale di queste opzioni identifica meglio il disturbo del del segnale video?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
+              (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
+              (risposte-valide fasce macchie linee-oriz schermo-nero )
+              (descrizione-risposte "Linee colorate verticali, raggruppate in fasce piu' larghe" "Una o piu' macchie di colore nero o bianco che coprono porzioni dello schermo"
+              "Linee di colore nero/grigio orizzontali, possono essere intermittenti" "Schermo completamente nero, come se spento")
+    )
+
+    (domanda  (attributo monitor-esterno)
+              (testo-domanda "E' possibile collegare un monitor esterno/secondario al dispositivo?")
+              (risposte-valide funzionante errore no)
+              (descrizione-risposte "Si, il monitor esterno/secondario funziona e non presenta i problemi del monitor principale"
+              "Si, ma il monitor esterno/secondario presenta lo stesso problema del monitor principale"
+              "No, non dispongo di un altro monitor")
+    )
+
+    (domanda  (attributo blocco-cursore)
+              (testo-domanda "Sullo schermo nero viene comunque visualizzato il cursore del mouse?")
+              (risposte-valide si no)
+              (descrizione-risposte "Si, la freccia del mouse e' visibile" "No, lo schermo e' completamente nero")
+    )
+
+    (domanda  (attributo fasce-bios)
+              (testo-domanda "Le fasce sono visibili sin dall'avvio del dispositivo oppure appaiono in un secondo momento? Ad esempio al momento del caricamento del desktop?")
+              (risposte-valide si no)
+              (descrizione-risposte "Le fasce appaiono sin dall'avvio" "Le fasce appaiono in un secondo momento")
+    )
+
+    (domanda  (attributo cavi-display)
+              (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso (di solito è presente un led di colore blu/verde che indica se il display è acceso e riceve segnale )")
+              (risposte-valide ok errore )
+              (descrizione-risposte "I cavi sono correttamente collegati MA il display presenta comunque il problema"
+               "I cavi non sono correttamente collegati oppure il display non e' acceso")
+    )
+
+    (domanda  (attributo muovere-cavi-display)
+              (testo-domanda "Verificare che lo spinotto del cavo video sia correttamente inserito nella presa, provare a muovere lo spinotto per verificare se il problema sparisce")
+              (risposte-valide risolto non-risolto )
+              (descrizione-risposte "Muovendo i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
     )
 
     (domanda  (attributo alimentazione-collegata)
-              (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa
-               elettrica e che ci sia passaggio di corrente (ad esempio testando la presa con una lampada)")
+              (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa elettrica e che ci sia passaggio di corrente [ad esempio testando la presa con una lampada]")
               (risposte-valide si no )
-              (descrizione-risposte "Il cavo è collegato correttamente MA il dispositivo non si accende"
-               "Il cavo non è collegato oppure non c'e' passaggio di corrente dalla presa")
+              (descrizione-risposte "Il cavo e' collegato correttamente MA il dispositivo non si accende"
+               "Il cavo non e' collegato oppure non c'e' passaggio di corrente dalla presa")
     )
 
     (domanda  (attributo batteria-difettosa)

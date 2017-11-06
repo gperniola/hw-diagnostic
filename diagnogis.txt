@@ -26,7 +26,7 @@ X==>	rimuovere la batteria e verificare l'accensione (batteria difettosa)
 1. stato-accensione fallito
 2. alimentazione-collegata si
 3. ronzio-alimentatore si
-X==>	Guasto alimentatore 
+X==>	Guasto alimentatore
 
 
 1. stato-accensione fallito
@@ -68,19 +68,19 @@ X==> Possibile guasto scheda madre o alimentatore
 1. problema-principale video
 2. disturbo-video fasce
 3. riavvio-forzato si
-=>	problema driver o guasto vga
+X=>	problema driver o guasto vga
 
 1. problema-principale video
 2. disturbo-video fasce
 3. riavvio-forzato no
 4. monitor-esterno funzionante
-=>	monitor/display guasto
+ X=>	monitor/display guasto
 
 1. problema-principale video
 2. disturbo-video fasce
 3. riavvio-forzato no
 4. monitor-esterno errore
-=>	problema driver o guasto vga o cavo 
+X=>	problema driver o guasto vga o cavo
 
 1. problema-principale video
 2. disturbo-video fasce
@@ -101,15 +101,15 @@ X==> Possibile guasto scheda madre o alimentatore
 2. disturbo-video macchie
 =>	display danneggiato
 
-1. problema-principale video
-2. disturbo-video scolorimento
-3. tipo-dispositivo pc-fisso
-=> 	controllare cavi e accensione
+X1. problema-principale video
+X2. disturbo-video scolorimento
+X3. tipo-dispositivo pc-fisso
+X=> 	controllare cavi e accensione
 
-1. problema-principale video
-2. disturbo-video scolorimento
-3. tipo-dispositivo pc-portatile OR cavi-display-ok
-=> 	display difettoso
+X1. problema-principale video
+X2. disturbo-video scolorimento
+X3. tipo-dispositivo pc-portatile OR cavi-display-ok
+X=> 	display difettoso
 
 1. problema-principale video
 2. disturbo-video schermo-nero
