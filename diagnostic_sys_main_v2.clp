@@ -63,14 +63,6 @@
   )
 )
 
-(deffunction stampa-header-revisione()
-  (clear-window)
-  (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
-)
-
-(deffunction stampa-footer-revisione()
-  (printout t crlf "***********************************************************" crlf crlf crlf)
-)
 
 (defmodule MAIN (export ?ALL))
 
