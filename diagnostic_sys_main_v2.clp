@@ -420,6 +420,13 @@
   (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
 )
 
+(defrule cavi-display-portatile
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  =>
+  (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
+  (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
+)
+
 (defrule chiedi-alimentazione
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   =>
@@ -484,7 +491,7 @@
 ;;********************
 
 (defrule diagnosi-cavi-display-non-connessi
-  ?p1 <- (nodo (nome cavi-display) (valore risolto))
+  ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto))
   =>
   (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)
   (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")))
@@ -495,22 +502,32 @@
   ?p2 <- (nodo (nome riavvio-forzato) (valore no))
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
   ?p4 <- (nodo (nome fasce-bios) (valore si))
+  ?p5 <- (nodo (nome muovere-cavi-display) (valore ?v3&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)
   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
 )
 
 (defrule diagnosi-display-guasto-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  (or
-    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-    ?p2 <- (nodo (nome cavi-display) (valore ok))
-  )
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&funzionante|no))
+  ?p2 <- (nodo (nome cavi-display) (valore ?v1&ok|interni))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+)
+
+(defrule diagnosi-cavi-display-portatile-guasti
+  ?p1 <- (nodo (nome diagnosi) (valore guasto-display))
+  (or
+    ?p2 <- (nodo (nome cavi-display) (valore interni))
+    ?p2 <- (nodo (nome muovere-cavi-display) (valore interni))
+  )
+  (not (nodo (nome diagnosi) (valore guasto-cavi)))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-cavi) (nodo-padre ?p1 ?p2)
+  (descrizione "I cavi interni che collegano il display alla scheda madre potrebbero essere danneggiati o non collegati correttamente.")))
 )
 
 (defrule diagnosi-display-guasto-3
@@ -534,19 +551,17 @@
 
 (defrule diagnosi-guasto-vga
   ?p1 <- (nodo (nome disturbo-video) (valore fasce))
-  ?p2 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p3 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2)
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)
   (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
 )
 
 (defrule diagnosi-guasto-vga-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  (or
-    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-    ?p2 <- (nodo (nome cavi-display) (valore ok))
-  )
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
   (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)
@@ -555,23 +570,18 @@
 
 (defrule diagnosi-problema-driver-video
   ?p1 <- (nodo (nome disturbo-video) (valore fasce))
-  (or
-    ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-    ?p2 <- (nodo (nome monitor-esterno) (valore errore))
-    ?p2 <- (nodo (nome fasce-bios) (valore no))
-  )
+  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p3 <- (nodo (nome fasce-bios) (valore no))
+  ?p4 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2)
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
   (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
 )
 
 (defrule diagnosi-problema-driver-video-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  (or
-    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-    ?p2 <- (nodo (nome cavi-display) (valore ok))
-  )
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
   (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
@@ -580,11 +590,8 @@
 
 (defrule diagnosi-problema-caricamento-SO
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  (or
-    ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-    ?p2 <- (nodo (nome cavi-display) (valore ok))
-  )
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v&errore|no))
+  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore si))
   =>
   (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)
