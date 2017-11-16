@@ -87,7 +87,8 @@
   )
 
   (deftemplate diagnosi
-    (slot nome        (type SYMBOL))
+    (slot attributo   (type SYMBOL))
+    (slot titolo      (type STRING))
     (slot descrizione (type STRING))
   )
 
@@ -349,12 +350,6 @@
   (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-problema-boot-o-SO
-  ?p1 <- (nodo (nome stato-accensione) (valore ok))
-  ?p2 <- (nodo (nome problema-principale) (valore accensione-SO))
-  =>
-  (assert (nodo (nome chiedi) (valore problema-boot-o-SO) (nodo-padre ?p1 ?p2)))
-)
 
 (defrule chiedi-riavvio-forzato
   ?p1 <- (nodo (nome stato-accensione) (valore ok))
@@ -362,24 +357,6 @@
   (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-bluescreen
-  ?p1 <- (nodo (nome problema-boot-o-SO) (valore SO))
-  ?p2 <- (nodo (nome sistema-operativo) (valore windows))
-  =>
-  (assert (nodo (nome chiedi) (valore bluescreen) (nodo-padre ?p1 ?p2)))
-)
-
-(defrule chiedi-segnali-bios
-  ?p1 <- (nodo (nome problema-boot-o-SO) (valore boot))
-  =>
-  (assert (nodo (nome chiedi) (valore segnali-bios) (nodo-padre ?p1)))
-)
-
-; (defrule chiedi-display-rotto
-;   ?p1 <- (nodo (nome problema-principale) (valore video))
-;   =>
-;   (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
-; )
 
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome problema-principale) (valore video))
@@ -433,17 +410,6 @@
   (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-ventole
-  ?p1 <- (nodo (nome problema-principale) (valore surriscaldamento))
-  =>
-  (assert (nodo (nome chiedi) (valore ventole) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-ronzio-alimentatore
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-  =>
-  (assert (nodo (nome chiedi) (valore ronzio-alimentatore) (nodo-padre ?p1 ?p2)))
 )
 
 
@@ -537,16 +503,6 @@
   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
 )
 
-; (defrule diagnosi-display-guasto-4
-;   ?p1 <- (nodo (nome disturbo-video) (valore scolorimento))
-;   (or
-;       ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-;       ?p2 <- (nodo (nome cavi-display) (valore ok))
-;   )
-;   =>
-;   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
-;   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
-; )
 
 
 (defrule diagnosi-guasto-vga
@@ -598,7 +554,7 @@
   (descrizione "Potrebbe esserci un problema nel caricamento del sistema operativo dovuto a problemi di hd o corruzione file.")))
 )
 
-(defrule diagnosi-cavi-display-disconnessi
+(defrule diagnosi-cavi-display-disconnessi ;;NON INSERITA NELLE DIAGNOSI
   ?p1 <- (nodo (nome cavi-display) (valore errore))
   =>
   (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi) (descrizione "Collegare correttamente i cavi video del display, quindi verificare se il problema è risolto.") (nodo-padre ?p1)))
@@ -652,109 +608,6 @@
 
 
 
-(defrule diagnosi-parziale-connettori-video
-  ?p1 <- (nodo (nome disturbo-video) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video) (descrizione "Problema ai connettori video") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-problema-pixels
-  ?p1 <- (nodo (nome disturbo-video) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels) (descrizione "Possibile guasto ai pixels del display") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-sostituzione-display
-  (or
-    ?p1 <- (nodo (nome display-rotto) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore problema-pixels))
-  )
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display) (descrizione "Necessaria sostituzione del display") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-stop-error
-  ?p1 <- (nodo (nome bluescreen) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore stop-error) (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-conflitto-hw
-  ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
-  ?p2 <- (nodo (nome installazione-nuovo-hw) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw) (descrizione "Conflitto tra diversi componenti hardware") (nodo-padre ?p1 ?p2)))
-)
-
-(defrule diagnosi-parziale-alimentazione
-  (or
-    (and
-      ?p1 <- (nodo (nome bluescreen) (valore no))
-      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-    )
-    (and
-      ?p1 <- (nodo (nome segnali-bios) (valore no))
-      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-    )
-  )
-  =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1 ?p2)))
-)
-
-(defrule diagnosi-parziale-alimentazione-2
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-scheda-madre
-  (or
-      (and
-        ?p1 <- (nodo (nome bluescreen) (valore no))
-        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-      )
-      (and
-        ?p1 <- (nodo (nome segnali-bios) (valore no))
-        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-      )
-  )
-  =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1 ?p2)))
-)
-
-(defrule diagnosi-parziale-scheda-madre-2
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-bios
-  ?p1 <- (nodo (nome segnali-bios) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-bios) (descrizione "Problema impostazioni BIOS") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-ram
-  (or
-    ?p1 <- (nodo (nome segnali-bios) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
-  )
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-ram) (descrizione "Possibile guasto memoria RAM") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-hard-disk
-  (or
-    ?p1 <- (nodo (nome segnali-bios) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
-  )
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk) (descrizione "Possibile guasto del disco fisso") (nodo-padre ?p1)))
-)
-
-
-
-
 (defrule deduci-SO-windows
   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
   =>
@@ -762,7 +615,7 @@
 )
 
 (defrule deduci-SO-android
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smarthpone))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smartphone))
   =>
   (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
 )
@@ -770,12 +623,74 @@
 
 
 
+
+
+(defmodule ELENCO-DIAGNOSI(import MAIN ?ALL)(export ?ALL))
+
+  (deffacts ELENCO-DIAGNOSI::elenco-diagnosi
+
+    (diagnosi (attributo cavi-display-non-connessi)
+              (titolo "Cavi del display non connessi correttamente")
+              (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")
+    )
+
+    (diagnosi (attributo display-guasto)
+              (titolo "Display guasto")
+              (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")
+    )
+
+    (diagnosi (attributo cavi-display-portatile-guasti)
+              (titolo "Cavi di connessione al display guasti")
+              (descrizione "I cavi che connettono il display alla scheda madre potrebbero essere danneggiati oppure connessi male.")
+    )
+
+    (diagnosi (attributo guasto-vga)
+              (titolo "Guasto della scheda video")
+              (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")
+    )
+
+    (diagnosi (attributo problema-driver-video)
+              (titolo "Problema con i driver video")
+              (descrizione "Potrebbe esserci un problema con i driver della scheda video.")
+    )
+
+    (diagnosi (attributo problema-caricamento-SO)
+              (titolo "Caricamento del sistema operativo fallito")
+              (descrizione "Potrebbe esserci un problema con il caricamento del sistema operativo.")
+    )
+
+    (diagnosi (attributo alimentazione-disconnessa)
+              (titolo "Alimentazione non connessa al dispositivo")
+              (descrizione "Collegare correttamente i cavi d'alimentazione e assicurarsi che ci sia passaggio di corrente.")
+    )
+
+    (diagnosi (attributo batteria-difettosa)
+              (titolo "Guasto alla batteria del dispositivo")
+              (descrizione "La batteria potrebbe essere danneggiata.")
+    )
+
+    (diagnosi (attributo alimentatore-spento) ;; riconducibile ad alimentazione-disconnessa
+              (titolo "Alimentatore spento")
+              (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.")
+    )
+
+    (diagnosi (attributo alimentatore-guasto)
+              (titolo "Guasto all'alimentatore")
+              (descrizione "L'alimentatore potrebbe essere guasto a causa di un corto circuito.")
+    )
+
+    (diagnosi (attributo scheda-madre-guasta)
+              (titolo "Guasto alla scheda madre")
+              (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito.")
+    )
+
+
+  )
+
 ;;********************
 ;;* QUESTIONS FACTS  *
 ;;********************
 (defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
-
-
 
   (deffacts ELENCO-DOMANDE::domande
 
@@ -817,11 +732,6 @@
 
 
 
-    (domanda  (attributo problema-boot-o-SO)
-              (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
-              (risposte-valide boot SO nessuno)
-              (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
-    )
 
     (domanda  (attributo riavvio-forzato)
               (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
@@ -829,35 +739,11 @@
               (descrizione-risposte "Si" "No")
     )
 
-    (domanda  (attributo bluescreen)
-              (testo-domanda "Il sistema termina con un errore bluescreen?")
-              (risposte-valide si no non-so)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
-
     (domanda  (attributo installazione-nuovo-hw)
               (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
               (risposte-valide si no non-so)
               (descrizione-risposte "Si" "No" "Non so")
     )
-
-    (domanda  (attributo segnali-bios)
-              (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
-    )
-
-    ; (domanda  (attributo stato-video)
-    ;           (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
-    ;           (risposte-valide fallito ok )
-    ;           (descrizione-risposte "Si" "No")
-    ; )
-
-    ; (domanda  (attributo display-rotto)
-    ;           (testo-domanda "Il display del dispositivo risulta rotto o incrinato?")
-    ;           (risposte-valide si no )
-    ;           (descrizione-risposte "Si" "No")
-    ; )
 
     (domanda  (attributo disturbo-video)
               (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
@@ -914,34 +800,4 @@
                "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica MA continua a non accendersi")
     )
 
-    (domanda  (attributo interruttore-alimentatore)
-              (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia impostato su acceso. L'interrutore si trova nella parte posteriore del pc, in prossimità del cavo d'alimentazione.")
-              (risposte-valide acceso spento )
-              (descrizione-risposte "L'interrutore è correttamente acceso MA il dispositivo continua a non accendersi"
-               "L'interruttore è spento")
-    )
-
-    (domanda  (attributo ronzio-alimentatore)
-              (testo-domanda "E' possibile udire un suono simile ad un ronzio provenire dall'alimentatore quando è connesso alla rete elettrica?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
-    )
-
-    (domanda  (attributo spia-alimentatore-pcportatile)
-              (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia, di solito di colore verde o bianco, che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
-              (risposte-valide si no sconosciuto )
-              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
-    )
-
-    (domanda  (attributo spia-alimentatore-pcdesktop)
-              (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
-              (risposte-valide si no sconosciuto )
-              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
-    )
-
-    (domanda  (attributo ventole)
-              (testo-domanda "Le ventole nella parte posteriore del dispositivo funzionano correttamente?")
-              (risposte-valide si-tiepida si-calda no-aria no-ventole )
-              (descrizione-risposte "Si, le ventole funzionano ed emanano aria fredda/tiepida" "Si, le ventole funzionano ed emanano aria molto calda" "No, le ventole non sembrano funzionare o non emanano aria" "Il dispositivo non possiede ventole")
-    )
   )
