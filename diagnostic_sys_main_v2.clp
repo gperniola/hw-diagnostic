@@ -9,6 +9,18 @@
 ;;* DEFFUNCTIONS *
 ;;****************
 
+
+(deffunction stampa-header()
+  (clear-window)
+  (printout t crlf crlf)
+  (printout t   "***                                                 ***" crlf
+                "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+                "*                                                     *" crlf
+                "*     Rispondere alle domande inserendo il numero     *" crlf
+                "**       corrispondente alla risposta corretta.      **" crlf
+                "***                                                 ***" crlf crlf)
+)
+
 (deffunction ask-question-revision(?n-domande-chieste)
   (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
   (bind ?answer (read))
@@ -35,6 +47,7 @@
 
 
 (deffunction ask-question (?j ?question $?allowed-values)
+  (stampa-header)
   (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
@@ -118,35 +131,37 @@
 ;;* CONTROL RULES  *
 ;;******************
 
-(defrule inizializzazione
-  (declare (salience ?*highest-priority*))
-  =>
-  (clear-window)
-  ;(focus DOMANDE-GENERICHE)
-  (printout t crlf crlf)
-  (printout t   "***                                                 ***" crlf
-                "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
-                "*                                                     *" crlf
-                "*     Rispondere alle domande inserendo il numero     *" crlf
-                "**       corrispondente alla risposta corretta.      **" crlf
-                "***                                                 ***" crlf crlf))
+; (defrule inizializzazione
+;   (declare (salience ?*highest-priority*))
+;   =>
+;   (clear-window)
+;   ;(focus DOMANDE-GENERICHE)
+;   (printout t crlf crlf)
+;   (printout t   "***                                                 ***" crlf
+;                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+;                 "*                                                     *" crlf
+;                 "*     Rispondere alle domande inserendo il numero     *" crlf
+;                 "**       corrispondente alla risposta corretta.      **" crlf
+;                 "***                                                 ***" crlf crlf))
 
 
 (defrule diagnosi-trovata
   (declare (salience ?*highest-priority*))
-  (diagnosi (nome ?nome) (descrizione ?desc))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi))
+  (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc))
   =>
-  (printout t crlf ">>>> Diagnosi del guasto: " ?nome " - " ?desc crlf crlf)
-  (halt))
-
-
-(defrule diagnosi-parziale-trovata
-  (declare (salience ?*highest-priority*))
-  (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
-  =>
-  (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
+  (printout t crlf "***** DIAGNOSI *****" crlf " - " ?titolo ":" crlf ?desc crlf crlf)
   (assert(ferma-programma))
 )
+
+
+; (defrule diagnosi-parziale-trovata
+;   (declare (salience ?*highest-priority*))
+;   (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
+;   =>
+;   (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
+;   (assert(ferma-programma))
+; )
 
 
 (defrule ferma-esecuzione
@@ -410,7 +425,6 @@
   (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
 )
 
-)
 
 
 ;;******************* DESKTOP QUESTIONS ***********************************
@@ -459,9 +473,9 @@
 (defrule diagnosi-cavi-display-non-connessi
   ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto))
   =>
-  (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)
-  (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")))
+  (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)))
 )
+;;Se il problema persiste e' possibile che il cavo sia danneggiato.
 
 (defrule diagnosi-display-guasto
   ?p1 <- (nodo (nome disturbo-video) (valore ?v1&fasce|linee-oriz))
@@ -470,8 +484,7 @@
   ?p4 <- (nodo (nome fasce-bios) (valore si))
   ?p5 <- (nodo (nome muovere-cavi-display) (valore ?v3&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)))
 )
 
 (defrule diagnosi-display-guasto-2
@@ -480,8 +493,7 @@
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 (defrule diagnosi-cavi-display-portatile-guasti
@@ -492,15 +504,13 @@
   )
   (not (nodo (nome diagnosi) (valore guasto-cavi)))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-cavi) (nodo-padre ?p1 ?p2)
-  (descrizione "I cavi interni che collegano il display alla scheda madre potrebbero essere danneggiati o non collegati correttamente.")))
+  (assert (nodo (nome diagnosi) (valore guasto-cavi) (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-display-guasto-3
   ?p1 <- (nodo (nome disturbo-video) (valore macchie))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)))
 )
 
 
@@ -510,8 +520,7 @@
   ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p3 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)
-  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-guasto-vga-2
@@ -520,8 +529,7 @@
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 (defrule diagnosi-problema-driver-video
@@ -530,9 +538,9 @@
   ?p3 <- (nodo (nome fasce-bios) (valore no))
   ?p4 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
   =>
-  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
+;;provare ad aggiornare o ripristinare i driver.
 
 (defrule diagnosi-problema-driver-video-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
@@ -540,8 +548,7 @@
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 (defrule diagnosi-problema-caricamento-SO
@@ -550,14 +557,13 @@
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore si))
   =>
-  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema nel caricamento del sistema operativo dovuto a problemi di hd o corruzione file.")))
+  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 (defrule diagnosi-cavi-display-disconnessi ;;NON INSERITA NELLE DIAGNOSI
   ?p1 <- (nodo (nome cavi-display) (valore errore))
   =>
-  (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi) (descrizione "Collegare correttamente i cavi video del display, quindi verificare se il problema è risolto.") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi)(nodo-padre ?p1)))
 )
 
 
@@ -565,14 +571,13 @@
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   ?p2 <- (nodo (nome alimentazione-collegata) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (descrizione "Collegare correttamente i cavi d'alimentazione e Assicurarsi
-  che ci sia passaggio di corrente, quindi verificare se il problema è risolto.") (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-batteria-difettosa
   ?p1 <- (nodo (nome batteria-difettosa) (valore si))
   =>
-  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (descrizione "La batteria è danneggiata. Utilizzare il dispositivo solo con l'alimentazione elettrica diretta e sostituire la batteria.") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore batteria-difettosa)(nodo-padre ?p1)))
 )
 
 (defrule diagnosi-alimentatore-spento
@@ -580,7 +585,7 @@
   ?p2 <- (nodo (nome stato-accensione) (valore fallito))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-spento) (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.") (nodo-padre ?p1 ?p2 ?p3)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-alimentatore-guasto
@@ -592,7 +597,7 @@
   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
 )
 =>
-(assert (nodo (nome diagnosi) (valore alimentatore-guasto) (descrizione "L'alimentatore potrebbe essere guasto. Si consiglia di staccare il dispositivo dall'alimentazione elettrica in quanto potrebbe ulteriormente danneggiarsi.") (nodo-padre ?p1 ?p2 ?p3)))
+(assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-scheda-madre-guasta
@@ -603,7 +608,7 @@
   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
 )
 =>
-(assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito. Si consiglia di staccare il dispositivo dall'alimentazione elettrica e contattare l'assistenza tecnica.") (nodo-padre ?p1 ?p2 ?p3)))
+(assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
 
@@ -634,7 +639,7 @@
               (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")
     )
 
-    (diagnosi (attributo display-guasto)
+    (diagnosi (attributo guasto-display)
               (titolo "Display guasto")
               (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")
     )
