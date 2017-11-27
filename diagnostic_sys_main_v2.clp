@@ -4,13 +4,46 @@
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
 
+;;******************
+;;*    TEMPLATES   *
+;;******************
+
+  (deftemplate nodo
+    (slot nome    (type SYMBOL))
+    (multislot valore  (type SYMBOL))
+    (slot tipo (type SYMBOL))
+    (slot descrizione (type STRING))
+    (multislot nodo-padre (type FACT-ADDRESS))
+  )
+
+  (deftemplate domanda
+    (slot attributo     (type SYMBOL) (default ?NONE))
+    (slot testo-domanda (type STRING) (default ?NONE))
+    (multislot risposte-valide (type SYMBOL) (default ?NONE))
+    (multislot descrizione-risposte (type STRING) (default ?NONE))
+    (slot risposta-selezionata (type INTEGER))
+    (slot gia-chiesta   (default  FALSE))
+    (slot num-domanda (type INTEGER))
+    (slot stampata (default FALSE))
+  )
+
+  (deftemplate diagnosi
+    (slot attributo   (type SYMBOL))
+    (slot titolo      (type STRING))
+    (slot descrizione (type STRING))
+  )
+
+
+
+
+(defmodule MAIN(export ?ALL))
 
 ;;****************
 ;;* DEFFUNCTIONS *
 ;;****************
 
 
-(deffunction stampa-header()
+(deffunction MAIN::stampa-header()
   (clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
@@ -21,7 +54,7 @@
                 "***                                                 ***" crlf crlf)
 )
 
-(deffunction ask-question-revision(?n-domande-chieste)
+(deffunction MAIN::ask-question-revision(?n-domande-chieste)
   (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -31,7 +64,7 @@
   )
 ?answer)
 
-(deffunction ask-question-direct (?j ?question $?allowed-values)
+(deffunction MAIN::ask-question-direct (?j ?question $?allowed-values)
   (printout t "***** REVISIONE DOMANDA N." ?j " *****" crlf ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
@@ -46,7 +79,7 @@
    ?answer)
 
 
-(deffunction ask-question (?j ?question $?allowed-values)
+(deffunction MAIN::ask-question (?j ?question $?allowed-values)
   (stampa-header)
   (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
@@ -64,7 +97,7 @@
    ?answer)
 
 
-(deffunction ask-stop-program ()
+(deffunction MAIN::ask-stop-program ()
   (printout t crlf crlf "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
   (bind ?answer (read))
   (while (not (member ?answer (create$ 1 2)))
@@ -76,50 +109,23 @@
   )
 )
 
-(deffunction stampa-header-revisione()
+(deffunction MAIN::stampa-header-revisione()
   (clear-window)
   (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
 )
 
-(deffunction stampa-footer-revisione()
+(deffunction MAIN::stampa-footer-revisione()
   (printout t crlf "***********************************************************" crlf crlf crlf)
 )
 
-(defmodule MAIN (export ?ALL))
 
-;;******************
-;;*    TEMPLATES   *
-;;******************
 
-  (deftemplate nodo
-    (slot nome    (type SYMBOL))
-    (multislot valore  (type SYMBOL))
-    (slot tipo (type SYMBOL))
-    (slot descrizione (type STRING))
-    (multislot nodo-padre (type FACT-ADDRESS))
-  )
 
-  (deftemplate diagnosi
-    (slot attributo   (type SYMBOL))
-    (slot titolo      (type STRING))
-    (slot descrizione (type STRING))
-  )
-
-  (deftemplate domanda
-    (slot attributo     (type SYMBOL) (default ?NONE))
-    (slot testo-domanda (type STRING) (default ?NONE))
-    (multislot risposte-valide (type SYMBOL) (default ?NONE))
-    (multislot descrizione-risposte (type STRING) (default ?NONE))
-    (slot risposta-selezionata (type INTEGER))
-    (slot gia-chiesta   (default  FALSE))
-    (slot num-domanda (type INTEGER))
-    (slot stampata (default FALSE))
-  )
 
 ;;**********************
 ;;*    INITIAL FACTS   *
 ;;**********************
-(deffacts fatti-iniziali
+(deffacts MAIN::fatti-iniziali
 
   (contatore-domande 0)
 )
@@ -131,11 +137,12 @@
 ;;* CONTROL RULES  *
 ;;******************
 
-; (defrule inizializzazione
-;   (declare (salience ?*highest-priority*))
-;   =>
-;   (clear-window)
-;   ;(focus DOMANDE-GENERICHE)
+(defrule MAIN::inizializzazione
+  (declare (salience ?*highest-priority*))
+  =>
+  (clear-window)
+  (focus DOMANDE-GENERICHE)
+)
 ;   (printout t crlf crlf)
 ;   (printout t   "***                                                 ***" crlf
 ;                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -145,7 +152,7 @@
 ;                 "***                                                 ***" crlf crlf))
 
 
-(defrule diagnosi-trovata
+(defrule MAIN::diagnosi-trovata
   (declare (salience ?*highest-priority*))
   (nodo (nome diagnosi) (valore ?attr-diagnosi))
   (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc))
@@ -164,7 +171,7 @@
 ; )
 
 
-(defrule ferma-esecuzione
+(defrule MAIN::ferma-esecuzione
   (declare (salience ?*low-priority*))
   (ferma-programma)
   =>
@@ -310,54 +317,7 @@
 ;;*    ASK RULES     *
 ;;********************
 
-;******************* MODULO DOMANDE GENERICHE **********************************
 
-; (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
-;
-;     (defrule DOMANDE-GENERICHE::init
-;       (declare (salience ?*highest-priority*))
-;       =>
-;       (set-strategy random)
-;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
-;     )
-;
-;     (defrule DOMANDE-GENERICHE::end
-;       (declare (salience ?*lowest-priority*))
-;       =>
-;       (set-strategy depth)
-;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
-;       (focus MAIN)
-;     )
-
-
-
-
-    (defrule chiedi-tipo-dispositivo
-      =>
-      (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
-    )
-
-    (defrule chiedi-accensione
-      =>
-      (assert (nodo (nome chiedi) (valore stato-accensione)))
-    )
-
-    (defrule chiedi-problema-principale
-      =>
-      (assert (nodo (nome chiedi) (valore problema-principale)))
-    )
-
-    (defrule chiedi-anni-dispositivo
-      =>
-      (assert (nodo (nome chiedi) (valore anni-dispositivo)))
-    )
-
-    (defrule chiedi-installazione-nuovo-hw
-      =>
-      (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
-    )
-
-;*******************************************************************************
 
 (defrule chiedi-garanzia
   ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
@@ -502,9 +462,9 @@
     ?p2 <- (nodo (nome cavi-display) (valore interni))
     ?p2 <- (nodo (nome muovere-cavi-display) (valore interni))
   )
-  (not (nodo (nome diagnosi) (valore guasto-cavi)))
+  (not (nodo (nome diagnosi) (valore cavi-display-portatile-guasti)))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-cavi) (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi) (valore cavi-display-portatile-guasti) (nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-display-guasto-3
@@ -630,7 +590,9 @@
 
 
 
-(defmodule ELENCO-DIAGNOSI(import MAIN ?ALL)(export ?ALL))
+(defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
+
+
 
   (deffacts ELENCO-DIAGNOSI::elenco-diagnosi
 
@@ -806,3 +768,53 @@
     )
 
   )
+
+
+  ;******************* MODULO DOMANDE GENERICHE **********************************
+
+  (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
+
+      (defrule DOMANDE-GENERICHE::init
+        (declare (salience ?*highest-priority*))
+        =>
+        (set-strategy random)
+        (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
+      )
+
+      (defrule DOMANDE-GENERICHE::end
+        (declare (salience ?*lowest-priority*))
+        =>
+        (set-strategy depth)
+        (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
+        (focus MAIN)
+      )
+
+
+
+
+      (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
+        =>
+        (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-accensione
+        =>
+        (assert (nodo (nome chiedi) (valore stato-accensione)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-problema-principale
+        =>
+        (assert (nodo (nome chiedi) (valore problema-principale)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-anni-dispositivo
+        =>
+        (assert (nodo (nome chiedi) (valore anni-dispositivo)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
+        =>
+        (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
+      )
+
+  ;*******************************************************************************
