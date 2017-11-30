@@ -1,0 +1,54 @@
+(diagnosi (attributo cavi-display-non-connessi)
+              (titolo "Cavi del display non connessi correttamente")
+              (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")
+    )
+
+    (diagnosi (attributo guasto-display)
+              (titolo "Display guasto")
+              (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")
+    )
+
+    (diagnosi (attributo cavi-display-portatile-guasti)
+              (titolo "Cavi di connessione al display guasti")
+              (descrizione "I cavi che connettono il display alla scheda madre potrebbero essere danneggiati oppure connessi male.")
+    )
+
+    (diagnosi (attributo guasto-vga)
+              (titolo "Guasto della scheda video")
+              (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")
+    )
+
+    (diagnosi (attributo problema-driver-video)
+              (titolo "Problema con i driver video")
+              (descrizione "Potrebbe esserci un problema con i driver della scheda video.")
+    )
+
+    (diagnosi (attributo problema-caricamento-SO)
+              (titolo "Caricamento del sistema operativo fallito")
+              (descrizione "Potrebbe esserci un problema con il caricamento del sistema operativo.")
+    )
+
+    (diagnosi (attributo alimentazione-disconnessa)
+              (titolo "Alimentazione non connessa al dispositivo")
+              (descrizione "Collegare correttamente i cavi d'alimentazione e assicurarsi che ci sia passaggio di corrente.")
+    )
+
+    (diagnosi (attributo batteria-difettosa)
+              (titolo "Guasto alla batteria del dispositivo")
+              (descrizione "La batteria potrebbe essere danneggiata.")
+    )
+
+    (diagnosi (attributo alimentatore-spento) ;; riconducibile ad alimentazione-disconnessa
+              (titolo "Alimentatore spento")
+              (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.")
+    )
+
+    (diagnosi (attributo alimentatore-guasto)
+              (titolo "Guasto all'alimentatore")
+              (descrizione "L'alimentatore potrebbe essere guasto a causa di un corto circuito.")
+    )
+
+    (diagnosi (attributo scheda-madre-guasta)
+              (titolo "Guasto alla scheda madre")
+              (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito.")
+    )

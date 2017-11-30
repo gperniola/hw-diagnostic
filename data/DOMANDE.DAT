@@ -1,0 +1,111 @@
+﻿(domanda  (attributo tipo-dispositivo)
+              (testo-domanda "A quale tipologia appartiene il dispositivo?")
+              (risposte-valide pc-desktop pc-portatile)
+              (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
+    )
+
+    (domanda  (attributo stato-accensione)
+              (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
+              (risposte-valide ok fallito)
+              (descrizione-risposte "Si" "No, il dispositivo non si accende")
+    )
+
+    (domanda  (attributo problema-principale)
+              (testo-domanda "Qual'e' la categoria che sembra più appropriata per il problema da analizzare?")
+              (risposte-valide accensione-SO video surriscaldamento altro)
+              (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
+                                    "Disturbo del segnale video, problema del display"
+                                    "Surriscaldamento eccessivo del dispositivo"
+                                    "Altro")
+    )
+
+    (domanda  (attributo anni-dispositivo)
+              (testo-domanda "Quanti anni ha il dispositivo?")
+              (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
+              (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
+    )
+
+    (domanda  (attributo garanzia)
+              (testo-domanda "Il dispositivo è ancora in garanzia?")
+              (risposte-valide si no sconosciuto)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+
+
+
+
+
+    (domanda  (attributo riavvio-forzato)
+              (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
+              (risposte-valide si no)
+              (descrizione-risposte "Si" "No")
+    )
+
+    (domanda  (attributo installazione-nuovo-hw)
+              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
+              (risposte-valide si no non-so)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+    (domanda  (attributo disturbo-video)
+              (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
+              (risposte-valide fasce macchie linee-oriz schermo-nero )
+              (descrizione-risposte "Linee colorate verticali, raggruppate in fasce piu' larghe" "Una o piu' macchie di colore nero o bianco che coprono porzioni dello schermo"
+              "Linee di colore nero/grigio orizzontali, possono essere intermittenti" "Schermo completamente nero, come se spento")
+    )
+
+    (domanda  (attributo monitor-esterno)
+              (testo-domanda "E' possibile collegare un monitor esterno/secondario al dispositivo?")
+              (risposte-valide funzionante errore no)
+              (descrizione-risposte "Si, il monitor esterno/secondario funziona e non presenta i problemi del monitor principale"
+              "Si, ma il monitor esterno/secondario presenta lo stesso problema del monitor principale"
+              "No, non dispongo di un altro monitor")
+    )
+
+    (domanda  (attributo blocco-cursore)
+              (testo-domanda "Sullo schermo nero viene comunque visualizzato il cursore del mouse?")
+              (risposte-valide si no)
+              (descrizione-risposte "Si, la freccia del mouse e' visibile" "No, lo schermo e' completamente nero")
+    )
+
+    (domanda  (attributo fasce-bios)
+              (testo-domanda "Le fasce sono visibili sin dall'avvio del dispositivo oppure appaiono in un secondo momento? Ad esempio al momento del caricamento del desktop?")
+              (risposte-valide si no)
+              (descrizione-risposte "Le fasce appaiono sin dall'avvio" "Le fasce appaiono in un secondo momento")
+    )
+
+    (domanda  (attributo cavi-display)
+              (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso (di solito è presente un led di colore blu/verde che indica se il display è acceso e riceve segnale )")
+              (risposte-valide ok errore )
+              (descrizione-risposte "I cavi sono correttamente collegati MA il display presenta comunque il problema"
+               "I cavi non sono correttamente collegati oppure il display non e' acceso")
+    )
+
+    (domanda  (attributo muovere-cavi-display)
+              (testo-domanda "Verificare che lo spinotto del cavo video sia correttamente inserito nella presa, provare a muovere lo spinotto per verificare se il problema sparisce")
+              (risposte-valide risolto non-risolto )
+              (descrizione-risposte "Muovendo i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
+    )
+
+    (domanda  (attributo alimentazione-collegata)
+              (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa elettrica e che ci sia passaggio di corrente [ad esempio testando la presa con una lampada]")
+              (risposte-valide si no )
+              (descrizione-risposte "Il cavo e' collegato correttamente MA il dispositivo non si accende"
+               "Il cavo non e' collegato oppure non c'e' passaggio di corrente dalla presa")
+    )
+
+    (domanda  (attributo batteria-difettosa)
+              (testo-domanda "Provare a rimuovere la batteria del dispositivo
+               e utilizzare solamente l'alimentazione elettrica diretta per avviare il dispositivo.")
+              (risposte-valide si no )
+              (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
+               "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica MA continua a non accendersi")
+    )
+
+    (domanda  (attributo interruttore-alimentatore)
+              (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia impostato su acceso. L'interrutore si trova nella parte posteriore del pc, in prossimità del cavo d'alimentazione.")
+              (risposte-valide acceso spento )
+              (descrizione-risposte "L'interrutore è correttamente acceso MA il dispositivo continua a non accendersi"
+               "L'interruttore è spento")
+    )
