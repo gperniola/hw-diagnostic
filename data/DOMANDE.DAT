@@ -1,4 +1,7 @@
-﻿(domanda  (attributo tipo-dispositivo)
+
+;; // DOMANDE GENERICHE (RANDOM) ***********************************************
+
+    (domanda  (attributo tipo-dispositivo)
               (testo-domanda "A quale tipologia appartiene il dispositivo?")
               (risposte-valide pc-desktop pc-portatile)
               (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
@@ -31,10 +34,16 @@
               (descrizione-risposte "Si" "No" "Non so")
     )
 
+    (domanda  (attributo installazione-nuovo-hw)
+              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
+              (risposte-valide si no non-so)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
+
+;; //***************************************************************************
 
 
-
-
+;; // DOMANDE VIDEO ************************************************************
 
     (domanda  (attributo riavvio-forzato)
               (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
@@ -42,11 +51,7 @@
               (descrizione-risposte "Si" "No")
     )
 
-    (domanda  (attributo installazione-nuovo-hw)
-              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
-              (risposte-valide si no non-so)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
+
 
     (domanda  (attributo disturbo-video)
               (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
