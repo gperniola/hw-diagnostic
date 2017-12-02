@@ -316,13 +316,16 @@
   (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
 )
 
-;;********************
-;;*    ASK RULES     *
-;;********************
 
 
 
 
+;;******************************************************************************
+;;*    REGOLE PER CHIDERE DOMANDE ALL'UTENTE                                   *
+;;******************************************************************************
+
+
+;; DOMANDE ACCENSIONE E SO *****************************************************
 
 (defrule chiedi-riavvio-forzato
   ?p1 <- (nodo (nome stato-accensione) (valore ok))
@@ -330,6 +333,53 @@
   (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
 )
 
+(defrule chiedi-alimentazione
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  =>
+  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
+)
+
+;; Per dispositivi desktop ...
+
+(defrule chiedi-spia-alimentatore-pcdesktop
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso))
+  =>
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
+)
+
+(defrule chiedi-interruttore-alimentatore
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+;; Per dispositivi laptop ...
+
+(defrule chiedi-spia-alimentatore-pcportatile
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+(defrule chiedi-batteria-difettosa
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
+  =>
+  (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+;;******************************************************************************
+
+
+;; DOMANDE VIDEO ***************************************************************
 
 (defrule chiedi-disturbo-video
   ?p1 <- (nodo (nome problema-principale) (valore video))
@@ -370,63 +420,65 @@
   (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
 )
 
-(defrule cavi-display-portatile
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+;;******************************************************************************
+
+
+
+
+;;******************************************************************************
+;;*     DIAGNOSI                                                               *
+;;******************************************************************************
+
+;; DIAGNOSI ACCENSIONE E SO ****************************************************
+
+(defrule diagnosi-alimentazione-disconnessa
+  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore no))
   =>
-  (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
-  (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2)))
 )
 
-(defrule chiedi-alimentazione
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+(defrule diagnosi-batteria-difettosa
+  ?p1 <- (nodo (nome batteria-difettosa) (valore si))
   =>
-  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore batteria-difettosa)(nodo-padre ?p1)))
 )
 
-
-
-;;******************* DESKTOP QUESTIONS ***********************************
-
-(defrule chiedi-spia-alimentatore-pcdesktop
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
-  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
-  ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso))
-  =>
-  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
-)
-
-(defrule chiedi-interruttore-alimentatore
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+(defrule diagnosi-alimentatore-spento
+  ?p1 <- (nodo (nome interruttore-alimentatore) (valore spento))
+  ?p2 <- (nodo (nome stato-accensione) (valore fallito))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
   =>
-  (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?p1 ?p2 ?p3)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
-
-;;******************* LAPTOP QUESTIONS ***********************************
-
-
-
-(defrule chiedi-spia-alimentatore-pcportatile
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
-  =>
-  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?p1 ?p2 ?p3)))
+(defrule diagnosi-alimentatore-guasto
+?p1 <- (nodo (nome stato-accensione) (valore fallito))
+?p2 <- (nodo (nome alimentazione-collegata) (valore si))
+(or
+  ?p3 <- (nodo (nome ronzio-alimentatore) (valore si))
+  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore ?v&no|sconosciuto))
+  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
+)
+=>
+(assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
-(defrule chiedi-batteria-difettosa
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
-  =>
-  (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?p1 ?p2 ?p3)))
+(defrule diagnosi-scheda-madre-guasta
+?p1 <- (nodo (nome stato-accensione) (valore fallito))
+?p2 <- (nodo (nome alimentazione-collegata) (valore si))
+(or
+  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore sconosciuto))
+  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
 )
-;;********************
-;;*     DIAGNOSI     *
-;;********************
+=>
+(assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3)))
+)
+
+;;******************************************************************************
+
+
+;; DIAGNOSI VIDEO **************************************************************
 
 (defrule diagnosi-cavi-display-non-connessi
   ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto))
@@ -470,8 +522,6 @@
   =>
   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)))
 )
-
-
 
 (defrule diagnosi-guasto-vga
   ?p1 <- (nodo (nome disturbo-video) (valore fasce))
@@ -524,52 +574,19 @@
   (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi)(nodo-padre ?p1)))
 )
 
+;;******************************************************************************
 
-(defrule diagnosi-alimentazione-disconnessa
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore no))
+
+
+
+;; REGOLE PER INFERENZA ********************************************************
+
+(defrule cavi-display-portatile
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
+  (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
 )
-
-(defrule diagnosi-batteria-difettosa
-  ?p1 <- (nodo (nome batteria-difettosa) (valore si))
-  =>
-  (assert (nodo (nome diagnosi) (valore batteria-difettosa)(nodo-padre ?p1)))
-)
-
-(defrule diagnosi-alimentatore-spento
-  ?p1 <- (nodo (nome interruttore-alimentatore) (valore spento))
-  ?p2 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
-  =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3)))
-)
-
-(defrule diagnosi-alimentatore-guasto
-?p1 <- (nodo (nome stato-accensione) (valore fallito))
-?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-(or
-  ?p3 <- (nodo (nome ronzio-alimentatore) (valore si))
-  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore ?v&no|sconosciuto))
-  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
-)
-=>
-(assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3)))
-)
-
-(defrule diagnosi-scheda-madre-guasta
-?p1 <- (nodo (nome stato-accensione) (valore fallito))
-?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-(or
-  ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore sconosciuto))
-  ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
-)
-=>
-(assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3)))
-)
-
-
 
 (defrule deduci-SO-windows
   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
@@ -588,15 +605,10 @@
 
 
 
+
+
 (defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
 
-
-
-
-
-;;********************
-;;* QUESTIONS FACTS  *
-;;********************
 (defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
 
 
