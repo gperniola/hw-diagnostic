@@ -1,4 +1,7 @@
-(diagnosi (attributo cavi-display-non-connessi)
+
+;; //DIAGNOSI PROBLEMI VIDEO****************************************************
+
+    (diagnosi (attributo cavi-display-non-connessi)
               (titolo "Cavi del display non connessi correttamente")
               (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")
     )
@@ -22,6 +25,11 @@
               (titolo "Problema con i driver video")
               (descrizione "Potrebbe esserci un problema con i driver della scheda video.")
     )
+
+;; //***************************************************************************
+
+
+;; //DIAGNOSI PROBLEMI ACCENSIONE E SO *****************************************
 
     (diagnosi (attributo problema-caricamento-SO)
               (titolo "Caricamento del sistema operativo fallito")
@@ -52,3 +60,5 @@
               (titolo "Guasto alla scheda madre")
               (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito.")
     )
+
+;; //***************************************************************************
