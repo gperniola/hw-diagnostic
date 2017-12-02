@@ -322,11 +322,6 @@
 
 
 
-(defrule chiedi-garanzia
-  ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
-  =>
-  (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
-)
 
 
 (defrule chiedi-riavvio-forzato
@@ -653,5 +648,12 @@
         =>
         (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
       )
+
+      (defrule DOMANDE-GENERICHE::chiedi-garanzia
+        ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
+        =>
+        (assert (nodo (nome chiedi) (valore garanzia) (nodo-padre ?p1)))
+      )
+
 
   ;*******************************************************************************
