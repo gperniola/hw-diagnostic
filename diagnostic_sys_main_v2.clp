@@ -85,11 +85,12 @@
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
+  (printout t crlf "9. Perche' questa domanda?")
   (printout t crlf "0. Revisiona domande precedenti." crlf crlf)
   (printout t "Inserire risposta: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-  (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0))) do
+  (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0)) (not (= ?answer 9))) do
       (printout t crlf "Valore inserito non valido, riprovare: ")
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
@@ -182,8 +183,14 @@
 )
 
 
+
+
+
+
+
+
 ; STAMPA ELENCO E REVISIONE DOMANDE
-;****************************************************************************
+;*******************************************************************************
 
 (defrule INIT-STAMPA-ELENCO-header
   (declare (salience ?*highest-priority*))
@@ -300,11 +307,18 @@
     (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
     (assert (init-revisiona-domande))
   else
-    ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
-    (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
-    ;;(retract ?ask)
-    (retract ?cont-dom)
-    (assert (contatore-domande ?j))
+    (if (= ?risposta 9) then
+      (retract ?ask)
+      (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+      (assert (nodo (nome spiegazione) (valore ?attr)))
+      (focus SPIEGAZIONE)
+    else
+      ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+      (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
+      ;;(retract ?ask)
+      (retract ?cont-dom)
+      (assert (contatore-domande ?j))
+    )
   )
 )
 
@@ -613,10 +627,51 @@
 
 
 
+(defmodule SPIEGAZIONE(import MAIN ?ALL)(export ?ALL))
+
+; SPIEGAZIONE DOMANDA
+;*******************************************************************************
+
+(deffunction SPIEGAZIONE::stampa-spiegazione(?dom $?p)
+  (printout t ?dom ": " crlf)
+  (loop-for-count (?cnt1 1 (length ?p)) do
+    (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
+    ;(printout t ?v ", ")
+    ;(assert (spiega ?v))
+    ?d <- (domanda ( attributo ?v) (testo-domanda ?s))
+    (printout t ?s crlf)
+  )
+)
+
+(defrule SPIEGAZIONE::debug
+  (declare (salience ?*highest-priority*))
+  =>
+  (printout t "DEBUG >> Modulo spiegazioni" crlf crlf)
+)
+
+(defrule SPIEGAZIONE::init-spiegazione
+  ?target <- (nodo (nome spiegazione) (valore ?attr ))
+  ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
+  =>
+  (retract ?target)
+  (stampa-spiegazione ?domanda ?p)
+  (bind ?answer (read))
+)
+
+
+
+
+
+
+
+
+
 
   ;******************* MODULO DOMANDE GENERICHE **********************************
 
   (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
+
+
 
       (defrule DOMANDE-GENERICHE::init
         (declare (salience ?*highest-priority*))
