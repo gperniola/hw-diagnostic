@@ -632,15 +632,16 @@
 ; SPIEGAZIONE DOMANDA
 ;*******************************************************************************
 
-(deffunction SPIEGAZIONE::stampa-spiegazione(?dom $?p)
-  (printout t ?dom ": " crlf)
+(deffunction SPIEGAZIONE::leggi-nodi($?p)
+  (printout t "Motivazione alla domanda: " crlf)
   (loop-for-count (?cnt1 1 (length ?p)) do
     (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
-    ;(printout t ?v ", ")
-    ;(assert (spiega ?v))
-    ?d <- (domanda ( attributo ?v) (testo-domanda ?s))
-    (printout t ?s crlf)
+    (assert (spiega ?v))
   )
+)
+
+(deffunction SPIEGAZIONE::stampa-spiegazione(?n ?dom ?risp)
+  (printout t "- Alla domanda n." ?n " l'utente ha risposto: " crlf ?risp crlf crlf)
 )
 
 (defrule SPIEGAZIONE::debug
@@ -654,13 +655,26 @@
   ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
   =>
   (retract ?target)
-  (stampa-spiegazione ?domanda ?p)
-  (bind ?answer (read))
+  (leggi-nodi ?p)
+  ;(bind ?answer (read))
 )
 
+(defrule SPIEGAZIONE::spiega-attributo
+  ?s <- (spiega ?attr)
+  ?d <- (domanda (attributo ?attr) (gia-chiesta TRUE) (num-domanda ?n-domanda) (risposta-selezionata ?n-risposta) (testo-domanda ?domanda) (descrizione-risposte $?risposte))
+  =>
+  (bind ?risposta (nth$ ?n-risposta ?risposte))
+  (stampa-spiegazione ?n-domanda ?domanda ?risposta)
+  (retract ?s)
+)
 
-
-
+(defrule SPIEGAZIONE::end-spiegazione
+  (not (nodo (nome spiegazione)))
+  (not (spiega ?s))
+  =>
+  (printout t "end spiegazione" crlf)
+  (bind ?answer (read))
+)
 
 
 
