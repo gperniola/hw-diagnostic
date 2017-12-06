@@ -641,7 +641,7 @@
 )
 
 (deffunction SPIEGAZIONE::stampa-spiegazione(?n ?dom ?risp)
-  (printout t "- Alla domanda n." ?n " l'utente ha risposto: " crlf ?risp crlf crlf)
+  (printout t "- ALLA DOMANDA N." ?n ": " crlf ?dom crlf "L'UTENTE HA RISPOSTO: " crlf ?risp crlf crlf)
 )
 
 (defrule SPIEGAZIONE::debug
@@ -659,13 +659,22 @@
   ;(bind ?answer (read))
 )
 
-(defrule SPIEGAZIONE::spiega-attributo
+(defrule SPIEGAZIONE::spiega-domanda
   ?s <- (spiega ?attr)
   ?d <- (domanda (attributo ?attr) (gia-chiesta TRUE) (num-domanda ?n-domanda) (risposta-selezionata ?n-risposta) (testo-domanda ?domanda) (descrizione-risposte $?risposte))
   =>
   (bind ?risposta (nth$ ?n-risposta ?risposte))
   (stampa-spiegazione ?n-domanda ?domanda ?risposta)
   (retract ?s)
+)
+
+(defrule SPIEGAZIONE::spiega-attributo
+  ?s <- (spiega ?attr)
+  ?a <- (nodo (nome ?attr) (nodo-padre $?p))
+  (not (domanda (attributo ?attr) (gia-chiesta TRUE)))
+  =>
+  (retract ?s)
+  (leggi-nodi ?p)
 )
 
 (defrule SPIEGAZIONE::end-spiegazione
