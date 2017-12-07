@@ -14,11 +14,10 @@
     )
 
     (domanda  (attributo problema-principale)
-              (testo-domanda "Qual'e' la categoria che sembra più appropriata per il problema da analizzare?")
-              (risposte-valide accensione-SO video surriscaldamento altro)
+              (testo-domanda "Qual'e' la categoria che sembra piu' appropriata per il problema da analizzare?")
+              (risposte-valide accensione-SO video altro)
               (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
                                     "Disturbo del segnale video, problema del display"
-                                    "Surriscaldamento eccessivo del dispositivo"
                                     "Altro")
     )
 
@@ -35,7 +34,7 @@
     )
 
     (domanda  (attributo installazione-nuovo-hw)
-              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
+              (testo-domanda "Sono state installate nuove componenti hardware prima che il problema cominciasse a verificarsi?")
               (risposte-valide si no non-so)
               (descrizione-risposte "Si" "No" "Non so")
     )
@@ -52,35 +51,35 @@
 )
 
 (domanda  (attributo alimentazione-collegata)
-          (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa elettrica e che ci sia passaggio di corrente [ad esempio testando la presa con una lampada]")
+          (testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato alla rete elettrica.")
           (risposte-valide si no )
-          (descrizione-risposte "Il cavo e' collegato correttamente MA il dispositivo non si accende"
-           "Il cavo non e' collegato oppure non c'e' passaggio di corrente dalla presa")
+          (descrizione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende"
+           "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
 )
 
 (domanda  (attributo batteria-difettosa)
-          (testo-domanda "Provare a rimuovere la batteria del dispositivo
-           e utilizzare solamente l'alimentazione elettrica diretta per avviare il dispositivo.")
+          (testo-domanda "Rimuovere la batteria del dispositivo
+           e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
           (risposte-valide si no )
           (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-           "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica MA continua a non accendersi")
+           "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
 )
 
 (domanda  (attributo interruttore-alimentatore)
-          (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia impostato su acceso. L'interrutore si trova nella parte posteriore del pc, in prossimità del cavo d'alimentazione.")
+          (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia acceso. L'interrutore si trova sulla parte posteriore del PC, in prossimita' del cavo d'alimentazione.")
           (risposte-valide acceso spento )
-          (descrizione-risposte "L'interrutore è correttamente acceso MA il dispositivo continua a non accendersi"
-           "L'interruttore è spento")
+          (descrizione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi"
+           "L'interruttore e' spento")
 )
 
 (domanda  (attributo spia-alimentatore-pcportatile)
-      (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia, di solito di colore verde o bianco, che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
+      (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide si no sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
 
 (domanda  (attributo spia-alimentatore-pcdesktop)
-      (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
+      (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide si no sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
@@ -118,9 +117,9 @@
 )
 
 (domanda  (attributo cavi-display)
-          (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso (di solito è presente un led di colore blu/verde che indica se il display è acceso e riceve segnale )")
+          (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso.")
           (risposte-valide ok errore )
-          (descrizione-risposte "I cavi sono correttamente collegati MA il display presenta comunque il problema"
+          (descrizione-risposte "I cavi sono correttamente collegati ma il display presenta comunque il problema"
           "I cavi non sono correttamente collegati oppure il display non e' acceso")
 )
 
