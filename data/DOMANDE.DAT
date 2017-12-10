@@ -2,18 +2,21 @@
 ;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
     (domanda  (attributo tipo-dispositivo)
+              (domanda-generica TRUE)
               (testo-domanda "A quale tipologia appartiene il dispositivo?")
               (risposte-valide pc-desktop pc-portatile)
               (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
     )
 
     (domanda  (attributo stato-accensione)
+              (domanda-generica TRUE)
               (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
               (risposte-valide ok fallito)
               (descrizione-risposte "Si" "No, il dispositivo non si accende")
     )
 
     (domanda  (attributo problema-principale)
+              (domanda-generica TRUE)
               (testo-domanda "Qual'e' la categoria che sembra piu' appropriata per il problema da analizzare?")
               (risposte-valide accensione-SO video altro)
               (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
@@ -22,18 +25,21 @@
     )
 
     (domanda  (attributo anni-dispositivo)
+              (domanda-generica TRUE)
               (testo-domanda "Quanti anni ha il dispositivo?")
               (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
               (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
     )
 
     (domanda  (attributo garanzia)
+              (domanda-generica TRUE)
               (testo-domanda "Il dispositivo è ancora in garanzia?")
               (risposte-valide si no sconosciuto)
               (descrizione-risposte "Si" "No" "Non so")
     )
 
     (domanda  (attributo installazione-nuovo-hw)
+              (domanda-generica TRUE)
               (testo-domanda "Sono state installate nuove componenti hardware prima che il problema cominciasse a verificarsi?")
               (risposte-valide si no non-so)
               (descrizione-risposte "Si" "No" "Non so")

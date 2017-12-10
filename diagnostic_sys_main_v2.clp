@@ -25,6 +25,7 @@
     (slot gia-chiesta   (default  FALSE))
     (slot num-domanda (type INTEGER))
     (slot stampata (default FALSE))
+    (slot domanda-generica (default FALSE))
   )
 
   (deftemplate diagnosi
@@ -402,14 +403,16 @@
 )
 
 (defrule chiedi-monitor-esterno
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|schermo-nero|linee-oriz))
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|schermo-nero|linee-oriz))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore display-rotto))
   ;?p2 <- (nodo (nome riavvio-forzato) (valore no))
   =>
   (assert (nodo (nome chiedi) (valore monitor-esterno) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-fasce-bios
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
   =>
   (assert (nodo (nome chiedi) (valore fasce-bios) (nodo-padre ?p1)))
 )
@@ -422,14 +425,17 @@
 
 (defrule chiedi-cavi-display
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore si))
+  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
   (assert (nodo (nome chiedi) (valore cavi-display) (nodo-padre ?p1 ?p2 )))
 )
 
 (defrule chiedi-muovere-cavi-display
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore si))
+  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
   (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
 )
@@ -595,24 +601,54 @@
 
 ;; REGOLE PER INFERENZA ********************************************************
 
-(defrule cavi-display-portatile
+; (defrule cavi-display-portatile
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+;   =>
+;   (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
+;   (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
+; )
+
+(defrule dispositivo-portatile
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
   =>
-  (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
-  (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
+  (assert (nodo (nome possiede-batteria) (valore si) (nodo-padre ?p1) (descrizione "Il dispositivo possiede una batteria.")))
+  (assert (nodo (nome cavi-display-accessibili) (valore no) (nodo-padre ?p1) (descrizione "I cavi che collegano il dispositivo al display non sono accessibili.")))
 )
 
-(defrule deduci-SO-windows
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
+(defrule dispositivo-fisso
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
-  (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
+  (assert (nodo (nome possiede-batteria) (valore no) (nodo-padre ?p1) (descrizione "Il dispositivo non possiede una batteria.")))
+  (assert (nodo (nome cavi-display-accessibili) (valore si) (nodo-padre ?p1) (descrizione "I cavi che collegano il dispositivo al display sono accessibili.")))
 )
 
-(defrule deduci-SO-android
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smartphone))
+(defrule interferenza-video
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
   =>
-  (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
+  (assert (nodo (nome tipo-disturbo-video) (valore interferenza) (nodo-padre ?p1) (descrizione "E' possibile che il problema sia causato da un interferenza.")))
 )
+
+(defrule display-rotto
+  ?p1 <- (nodo (nome disturbo-video) (valore  ?v&fasce|schermo-nero|linee-oriz))
+  =>
+  (assert (nodo (nome tipo-disturbo-video) (valore display-rotto) (nodo-padre ?p1) (descrizione "E' possibile che qualche componente del display sia guasta.")))
+)
+
+
+
+
+
+; (defrule deduci-SO-windows
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
+;   =>
+;   (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
+; )
+;
+; (defrule deduci-SO-android
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smartphone))
+;   =>
+;   (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
+; )
 
 
 
@@ -633,47 +669,72 @@
 ;*******************************************************************************
 
 (deffunction SPIEGAZIONE::leggi-nodi($?p)
-  (printout t "Motivazione alla domanda: " crlf)
   (loop-for-count (?cnt1 1 (length ?p)) do
     (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
     (assert (spiega ?v))
   )
 )
 
-(deffunction SPIEGAZIONE::stampa-spiegazione(?n ?dom ?risp)
-  (printout t "- ALLA DOMANDA N." ?n ": " crlf ?dom crlf "L'UTENTE HA RISPOSTO: " crlf ?risp crlf crlf)
+(deffunction SPIEGAZIONE::stampa-spiegazione-domanda(?n-sp ?n ?dom ?risp)
+  (printout t "[ SP." ?n-sp " ]" crlf "-- Alla domanda n." ?n ": " crlf ?dom crlf "l'utente ha risposto: "  ?risp crlf crlf)
 )
 
-(defrule SPIEGAZIONE::debug
-  (declare (salience ?*highest-priority*))
-  =>
-  (printout t "DEBUG >> Modulo spiegazioni" crlf crlf)
+(deffunction SPIEGAZIONE::stampa-spiegazione-attributo(?n-sp ?spiegazione)
+  (printout t "[ SP." ?n-sp " ]" crlf "-- Il sistema ha dedotto che:" crlf ?spiegazione crlf crlf)
 )
 
-(defrule SPIEGAZIONE::init-spiegazione
+; (defrule SPIEGAZIONE::debug
+;   (declare (salience ?*highest-priority*))
+;   =>
+;   (printout t "DEBUG >> Modulo spiegazioni" crlf crlf)
+; )
+
+(defrule SPIEGAZIONE::init-spiegazione-domanda-non-generica
   ?target <- (nodo (nome spiegazione) (valore ?attr ))
   ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
+  (domanda (attributo ?attr) (domanda-generica FALSE))
   =>
+  (printout t "***** MOTIVAZIONI DOMANDA *****" crlf)
   (retract ?target)
   (leggi-nodi ?p)
   ;(bind ?answer (read))
+  (assert (contatore-spiegazione 0))
+)
+
+(defrule SPIEGAZIONE::init-spiegazione-domanda-generica
+  ?target <- (nodo (nome spiegazione) (valore ?attr ))
+  ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
+  (domanda (attributo ?attr) (domanda-generica TRUE))
+  =>
+  (printout t "***** MOTIVAZIONI DOMANDA *****" crlf crlf)
+  (printout t "Questa e' una domanda generica necessaria per introdurre al sistema delle informazioni basilari sul dispositivo." crlf)
+  (retract ?target)
 )
 
 (defrule SPIEGAZIONE::spiega-domanda
   ?s <- (spiega ?attr)
   ?d <- (domanda (attributo ?attr) (gia-chiesta TRUE) (num-domanda ?n-domanda) (risposta-selezionata ?n-risposta) (testo-domanda ?domanda) (descrizione-risposte $?risposte))
+  ?c <- (contatore-spiegazione ?cont)
   =>
+  (retract ?c)
+  (assert (contatore-spiegazione (+ ?cont 1)))
   (bind ?risposta (nth$ ?n-risposta ?risposte))
-  (stampa-spiegazione ?n-domanda ?domanda ?risposta)
+  (bind ?n-spieg (+ ?cont 1))
+  (stampa-spiegazione-domanda ?n-spieg ?n-domanda ?domanda ?risposta)
   (retract ?s)
 )
 
 (defrule SPIEGAZIONE::spiega-attributo
   ?s <- (spiega ?attr)
-  ?a <- (nodo (nome ?attr) (nodo-padre $?p))
+  ?a <- (nodo (nome ?attr) (nodo-padre $?p) (descrizione ?descr))
+  ?c <- (contatore-spiegazione ?cont)
   (not (domanda (attributo ?attr) (gia-chiesta TRUE)))
   =>
+  (retract ?c)
+  (assert (contatore-spiegazione (+ ?cont 1)))
   (retract ?s)
+  (bind ?n-spieg (+ ?cont 1))
+  (stampa-spiegazione-attributo ?n-spieg ?descr)
   (leggi-nodi ?p)
 )
 
@@ -681,7 +742,7 @@
   (not (nodo (nome spiegazione)))
   (not (spiega ?s))
   =>
-  (printout t "end spiegazione" crlf)
+  (printout t "Premere 0 e INVIO per tornare alla normale esecuzione del programma." crlf)
   (bind ?answer (read))
 )
 
