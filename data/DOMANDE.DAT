@@ -45,10 +45,18 @@
               (descrizione-risposte "Si" "No" "Non so")
     )
 
+    (domanda  (attributo momento-manifestazione-problema)
+              (domanda-generica TRUE)
+              (testo-domanda "In quale momento si verifica il problema?")
+              (risposte-valide avvio caricamento-SO SO)
+              (descrizione-risposte "Sin dall'avvio del dispositivo o nelle prime fasi di caricamento" "Durante il caricamento del sistema operativo o al momento del login" "Dopo il caricamento del sistema operativo")
+    )
+
 ;; //***************************************************************************
 
 
 ;; // DOMANDE ACCENSIONE PC ****************************************************
+
 
 (domanda  (attributo riavvio-forzato)
           (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")

@@ -436,8 +436,9 @@
   ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
   ?p2 <- (nodo (nome cavi-display-accessibili) (valore si))
   ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome momento-manifestazione-problema) (valore avvio))
   =>
-  (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
+  (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 ?p3 )))
 )
 
 ;;******************************************************************************
@@ -508,18 +509,24 @@
 ;;Se il problema persiste e' possibile che il cavo sia danneggiato.
 
 (defrule diagnosi-display-guasto
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v1&fasce|linee-oriz))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
   ?p2 <- (nodo (nome riavvio-forzato) (valore no))
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
-  ?p4 <- (nodo (nome fasce-bios) (valore si))
-  ?p5 <- (nodo (nome muovere-cavi-display) (valore ?v3&non-risolto|interni))
+  ?p4 <- (nodo (nome momento-manifestazione-problema) (valore avvio))
+  (or
+    ?p5 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p5 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   =>
   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)))
 )
 
 (defrule diagnosi-display-guasto-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v1&ok|interni))
+  (or
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
@@ -528,11 +535,7 @@
 
 (defrule diagnosi-cavi-display-portatile-guasti
   ?p1 <- (nodo (nome diagnosi) (valore guasto-display))
-  (or
-    ?p2 <- (nodo (nome cavi-display) (valore interni))
-    ?p2 <- (nodo (nome muovere-cavi-display) (valore interni))
-  )
-  (not (nodo (nome diagnosi) (valore cavi-display-portatile-guasti)))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
   =>
   (assert (nodo (nome diagnosi) (valore cavi-display-portatile-guasti) (nodo-padre ?p1 ?p2)))
 )
@@ -546,14 +549,20 @@
 (defrule diagnosi-guasto-vga
   ?p1 <- (nodo (nome disturbo-video) (valore fasce))
   ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p3 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
+  (or
+    ?p3 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p3 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   =>
   (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-guasto-vga-2
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  (or
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
@@ -561,10 +570,13 @@
 )
 
 (defrule diagnosi-problema-driver-video
-  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore fasce))
   ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p3 <- (nodo (nome fasce-bios) (valore no))
-  ?p4 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
+  (or
+    ?p4 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p4 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   =>
   (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
@@ -581,7 +593,10 @@
 
 (defrule diagnosi-problema-caricamento-SO
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  (or
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
   ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
   ?p4 <- (nodo (nome blocco-cursore) (valore si))
   =>
@@ -634,6 +649,11 @@
   (assert (nodo (nome tipo-disturbo-video) (valore display-rotto) (nodo-padre ?p1) (descrizione "E' possibile che qualche componente del display sia guasta.")))
 )
 
+(defrule momento-problema-avvio
+  ?p1 <- (nodo (nome fasce-bios) (valore si))
+  =>
+  (assert (nodo (nome momento-manifestazione-problema) (valore avvio) (nodo-padre ?p1) (descrizione "Il problema si manifesta sin dall'avvio del dispositivo")))
+)
 
 
 
@@ -798,6 +818,12 @@
       (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
         =>
         (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-momento-manifestazione-problema
+        ?p1 <- (nodo (nome stato-accensione) (valore ok))
+        =>
+        (assert (nodo (nome chiedi) (valore momento-manifestazione-problema) (nodo-padre ?p1)))
       )
 
       (defrule DOMANDE-GENERICHE::chiedi-garanzia
