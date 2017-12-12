@@ -297,7 +297,7 @@
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
   ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
-  ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
+  ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE) (domanda-generica FALSE))
   (not (nodo (nome ?attr)))
   ?cont-dom <- (contatore-domande ?i)
   =>
@@ -696,11 +696,11 @@
 )
 
 (deffunction SPIEGAZIONE::stampa-spiegazione-domanda(?n-sp ?n ?dom ?risp)
-  (printout t "[ SP." ?n-sp " ]" crlf "-- Alla domanda n." ?n ": " crlf ?dom crlf "l'utente ha risposto: "  ?risp crlf crlf)
+  (printout t ?n-sp ". Alla domanda n." ?n ": " crlf ?dom crlf "l'utente ha risposto: "  ?risp crlf crlf)
 )
 
 (deffunction SPIEGAZIONE::stampa-spiegazione-attributo(?n-sp ?spiegazione)
-  (printout t "[ SP." ?n-sp " ]" crlf "-- Il sistema ha dedotto che:" crlf ?spiegazione crlf crlf)
+  (printout t  ?n-sp ". Il sistema ha dedotto che:" crlf ?spiegazione crlf crlf)
 )
 
 ; (defrule SPIEGAZIONE::debug
@@ -773,8 +773,7 @@
 
   ;******************* MODULO DOMANDE GENERICHE **********************************
 
-  (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
-
+  (defmodule DOMANDE-GENERICHE (import MAIN deftemplate ?ALL)(import MAIN defglobal ?ALL) (import MAIN deffunction ?ALL)(export ?ALL))
 
 
       (defrule DOMANDE-GENERICHE::init
@@ -786,14 +785,51 @@
 
       (defrule DOMANDE-GENERICHE::end
         (declare (salience ?*lowest-priority*))
+        (not (domanda (domanda-generica TRUE) (gia-chiesta FALSE)))
         =>
+        (assert (wtf))
         (set-strategy depth)
         (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
         (focus MAIN)
       )
 
 
+      (defrule DOMANDE-GENERICHE::chiedi-domanda-generica
+        (declare (salience ?*low-priority*))
+        ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
+        ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE)(domanda-generica TRUE))
+        (not (nodo (nome ?attr)))
+        ?cont-dom <- (contatore-domande ?i)
+        =>
+        (bind ?j (+ ?i 1))
+        (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
+        (if (= ?risposta 0) then
+          (retract ?ask)
+          (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+          (assert (init-revisiona-domande))
+        else
+          (if (= ?risposta 9) then
+            (retract ?ask)
+            (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+            (assert (nodo (nome spiegazione) (valore ?attr)))
+            (focus SPIEGAZIONE)
+          else
+            ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+            (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
+            ;;(retract ?ask)
+            (retract ?cont-dom)
+            (assert (contatore-domande ?j))
+          )
+        )
+      )
 
+      (defrule DOMANDE-GENERICHE::usa-risposta-utente-gen
+        ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
+        ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta TRUE) (risposta-selezionata ?risp) (domanda-generica TRUE))
+        (not (nodo (nome ?attr)))
+        =>
+        (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+      )
 
       (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
         =>
