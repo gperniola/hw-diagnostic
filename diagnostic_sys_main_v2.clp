@@ -297,7 +297,7 @@
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
   ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
-  ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE) (domanda-generica FALSE))
+  ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr)))
   ?cont-dom <- (contatore-domande ?i)
   =>
@@ -787,15 +787,13 @@
         (declare (salience ?*lowest-priority*))
         (not (domanda (domanda-generica TRUE) (gia-chiesta FALSE)))
         =>
-        (assert (wtf))
         (set-strategy depth)
         (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
-        (focus MAIN)
       )
 
 
       (defrule DOMANDE-GENERICHE::chiedi-domanda-generica
-        (declare (salience ?*low-priority*))
+        ;(declare (salience ?*low-priority*))
         ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
         ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE)(domanda-generica TRUE))
         (not (nodo (nome ?attr)))

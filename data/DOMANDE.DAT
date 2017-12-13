@@ -38,12 +38,12 @@
               (descrizione-risposte "Si" "No" "Non so")
     )
 
-    (domanda  (attributo installazione-nuovo-hw)
+     (domanda  (attributo installazione-nuovo-hw)
               (domanda-generica TRUE)
-              (testo-domanda "Sono state installate nuove componenti hardware prima che il problema cominciasse a verificarsi?")
+            (testo-domanda "Sono state installate nuove componenti hardware prima che il problema cominciasse a verificarsi?")
               (risposte-valide si no non-so)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
+             (descrizione-risposte "Si" "No" "Non so")
+     )
 
     (domanda  (attributo momento-manifestazione-problema)
               (domanda-generica TRUE)
