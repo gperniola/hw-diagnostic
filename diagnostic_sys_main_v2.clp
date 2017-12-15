@@ -4,12 +4,58 @@
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
 
+;;******************
+;;*    TEMPLATES   *
+;;******************
+
+  (deftemplate nodo
+    (slot nome    (type SYMBOL))
+    (multislot valore  (type SYMBOL))
+    (slot tipo (type SYMBOL))
+    (slot descrizione (type STRING))
+    (multislot nodo-padre (type FACT-ADDRESS))
+  )
+
+  (deftemplate domanda
+    (slot attributo     (type SYMBOL) (default ?NONE))
+    (slot testo-domanda (type STRING) (default ?NONE))
+    (multislot risposte-valide (type SYMBOL) (default ?NONE))
+    (multislot descrizione-risposte (type STRING) (default ?NONE))
+    (slot risposta-selezionata (type INTEGER))
+    (slot gia-chiesta   (default  FALSE))
+    (slot num-domanda (type INTEGER))
+    (slot stampata (default FALSE))
+    (slot domanda-generica (default FALSE))
+  )
+
+  (deftemplate diagnosi
+    (slot attributo   (type SYMBOL))
+    (slot titolo      (type STRING))
+    (slot descrizione (type STRING))
+  )
+
+
+
+
+(defmodule MAIN(export ?ALL))
 
 ;;****************
 ;;* DEFFUNCTIONS *
 ;;****************
 
-(deffunction ask-question-revision(?n-domande-chieste)
+
+(deffunction MAIN::stampa-header()
+  (clear-window)
+  (printout t crlf crlf)
+  (printout t   "***                                                 ***" crlf
+                "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+                "*                                                     *" crlf
+                "*     Rispondere alle domande inserendo il numero     *" crlf
+                "**       corrispondente alla risposta corretta.      **" crlf
+                "***                                                 ***" crlf crlf)
+)
+
+(deffunction MAIN::ask-question-revision(?n-domande-chieste)
   (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -19,7 +65,7 @@
   )
 ?answer)
 
-(deffunction ask-question-direct (?j ?question $?allowed-values)
+(deffunction MAIN::ask-question-direct (?j ?question $?allowed-values)
   (printout t "***** REVISIONE DOMANDA N." ?j " *****" crlf ?question crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
@@ -34,16 +80,18 @@
    ?answer)
 
 
-(deffunction ask-question (?j ?question $?allowed-values)
+(deffunction MAIN::ask-question (?j ?question $?allowed-values)
+  (stampa-header)
   (printout t "***** DOMANDA N." ?j " *****" crlf ?question crlf crlf)
   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
   )
+  (printout t crlf "9. Perche' questa domanda?")
   (printout t crlf "0. Revisiona domande precedenti." crlf crlf)
   (printout t "Inserire risposta: ")
   (bind ?answer (read))
   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-  (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0))) do
+  (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0)) (not (= ?answer 9))) do
       (printout t crlf "Valore inserito non valido, riprovare: ")
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
@@ -51,7 +99,7 @@
    ?answer)
 
 
-(deffunction ask-stop-program ()
+(deffunction MAIN::ask-stop-program ()
   (printout t crlf crlf "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
   (bind ?answer (read))
   (while (not (member ?answer (create$ 1 2)))
@@ -63,49 +111,23 @@
   )
 )
 
-(deffunction stampa-header-revisione()
+(deffunction MAIN::stampa-header-revisione()
   (clear-window)
   (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
 )
 
-(deffunction stampa-footer-revisione()
+(deffunction MAIN::stampa-footer-revisione()
   (printout t crlf "***********************************************************" crlf crlf crlf)
 )
 
-(defmodule MAIN (export ?ALL))
 
-;;******************
-;;*    TEMPLATES   *
-;;******************
 
-  (deftemplate nodo
-    (slot nome    (type SYMBOL))
-    (multislot valore  (type SYMBOL))
-    (slot tipo (type SYMBOL))
-    (slot descrizione (type STRING))
-    (multislot nodo-padre (type FACT-ADDRESS))
-  )
 
-  (deftemplate diagnosi
-    (slot nome        (type SYMBOL))
-    (slot descrizione (type STRING))
-  )
-
-  (deftemplate domanda
-    (slot attributo     (type SYMBOL) (default ?NONE))
-    (slot testo-domanda (type STRING) (default ?NONE))
-    (multislot risposte-valide (type SYMBOL) (default ?NONE))
-    (multislot descrizione-risposte (type STRING) (default ?NONE))
-    (slot risposta-selezionata (type INTEGER))
-    (slot gia-chiesta   (default  FALSE))
-    (slot num-domanda (type INTEGER))
-    (slot stampata (default FALSE))
-  )
 
 ;;**********************
 ;;*    INITIAL FACTS   *
 ;;**********************
-(deffacts fatti-iniziali
+(deffacts MAIN::fatti-iniziali
 
   (contatore-domande 0)
 )
@@ -117,38 +139,44 @@
 ;;* CONTROL RULES  *
 ;;******************
 
-(defrule inizializzazione
+(defrule MAIN::inizializzazione
   (declare (salience ?*highest-priority*))
   =>
+  (load-facts "data/DOMANDE.DAT")
+  (load-facts "data/DIAGNOSI.DAT")
+  ;(assert (facts-loaded))
   (clear-window)
-  ;(focus DOMANDE-GENERICHE)
-  (printout t crlf crlf)
-  (printout t   "***                                                 ***" crlf
-                "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
-                "*                                                     *" crlf
-                "*     Rispondere alle domande inserendo il numero     *" crlf
-                "**       corrispondente alla risposta corretta.      **" crlf
-                "***                                                 ***" crlf crlf))
+  (focus DOMANDE-GENERICHE)
+)
+;   (printout t crlf crlf)
+;   (printout t   "***                                                 ***" crlf
+;                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+;                 "*                                                     *" crlf
+;                 "*     Rispondere alle domande inserendo il numero     *" crlf
+;                 "**       corrispondente alla risposta corretta.      **" crlf
+;                 "***                                                 ***" crlf crlf))
 
 
-(defrule diagnosi-trovata
+(defrule MAIN::diagnosi-trovata
   (declare (salience ?*highest-priority*))
-  (diagnosi (nome ?nome) (descrizione ?desc))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi))
+  (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc))
   =>
-  (printout t crlf ">>>> Diagnosi del guasto: " ?nome " - " ?desc crlf crlf)
-  (halt))
-
-
-(defrule diagnosi-parziale-trovata
-  (declare (salience ?*highest-priority*))
-  (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
-  =>
-  (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
+  (printout t crlf "***** DIAGNOSI *****" crlf " - " ?titolo ":" crlf ?desc crlf crlf)
   (assert(ferma-programma))
 )
 
 
-(defrule ferma-esecuzione
+; (defrule diagnosi-parziale-trovata
+;   (declare (salience ?*highest-priority*))
+;   (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
+;   =>
+;   (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
+;   (assert(ferma-programma))
+; )
+
+
+(defrule MAIN::ferma-esecuzione
   (declare (salience ?*low-priority*))
   (ferma-programma)
   =>
@@ -156,8 +184,14 @@
 )
 
 
+
+
+
+
+
+
 ; STAMPA ELENCO E REVISIONE DOMANDE
-;****************************************************************************
+;*******************************************************************************
 
 (defrule INIT-STAMPA-ELENCO-header
   (declare (salience ?*highest-priority*))
@@ -274,11 +308,18 @@
     (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
     (assert (init-revisiona-domande))
   else
-    ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
-    (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
-    ;;(retract ?ask)
-    (retract ?cont-dom)
-    (assert (contatore-domande ?j))
+    (if (= ?risposta 9) then
+      (retract ?ask)
+      (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+      (assert (nodo (nome spiegazione) (valore ?attr)))
+      (focus SPIEGAZIONE)
+    else
+      ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+      (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
+      ;;(retract ?ask)
+      (retract ?cont-dom)
+      (assert (contatore-domande ?j))
+    )
   )
 )
 
@@ -290,141 +331,21 @@
   (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
 )
 
-;;********************
-;;*    ASK RULES     *
-;;********************
-
-;******************* MODULO DOMANDE GENERICHE **********************************
-
-; (defmodule DOMANDE-GENERICHE (import MAIN ?ALL)(export ?ALL))
-;
-;     (defrule DOMANDE-GENERICHE::init
-;       (declare (salience ?*highest-priority*))
-;       =>
-;       (set-strategy random)
-;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
-;     )
-;
-;     (defrule DOMANDE-GENERICHE::end
-;       (declare (salience ?*lowest-priority*))
-;       =>
-;       (set-strategy depth)
-;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
-;       (focus MAIN)
-;     )
 
 
 
 
-    (defrule chiedi-tipo-dispositivo
-      =>
-      (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
-    )
+;;******************************************************************************
+;;*    REGOLE PER CHIDERE DOMANDE ALL'UTENTE                                   *
+;;******************************************************************************
 
-    (defrule chiedi-accensione
-      =>
-      (assert (nodo (nome chiedi) (valore stato-accensione)))
-    )
 
-    (defrule chiedi-problema-principale
-      =>
-      (assert (nodo (nome chiedi) (valore problema-principale)))
-    )
-
-    (defrule chiedi-anni-dispositivo
-      =>
-      (assert (nodo (nome chiedi) (valore anni-dispositivo)))
-    )
-
-    (defrule chiedi-installazione-nuovo-hw
-      =>
-      (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
-    )
-
-;*******************************************************************************
-
-(defrule chiedi-garanzia
-  ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
-  =>
-  (assert (nodo (nome chiedi) (valore anni-dispositivo) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-problema-boot-o-SO
-  ?p1 <- (nodo (nome stato-accensione) (valore ok))
-  ?p2 <- (nodo (nome problema-principale) (valore accensione-SO))
-  =>
-  (assert (nodo (nome chiedi) (valore problema-boot-o-SO) (nodo-padre ?p1 ?p2)))
-)
+;; DOMANDE ACCENSIONE E SO *****************************************************
 
 (defrule chiedi-riavvio-forzato
   ?p1 <- (nodo (nome stato-accensione) (valore ok))
   =>
   (assert (nodo (nome chiedi) (valore riavvio-forzato) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-bluescreen
-  ?p1 <- (nodo (nome problema-boot-o-SO) (valore SO))
-  ?p2 <- (nodo (nome sistema-operativo) (valore windows))
-  =>
-  (assert (nodo (nome chiedi) (valore bluescreen) (nodo-padre ?p1 ?p2)))
-)
-
-(defrule chiedi-segnali-bios
-  ?p1 <- (nodo (nome problema-boot-o-SO) (valore boot))
-  =>
-  (assert (nodo (nome chiedi) (valore segnali-bios) (nodo-padre ?p1)))
-)
-
-; (defrule chiedi-display-rotto
-;   ?p1 <- (nodo (nome problema-principale) (valore video))
-;   =>
-;   (assert (nodo (nome chiedi) (valore display-rotto) (nodo-padre ?p1)))
-; )
-
-(defrule chiedi-disturbo-video
-  ?p1 <- (nodo (nome problema-principale) (valore video))
-  =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-monitor-esterno
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|schermo-nero|linee-oriz))
-  ;?p2 <- (nodo (nome riavvio-forzato) (valore no))
-  =>
-  (assert (nodo (nome chiedi) (valore monitor-esterno) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-fasce-bios
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
-  =>
-  (assert (nodo (nome chiedi) (valore fasce-bios) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-blocco-cursore
-  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  =>
-  (assert (nodo (nome chiedi) (valore blocco-cursore) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-cavi-display
-  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
-  =>
-  (assert (nodo (nome chiedi) (valore cavi-display) (nodo-padre ?p1 ?p2 )))
-)
-
-(defrule chiedi-muovere-cavi-display
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
-  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
-  =>
-  (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 )))
-)
-
-(defrule cavi-display-portatile
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-  =>
-  (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
-  (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
 )
 
 (defrule chiedi-alimentazione
@@ -433,21 +354,7 @@
   (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?p1)))
 )
 
-(defrule chiedi-ventole
-  ?p1 <- (nodo (nome problema-principale) (valore surriscaldamento))
-  =>
-  (assert (nodo (nome chiedi) (valore ventole) (nodo-padre ?p1)))
-)
-
-(defrule chiedi-ronzio-alimentatore
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-  =>
-  (assert (nodo (nome chiedi) (valore ronzio-alimentatore) (nodo-padre ?p1 ?p2)))
-)
-
-
-;;******************* DESKTOP QUESTIONS ***********************************
+;; Per dispositivi desktop ...
 
 (defrule chiedi-spia-alimentatore-pcdesktop
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
@@ -466,10 +373,7 @@
   (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?p1 ?p2 ?p3)))
 )
 
-
-;;******************* LAPTOP QUESTIONS ***********************************
-
-
+;; Per dispositivi laptop ...
 
 (defrule chiedi-spia-alimentatore-pcportatile
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
@@ -486,137 +390,79 @@
   =>
   (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?p1 ?p2 ?p3)))
 )
-;;********************
-;;*     DIAGNOSI     *
-;;********************
 
-(defrule diagnosi-cavi-display-non-connessi
-  ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto))
+;;******************************************************************************
+
+
+;; DOMANDE VIDEO ***************************************************************
+
+(defrule chiedi-disturbo-video
+  ?p1 <- (nodo (nome problema-principale) (valore video))
   =>
-  (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)
-  (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?p1)))
 )
 
-(defrule diagnosi-display-guasto
-  ?p1 <- (nodo (nome disturbo-video) (valore ?v1&fasce|linee-oriz))
-  ?p2 <- (nodo (nome riavvio-forzato) (valore no))
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
-  ?p4 <- (nodo (nome fasce-bios) (valore si))
-  ?p5 <- (nodo (nome muovere-cavi-display) (valore ?v3&non-risolto|interni))
+(defrule chiedi-monitor-esterno
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|schermo-nero|linee-oriz))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore display-rotto))
+  ;?p2 <- (nodo (nome riavvio-forzato) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+  (assert (nodo (nome chiedi) (valore monitor-esterno) (nodo-padre ?p1)))
 )
 
-(defrule diagnosi-display-guasto-2
+(defrule chiedi-fasce-bios
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
+  =>
+  (assert (nodo (nome chiedi) (valore fasce-bios) (nodo-padre ?p1)))
+)
+
+(defrule chiedi-blocco-cursore
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v1&ok|interni))
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
-  ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
+  (assert (nodo (nome chiedi) (valore blocco-cursore) (nodo-padre ?p1)))
 )
 
-(defrule diagnosi-cavi-display-portatile-guasti
-  ?p1 <- (nodo (nome diagnosi) (valore guasto-display))
-  (or
-    ?p2 <- (nodo (nome cavi-display) (valore interni))
-    ?p2 <- (nodo (nome muovere-cavi-display) (valore interni))
-  )
-  (not (nodo (nome diagnosi) (valore guasto-cavi)))
-  =>
-  (assert (nodo (nome diagnosi) (valore guasto-cavi) (nodo-padre ?p1 ?p2)
-  (descrizione "I cavi interni che collegano il display alla scheda madre potrebbero essere danneggiati o non collegati correttamente.")))
-)
-
-(defrule diagnosi-display-guasto-3
-  ?p1 <- (nodo (nome disturbo-video) (valore macchie))
-  =>
-  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
-  (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
-)
-
-; (defrule diagnosi-display-guasto-4
-;   ?p1 <- (nodo (nome disturbo-video) (valore scolorimento))
-;   (or
-;       ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-;       ?p2 <- (nodo (nome cavi-display) (valore ok))
-;   )
-;   =>
-;   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)
-;   (descrizione "Il display potrebbe essere danneggiato e richiederne la sostituzione.")))
-; )
-
-
-(defrule diagnosi-guasto-vga
-  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
-  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p3 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
-  =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)
-  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
-)
-
-(defrule diagnosi-guasto-vga-2
+(defrule chiedi-cavi-display
   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore si))
+  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "La scheda video potrebbe essere danneggiata e richiederne la sostituzione.")))
+  (assert (nodo (nome chiedi) (valore cavi-display) (nodo-padre ?p1 ?p2 )))
 )
 
-(defrule diagnosi-problema-driver-video
-  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
-  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p3 <- (nodo (nome fasce-bios) (valore no))
-  ?p4 <- (nodo (nome muovere-cavi-display) (valore ?v2&non-risolto|interni))
+(defrule chiedi-muovere-cavi-display
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
+  ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore si))
+  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  ?p3 <- (nodo (nome momento-manifestazione-problema) (valore avvio))
   =>
-  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
+  (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?p1 ?p2 ?p3 )))
 )
 
-(defrule diagnosi-problema-driver-video-2
-  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p4 <- (nodo (nome blocco-cursore) (valore no))
-  =>
-  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema con i driver della scheda video, provare ad aggiornare o ripristinare i driver.")))
-)
+;;******************************************************************************
 
-(defrule diagnosi-problema-caricamento-SO
-  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
-  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
-  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
-  ?p4 <- (nodo (nome blocco-cursore) (valore si))
-  =>
-  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)
-  (descrizione "Potrebbe esserci un problema nel caricamento del sistema operativo dovuto a problemi di hd o corruzione file.")))
-)
 
-(defrule diagnosi-cavi-display-disconnessi
-  ?p1 <- (nodo (nome cavi-display) (valore errore))
-  =>
-  (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi) (descrizione "Collegare correttamente i cavi video del display, quindi verificare se il problema è risolto.") (nodo-padre ?p1)))
-)
 
+
+;;******************************************************************************
+;;*     DIAGNOSI                                                               *
+;;******************************************************************************
+
+;; DIAGNOSI ACCENSIONE E SO ****************************************************
 
 (defrule diagnosi-alimentazione-disconnessa
   ?p1 <- (nodo (nome stato-accensione) (valore fallito))
   ?p2 <- (nodo (nome alimentazione-collegata) (valore no))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (descrizione "Collegare correttamente i cavi d'alimentazione e Assicurarsi
-  che ci sia passaggio di corrente, quindi verificare se il problema è risolto.") (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2)))
 )
 
 (defrule diagnosi-batteria-difettosa
   ?p1 <- (nodo (nome batteria-difettosa) (valore si))
   =>
-  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (descrizione "La batteria è danneggiata. Utilizzare il dispositivo solo con l'alimentazione elettrica diretta e sostituire la batteria.") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore batteria-difettosa)(nodo-padre ?p1)))
 )
 
 (defrule diagnosi-alimentatore-spento
@@ -624,7 +470,7 @@
   ?p2 <- (nodo (nome stato-accensione) (valore fallito))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-spento) (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.") (nodo-padre ?p1 ?p2 ?p3)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-alimentatore-guasto
@@ -636,7 +482,7 @@
   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
 )
 =>
-(assert (nodo (nome diagnosi) (valore alimentatore-guasto) (descrizione "L'alimentatore potrebbe essere guasto. Si consiglia di staccare il dispositivo dall'alimentazione elettrica in quanto potrebbe ulteriormente danneggiarsi.") (nodo-padre ?p1 ?p2 ?p3)))
+(assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
 (defrule diagnosi-scheda-madre-guasta
@@ -647,301 +493,378 @@
   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
 )
 =>
-(assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito. Si consiglia di staccare il dispositivo dall'alimentazione elettrica e contattare l'assistenza tecnica.") (nodo-padre ?p1 ?p2 ?p3)))
+(assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3)))
 )
 
+;;******************************************************************************
 
 
-(defrule diagnosi-parziale-connettori-video
-  ?p1 <- (nodo (nome disturbo-video) (valore si))
+;; DIAGNOSI VIDEO **************************************************************
+
+(defrule diagnosi-cavi-display-non-connessi
+  ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-connettori-video) (descrizione "Problema ai connettori video") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?p1)))
 )
+;;Se il problema persiste e' possibile che il cavo sia danneggiato.
 
-(defrule diagnosi-parziale-problema-pixels
-  ?p1 <- (nodo (nome disturbo-video) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-pixels) (descrizione "Possibile guasto ai pixels del display") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-sostituzione-display
+(defrule diagnosi-display-guasto
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza))
+  ?p2 <- (nodo (nome riavvio-forzato) (valore no))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
+  ?p4 <- (nodo (nome momento-manifestazione-problema) (valore avvio))
   (or
-    ?p1 <- (nodo (nome display-rotto) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore problema-pixels))
+    ?p5 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p5 <- (nodo (nome cavi-display-accessibili) (valore no))
   )
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore sostituzione-display) (descrizione "Necessaria sostituzione del display") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)))
 )
 
-(defrule diagnosi-parziale-stop-error
-  ?p1 <- (nodo (nome bluescreen) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore stop-error) (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-conflitto-hw
-  ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
-  ?p2 <- (nodo (nome installazione-nuovo-hw) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore conflitto-hw) (descrizione "Conflitto tra diversi componenti hardware") (nodo-padre ?p1 ?p2)))
-)
-
-(defrule diagnosi-parziale-alimentazione
+(defrule diagnosi-display-guasto-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
   (or
-    (and
-      ?p1 <- (nodo (nome bluescreen) (valore no))
-      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-    )
-    (and
-      ?p1 <- (nodo (nome segnali-bios) (valore no))
-      ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-    )
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
+)
+
+(defrule diagnosi-cavi-display-portatile-guasti
+  ?p1 <- (nodo (nome diagnosi) (valore guasto-display))
+  ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore cavi-display-portatile-guasti) (nodo-padre ?p1 ?p2)))
+)
+
+(defrule diagnosi-display-guasto-3
+  ?p1 <- (nodo (nome disturbo-video) (valore macchie))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?p1)))
+)
+
+(defrule diagnosi-guasto-vga
+  ?p1 <- (nodo (nome disturbo-video) (valore fasce))
+  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  (or
+    ?p3 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p3 <- (nodo (nome cavi-display-accessibili) (valore no))
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3)))
 )
 
-(defrule diagnosi-parziale-alimentazione-2
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-  =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-alimentazione) (descrizione "Problema all'alimentazione del dispositivo") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-scheda-madre
+(defrule diagnosi-guasto-vga-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
   (or
-      (and
-        ?p1 <- (nodo (nome bluescreen) (valore no))
-        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-      )
-      (and
-        ?p1 <- (nodo (nome segnali-bios) (valore no))
-        ?p2 <- (nodo (nome riavvio-forzato) (valore si))
-      )
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
+  )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
+  =>
+  (assert (nodo (nome diagnosi) (valore guasto-vga) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
+)
+
+(defrule diagnosi-problema-driver-video
+  ?p1 <- (nodo (nome tipo-disturbo-video) (valore fasce))
+  ?p2 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p3 <- (nodo (nome fasce-bios) (valore no))
+  (or
+    ?p4 <- (nodo (nome muovere-cavi-display) (valore non-risolto))
+    ?p4 <- (nodo (nome cavi-display-accessibili) (valore no))
   )
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1 ?p2)))
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
+;;provare ad aggiornare o ripristinare i driver.
 
-(defrule diagnosi-parziale-scheda-madre-2
-  ?p1 <- (nodo (nome stato-accensione) (valore fallito))
+(defrule diagnosi-problema-driver-video-2
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
+  ?p2 <- (nodo (nome cavi-display) (valore ?v2&ok|interni))
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore no))
   =>
-  (assert (nodo(nome diagnosi-parziale) (valore problema-scheda-madre) (descrizione "Possibile guasto della scheda madre") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore problema-driver-video) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
-(defrule diagnosi-parziale-bios
-  ?p1 <- (nodo (nome segnali-bios) (valore si))
-  =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-bios) (descrizione "Problema impostazioni BIOS") (nodo-padre ?p1)))
-)
-
-(defrule diagnosi-parziale-ram
+(defrule diagnosi-problema-caricamento-SO
+  ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero))
   (or
-    ?p1 <- (nodo (nome segnali-bios) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
+    ?p2 <- (nodo (nome cavi-display) (valore ok))
+    ?p2 <- (nodo (nome cavi-display-accessibili) (valore no))
   )
+  ?p3 <- (nodo (nome monitor-esterno) (valore ?v1&errore|no))
+  ?p4 <- (nodo (nome blocco-cursore) (valore si))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-ram) (descrizione "Possibile guasto memoria RAM") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
-(defrule diagnosi-parziale-hard-disk
-  (or
-    ?p1 <- (nodo (nome segnali-bios) (valore si))
-    ?p1 <- (nodo (nome diagnosi-parziale) (valore stop-error))
-  )
+(defrule diagnosi-cavi-display-disconnessi ;;NON INSERITA NELLE DIAGNOSI
+  ?p1 <- (nodo (nome cavi-display) (valore errore))
   =>
-  (assert (nodo (nome diagnosi-parziale) (valore problema-hard-disk) (descrizione "Possibile guasto del disco fisso") (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore cavi-display-disconnessi)(nodo-padre ?p1)))
+)
+
+;;******************************************************************************
+
+
+
+
+;; REGOLE PER INFERENZA ********************************************************
+
+; (defrule cavi-display-portatile
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+;   =>
+;   (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
+;   (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
+; )
+
+(defrule dispositivo-portatile
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
+  =>
+  (assert (nodo (nome possiede-batteria) (valore si) (nodo-padre ?p1) (descrizione "Il dispositivo possiede una batteria.")))
+  (assert (nodo (nome cavi-display-accessibili) (valore no) (nodo-padre ?p1) (descrizione "I cavi che collegano il dispositivo al display non sono accessibili.")))
+)
+
+(defrule dispositivo-fisso
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
+  =>
+  (assert (nodo (nome possiede-batteria) (valore no) (nodo-padre ?p1) (descrizione "Il dispositivo non possiede una batteria.")))
+  (assert (nodo (nome cavi-display-accessibili) (valore si) (nodo-padre ?p1) (descrizione "I cavi che collegano il dispositivo al display sono accessibili.")))
+)
+
+(defrule interferenza-video
+  ?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
+  =>
+  (assert (nodo (nome tipo-disturbo-video) (valore interferenza) (nodo-padre ?p1) (descrizione "E' possibile che il problema sia causato da un interferenza.")))
+)
+
+(defrule display-rotto
+  ?p1 <- (nodo (nome disturbo-video) (valore  ?v&fasce|schermo-nero|linee-oriz))
+  =>
+  (assert (nodo (nome tipo-disturbo-video) (valore display-rotto) (nodo-padre ?p1) (descrizione "E' possibile che qualche componente del display sia guasta.")))
+)
+
+(defrule momento-problema-avvio
+  ?p1 <- (nodo (nome fasce-bios) (valore si))
+  =>
+  (assert (nodo (nome momento-manifestazione-problema) (valore avvio) (nodo-padre ?p1) (descrizione "Il problema si manifesta sin dall'avvio del dispositivo")))
 )
 
 
 
 
-(defrule deduci-SO-windows
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
-  =>
-  (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
-)
-
-(defrule deduci-SO-android
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smarthpone))
-  =>
-  (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
-)
-
-
+; (defrule deduci-SO-windows
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
+;   =>
+;   (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
+; )
+;
+; (defrule deduci-SO-android
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smartphone))
+;   =>
+;   (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
+; )
 
 
-;;********************
-;;* QUESTIONS FACTS  *
-;;********************
+
+
+
+
+
+
+(defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
+
 (defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
 
 
 
-  (deffacts ELENCO-DOMANDE::domande
+(defmodule SPIEGAZIONE(import MAIN ?ALL)(export ?ALL))
 
+; SPIEGAZIONE DOMANDA
+;*******************************************************************************
 
-    (domanda  (attributo tipo-dispositivo)
-              (testo-domanda "A quale tipologia appartiene il dispositivo?")
-              (risposte-valide pc-desktop pc-portatile)
-              (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
-    )
-
-    (domanda  (attributo stato-accensione)
-              (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
-              (risposte-valide ok fallito)
-              (descrizione-risposte "Si" "No, il dispositivo non si accende")
-    )
-
-    (domanda  (attributo problema-principale)
-              (testo-domanda "Qual'e' la categoria che sembra più appropriata per il problema da analizzare?")
-              (risposte-valide accensione-SO video surriscaldamento altro)
-              (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
-                                    "Disturbo del segnale video, problema del display"
-                                    "Surriscaldamento eccessivo del dispositivo"
-                                    "Altro")
-    )
-
-    (domanda  (attributo anni-dispositivo)
-              (testo-domanda "Quanti anni ha il dispositivo?")
-              (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
-              (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
-    )
-
-    (domanda  (attributo garanzia)
-              (testo-domanda "Il dispositivo è ancora in garanzia?")
-              (risposte-valide si no sconosciuto)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
-
-
-
-
-
-    (domanda  (attributo problema-boot-o-SO)
-              (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
-              (risposte-valide boot SO nessuno)
-              (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
-    )
-
-    (domanda  (attributo riavvio-forzato)
-              (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
-              (risposte-valide si no)
-              (descrizione-risposte "Si" "No")
-    )
-
-    (domanda  (attributo bluescreen)
-              (testo-domanda "Il sistema termina con un errore bluescreen?")
-              (risposte-valide si no non-so)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
-
-    (domanda  (attributo installazione-nuovo-hw)
-              (testo-domanda "E' stato installato del nuovo hardware prima che il problema cominciasse a verificarsi?")
-              (risposte-valide si no non-so)
-              (descrizione-risposte "Si" "No" "Non so")
-    )
-
-    (domanda  (attributo segnali-bios)
-              (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
-    )
-
-    ; (domanda  (attributo stato-video)
-    ;           (testo-domanda "Il problema ha a che fare con il display o il segnale video?")
-    ;           (risposte-valide fallito ok )
-    ;           (descrizione-risposte "Si" "No")
-    ; )
-
-    ; (domanda  (attributo display-rotto)
-    ;           (testo-domanda "Il display del dispositivo risulta rotto o incrinato?")
-    ;           (risposte-valide si no )
-    ;           (descrizione-risposte "Si" "No")
-    ; )
-
-    (domanda  (attributo disturbo-video)
-              (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
-              (risposte-valide fasce macchie linee-oriz schermo-nero )
-              (descrizione-risposte "Linee colorate verticali, raggruppate in fasce piu' larghe" "Una o piu' macchie di colore nero o bianco che coprono porzioni dello schermo"
-              "Linee di colore nero/grigio orizzontali, possono essere intermittenti" "Schermo completamente nero, come se spento")
-    )
-
-    (domanda  (attributo monitor-esterno)
-              (testo-domanda "E' possibile collegare un monitor esterno/secondario al dispositivo?")
-              (risposte-valide funzionante errore no)
-              (descrizione-risposte "Si, il monitor esterno/secondario funziona e non presenta i problemi del monitor principale"
-              "Si, ma il monitor esterno/secondario presenta lo stesso problema del monitor principale"
-              "No, non dispongo di un altro monitor")
-    )
-
-    (domanda  (attributo blocco-cursore)
-              (testo-domanda "Sullo schermo nero viene comunque visualizzato il cursore del mouse?")
-              (risposte-valide si no)
-              (descrizione-risposte "Si, la freccia del mouse e' visibile" "No, lo schermo e' completamente nero")
-    )
-
-    (domanda  (attributo fasce-bios)
-              (testo-domanda "Le fasce sono visibili sin dall'avvio del dispositivo oppure appaiono in un secondo momento? Ad esempio al momento del caricamento del desktop?")
-              (risposte-valide si no)
-              (descrizione-risposte "Le fasce appaiono sin dall'avvio" "Le fasce appaiono in un secondo momento")
-    )
-
-    (domanda  (attributo cavi-display)
-              (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso (di solito è presente un led di colore blu/verde che indica se il display è acceso e riceve segnale )")
-              (risposte-valide ok errore )
-              (descrizione-risposte "I cavi sono correttamente collegati MA il display presenta comunque il problema"
-               "I cavi non sono correttamente collegati oppure il display non e' acceso")
-    )
-
-    (domanda  (attributo muovere-cavi-display)
-              (testo-domanda "Verificare che lo spinotto del cavo video sia correttamente inserito nella presa, provare a muovere lo spinotto per verificare se il problema sparisce")
-              (risposte-valide risolto non-risolto )
-              (descrizione-risposte "Muovendo i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
-    )
-
-    (domanda  (attributo alimentazione-collegata)
-              (testo-domanda "Assicurarsi che il cavo di alimentazione del dispositivo sia correttamente collegato alla presa elettrica e che ci sia passaggio di corrente [ad esempio testando la presa con una lampada]")
-              (risposte-valide si no )
-              (descrizione-risposte "Il cavo e' collegato correttamente MA il dispositivo non si accende"
-               "Il cavo non e' collegato oppure non c'e' passaggio di corrente dalla presa")
-    )
-
-    (domanda  (attributo batteria-difettosa)
-              (testo-domanda "Provare a rimuovere la batteria del dispositivo
-               e utilizzare solamente l'alimentazione elettrica diretta per avviare il dispositivo.")
-              (risposte-valide si no )
-              (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-               "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica MA continua a non accendersi")
-    )
-
-    (domanda  (attributo interruttore-alimentatore)
-              (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia impostato su acceso. L'interrutore si trova nella parte posteriore del pc, in prossimità del cavo d'alimentazione.")
-              (risposte-valide acceso spento )
-              (descrizione-risposte "L'interrutore è correttamente acceso MA il dispositivo continua a non accendersi"
-               "L'interruttore è spento")
-    )
-
-    (domanda  (attributo ronzio-alimentatore)
-              (testo-domanda "E' possibile udire un suono simile ad un ronzio provenire dall'alimentatore quando è connesso alla rete elettrica?")
-              (risposte-valide si no )
-              (descrizione-risposte "Si" "No")
-    )
-
-    (domanda  (attributo spia-alimentatore-pcportatile)
-              (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia, di solito di colore verde o bianco, che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
-              (risposte-valide si no sconosciuto )
-              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
-    )
-
-    (domanda  (attributo spia-alimentatore-pcdesktop)
-              (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che dovrebbe accendersi quando il dispositivo e' collegato all'alimentazione esterna. La spia e' accesa? ")
-              (risposte-valide si no sconosciuto )
-              (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
-    )
-
-    (domanda  (attributo ventole)
-              (testo-domanda "Le ventole nella parte posteriore del dispositivo funzionano correttamente?")
-              (risposte-valide si-tiepida si-calda no-aria no-ventole )
-              (descrizione-risposte "Si, le ventole funzionano ed emanano aria fredda/tiepida" "Si, le ventole funzionano ed emanano aria molto calda" "No, le ventole non sembrano funzionare o non emanano aria" "Il dispositivo non possiede ventole")
-    )
+(deffunction SPIEGAZIONE::leggi-nodi($?p)
+  (loop-for-count (?cnt1 1 (length ?p)) do
+    (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
+    (assert (spiega ?v))
   )
+)
+
+(deffunction SPIEGAZIONE::stampa-spiegazione-domanda(?n-sp ?n ?dom ?risp)
+  (printout t ?n-sp ". Alla domanda n." ?n ": " crlf ?dom crlf "l'utente ha risposto: "  ?risp crlf crlf)
+)
+
+(deffunction SPIEGAZIONE::stampa-spiegazione-attributo(?n-sp ?spiegazione)
+  (printout t  ?n-sp ". Il sistema ha dedotto che:" crlf ?spiegazione crlf crlf)
+)
+
+; (defrule SPIEGAZIONE::debug
+;   (declare (salience ?*highest-priority*))
+;   =>
+;   (printout t "DEBUG >> Modulo spiegazioni" crlf crlf)
+; )
+
+(defrule SPIEGAZIONE::init-spiegazione-domanda-non-generica
+  ?target <- (nodo (nome spiegazione) (valore ?attr ))
+  ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
+  (domanda (attributo ?attr) (domanda-generica FALSE))
+  =>
+  (printout t "***** MOTIVAZIONI DOMANDA *****" crlf)
+  (retract ?target)
+  (leggi-nodi ?p)
+  ;(bind ?answer (read))
+  (assert (contatore-spiegazione 0))
+)
+
+(defrule SPIEGAZIONE::init-spiegazione-domanda-generica
+  ?target <- (nodo (nome spiegazione) (valore ?attr ))
+  ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
+  (domanda (attributo ?attr) (domanda-generica TRUE))
+  =>
+  (printout t "***** MOTIVAZIONI DOMANDA *****" crlf crlf)
+  (printout t "Questa e' una domanda generica necessaria per introdurre al sistema delle informazioni basilari sul dispositivo." crlf)
+  (retract ?target)
+)
+
+(defrule SPIEGAZIONE::spiega-domanda
+  ?s <- (spiega ?attr)
+  ?d <- (domanda (attributo ?attr) (gia-chiesta TRUE) (num-domanda ?n-domanda) (risposta-selezionata ?n-risposta) (testo-domanda ?domanda) (descrizione-risposte $?risposte))
+  ?c <- (contatore-spiegazione ?cont)
+  =>
+  (retract ?c)
+  (assert (contatore-spiegazione (+ ?cont 1)))
+  (bind ?risposta (nth$ ?n-risposta ?risposte))
+  (bind ?n-spieg (+ ?cont 1))
+  (stampa-spiegazione-domanda ?n-spieg ?n-domanda ?domanda ?risposta)
+  (retract ?s)
+)
+
+(defrule SPIEGAZIONE::spiega-attributo
+  ?s <- (spiega ?attr)
+  ?a <- (nodo (nome ?attr) (nodo-padre $?p) (descrizione ?descr))
+  ?c <- (contatore-spiegazione ?cont)
+  (not (domanda (attributo ?attr) (gia-chiesta TRUE)))
+  =>
+  (retract ?c)
+  (assert (contatore-spiegazione (+ ?cont 1)))
+  (retract ?s)
+  (bind ?n-spieg (+ ?cont 1))
+  (stampa-spiegazione-attributo ?n-spieg ?descr)
+  (leggi-nodi ?p)
+)
+
+(defrule SPIEGAZIONE::end-spiegazione
+  (not (nodo (nome spiegazione)))
+  (not (spiega ?s))
+  =>
+  (printout t "Premere 0 e INVIO per tornare alla normale esecuzione del programma." crlf)
+  (bind ?answer (read))
+)
+
+
+
+
+
+
+  ;******************* MODULO DOMANDE GENERICHE **********************************
+
+  (defmodule DOMANDE-GENERICHE (import MAIN deftemplate ?ALL)(import MAIN defglobal ?ALL) (import MAIN deffunction ?ALL)(export ?ALL))
+
+
+      (defrule DOMANDE-GENERICHE::init
+        (declare (salience ?*highest-priority*))
+        =>
+        (set-strategy random)
+        (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
+      )
+
+      (defrule DOMANDE-GENERICHE::end
+        (declare (salience ?*lowest-priority*))
+        (not (domanda (domanda-generica TRUE) (gia-chiesta FALSE)))
+        =>
+        (set-strategy depth)
+        (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to depth." crlf crlf)
+      )
+
+
+      (defrule DOMANDE-GENERICHE::chiedi-domanda-generica
+        ;(declare (salience ?*low-priority*))
+        ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
+        ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE)(domanda-generica TRUE))
+        (not (nodo (nome ?attr)))
+        ?cont-dom <- (contatore-domande ?i)
+        =>
+        (bind ?j (+ ?i 1))
+        (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
+        (if (= ?risposta 0) then
+          (retract ?ask)
+          (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+          (assert (init-revisiona-domande))
+        else
+          (if (= ?risposta 9) then
+            (retract ?ask)
+            (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
+            (assert (nodo (nome spiegazione) (valore ?attr)))
+            (focus SPIEGAZIONE)
+          else
+            ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+            (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
+            ;;(retract ?ask)
+            (retract ?cont-dom)
+            (assert (contatore-domande ?j))
+          )
+        )
+      )
+
+      (defrule DOMANDE-GENERICHE::usa-risposta-utente-gen
+        ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
+        ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta TRUE) (risposta-selezionata ?risp) (domanda-generica TRUE))
+        (not (nodo (nome ?attr)))
+        =>
+        (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
+        =>
+        (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-accensione
+        =>
+        (assert (nodo (nome chiedi) (valore stato-accensione)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-problema-principale
+        =>
+        (assert (nodo (nome chiedi) (valore problema-principale)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-anni-dispositivo
+        =>
+        (assert (nodo (nome chiedi) (valore anni-dispositivo)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
+        =>
+        (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-momento-manifestazione-problema
+        ?p1 <- (nodo (nome stato-accensione) (valore ok))
+        =>
+        (assert (nodo (nome chiedi) (valore momento-manifestazione-problema) (nodo-padre ?p1)))
+      )
+
+      (defrule DOMANDE-GENERICHE::chiedi-garanzia
+        ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
+        =>
+        (assert (nodo (nome chiedi) (valore garanzia) (nodo-padre ?p1)))
+      )
+
+
+  ;*******************************************************************************
