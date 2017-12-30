@@ -14,6 +14,7 @@
     (slot tipo (type SYMBOL))
     (slot descrizione (type STRING))
     (multislot nodo-padre (type FACT-ADDRESS))
+    (slot certezza (type FLOAT) (default 1.0))
   )
 
   (deftemplate domanda
@@ -133,6 +134,56 @@
 )
 
 
+;********************************
+;* CF RULES AND FUNCTIONS       *
+;********************************
+
+(deffunction MAIN::min-multifield($?list)
+  (bind ?min-v (nth$ 1 ?list))
+  (loop-for-count (?cnt 2 (length ?list)) do
+      (bind ?temp (nth$ ?cnt ?list))
+      (if (< ?temp ?min-v) then (bind ?min-v ?temp))
+  )
+  (return ?min-v)
+)
+
+(deffunction MAIN::max-multifield($?list)
+  (bind ?max-v (nth$ 1 ?list))
+  (loop-for-count (?cnt 2 (length ?list)) do
+      (bind ?temp (nth$ ?cnt ?list))
+      (if (> ?temp ?max-v) then (bind ?max-v ?temp))
+  )
+  (return ?max-v)
+)
+
+(deffunction MAIN::calcola-certezza(?cert $?cert-list)
+  (bind ?min-cert (min-multifield $?cert-list))
+  (return (* ?cert ?min-cert))
+)
+
+(defrule MAIN::combina-certezza-nodi
+  ?nodo1 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c1) (nodo-padre $?padre1))
+  ?nodo2 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c2) (nodo-padre $?padre2))
+  (test (neq ?nodo1 ?nodo2))
+  =>
+  (retract ?nodo1)
+  (modify ?nodo2 (certezza  (- (+ ?c1 ?c2) (* ?c1 ?c2))) (nodo-padre ?padre2 ?padre1))
+)
+
+
+;***********EXAMPLE CF RULES ***********************
+(deffacts exfacts
+  (nodo (nome statox) (valore x) (certezza 0.6))
+  (nodo (nome statoy) (valore y) (certezza 0.8))
+)
+(defrule chiedi-x
+  ?p1 <- (nodo (nome statox) (valore x) (certezza ?crt1))
+  ?p2 <- (nodo (nome statoy) (valore y) (certezza ?crt2))
+  =>
+  (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
+  (assert (nodo (nome statoz) (valore z) (certezza ?crt)))
+)
+;***************************************************
 
 
 ;;******************
@@ -159,10 +210,10 @@
 
 (defrule MAIN::diagnosi-trovata
   (declare (salience ?*highest-priority*))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.70)))
   (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc))
   =>
-  (printout t crlf "***** DIAGNOSI *****" crlf " - " ?titolo ":" crlf ?desc crlf crlf)
+  (printout t crlf "***** DIAGNOSI *****" crlf " - " ?titolo " [" (* ?cer 100) "%] :" crlf ?desc crlf crlf)
   (assert(ferma-programma))
 )
 
@@ -338,7 +389,6 @@
 ;;******************************************************************************
 ;;*    REGOLE PER CHIDERE DOMANDE ALL'UTENTE                                   *
 ;;******************************************************************************
-
 
 ;; DOMANDE ACCENSIONE E SO *****************************************************
 
