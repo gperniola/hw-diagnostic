@@ -11,20 +11,20 @@
   (deftemplate nodo
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
-    (slot tipo (type SYMBOL))
-    (slot descrizione (type STRING))
-    (multislot nodo-padre (type FACT-ADDRESS))
     (slot certezza (type FLOAT) (default 1.0))
+    (slot tipo (type SYMBOL))
+    (multislot nodo-padre (type FACT-ADDRESS))
+    (slot descrizione (type STRING))
   )
 
   (deftemplate domanda
     (slot attributo     (type SYMBOL) (default ?NONE))
-    (slot testo-domanda (type STRING) (default ?NONE))
-    (multislot risposte-valide (type SYMBOL) (default ?NONE))
-    (multislot descrizione-risposte (type STRING) (default ?NONE))
-    (slot risposta-selezionata (type INTEGER))
     (slot gia-chiesta   (default  FALSE))
     (slot num-domanda (type INTEGER))
+    (multislot risposte-valide (type SYMBOL) (default ?NONE))
+    (slot risposta-selezionata (type INTEGER))
+    (slot testo-domanda (type STRING) (default ?NONE))
+    (multislot descrizione-risposte (type STRING) (default ?NONE))
     (slot stampata (default FALSE))
     (slot domanda-generica (default FALSE))
   )
@@ -705,7 +705,37 @@
   (assert (nodo (nome momento-manifestazione-problema) (valore avvio) (nodo-padre ?p1) (descrizione "Il problema si manifesta sin dall'avvio del dispositivo")))
 )
 
+(defrule garanzia-2-anni
+  ?p1 <- (nodo (nome anni-dispositivo) (valore meno-2-anni) (certezza ?crt1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2))
+  =>
+  (bind ?crt (calcola-certezza 0.8 ?crt1 ?crt2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?crt) (nodo-padre ?p1 ?p2)))
+)
 
+(defrule garanzia-5-anni
+  ?p1 <- (nodo (nome anni-dispositivo) (valore meno-5-anni) (certezza ?crt1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2))
+  =>
+  (bind ?crt (calcola-certezza 0.4 ?crt1 ?crt2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?crt) (nodo-padre ?p1 ?p2)))
+)
+
+(defrule garanzia-anni-sconosciuti
+  ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (certezza ?crt1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2))
+  =>
+  (bind ?crt (calcola-certezza 0.6 ?crt1 ?crt2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?crt) (nodo-padre ?p1 ?p2)))
+)
+
+(defrule garanzia-10-anni-piu
+  ?p1 <- (nodo (nome anni-dispositivo) (valore  ?val&meno-10-anni|piu-10-anni) (certezza ?crt1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2))
+  =>
+  (bind ?crt (calcola-certezza 1.0 ?crt1 ?crt2))
+  (assert (nodo (nome garanzia) (valore no) (certezza ?crt) (nodo-padre ?p1 ?p2)))
+)
 
 
 ; (defrule deduci-SO-windows
@@ -879,19 +909,22 @@
         (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
       )
 
+
+
       (defrule DOMANDE-GENERICHE::chiedi-tipo-dispositivo
         =>
         (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
       )
 
-      (defrule DOMANDE-GENERICHE::chiedi-accensione
+      (defrule DOMANDE-GENERICHE::chiedi-esperienza-utente
         =>
-        (assert (nodo (nome chiedi) (valore stato-accensione)))
+        (assert (nodo (nome chiedi) (valore esperienza-utente)))
       )
 
       (defrule DOMANDE-GENERICHE::chiedi-problema-principale
+        ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto))
         =>
-        (assert (nodo (nome chiedi) (valore problema-principale)))
+        (assert (nodo (nome chiedi) (valore problema-principale) (nodo-padre ?p1)))
       )
 
       (defrule DOMANDE-GENERICHE::chiedi-anni-dispositivo
@@ -899,22 +932,14 @@
         (assert (nodo (nome chiedi) (valore anni-dispositivo)))
       )
 
-      (defrule DOMANDE-GENERICHE::chiedi-installazione-nuovo-hw
-        =>
-        (assert (nodo (nome chiedi) (valore installazione-nuovo-hw)))
-      )
-
-      (defrule DOMANDE-GENERICHE::chiedi-momento-manifestazione-problema
-        ?p1 <- (nodo (nome stato-accensione) (valore ok))
-        =>
-        (assert (nodo (nome chiedi) (valore momento-manifestazione-problema) (nodo-padre ?p1)))
-      )
-
       (defrule DOMANDE-GENERICHE::chiedi-garanzia
         ?p1 <- (nodo (nome anni-dispositivo) (valore ?val&meno-2-anni|meno-5-anni|sconosciuto))
         =>
         (assert (nodo (nome chiedi) (valore garanzia) (nodo-padre ?p1)))
       )
+
+
+
 
 
   ;*******************************************************************************
