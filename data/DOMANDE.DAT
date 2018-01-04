@@ -22,7 +22,7 @@
           (domanda-generica TRUE)
           (testo-domanda "Quanti anni ha il dispositivo?")
           (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
-          (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
+          (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
 )
 
 (domanda  (attributo garanzia)
