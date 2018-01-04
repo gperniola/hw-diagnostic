@@ -5,6 +5,13 @@ FASE 1: Domande di carattere generale per identificare il dispositivo e il grado
 		2.1- Se l'età è inferiore a 5 anni, chiedere se il dispositivo è ancora in garanzia
 	3- Stabilire se il dispositivo è un pc fisso o portatile
 
+
+***TODO
+
+- regole per creare il profilo e avviare la fase 2 (alcune regole come batteria e cavi accessibili gia' ci sono)
+- diversi set di domande in base all'esperienza dell'utente per video e accensione
+*******
+
 FASE 1.1: Creare i profili per dispositivo e utente sulla base delle risposte ricevute nella FASE 1.
 	-Profilo utente esperto a conoscenza del problema:
 		-Chiedere a che tipologia appartiene il problema?
