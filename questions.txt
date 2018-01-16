@@ -29,7 +29,7 @@ FASE 1.1: Creare i profili per dispositivo e utente sulla base delle risposte ri
 	Profilo pc portatile:
 		- ha una batteria
 		- i cavi video non sono accessibili
-		- ha un alimentatore esterno
+		- ha un alimentatore caricabatterie
 
 FASE 2: Sulla base del profilo delineato nella FASE 1, porre domande specifiche volte ad individuare la causa del problema (diagnosi).
 

@@ -6,7 +6,7 @@
           (testo-domanda "Indicare il grado di esperienza dell'utente.")
           (risposte-valide utente-esperto utente-inesperto)
           (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
-                                "Dispongo di competenze informatiche limitate e non conosco i termini tecnici utilizzati")
+                                "Dispongo di competenze informatiche limitate o non conosco i termini tecnici utilizzati")
 )
 
 (domanda  (attributo problema-principale)
@@ -39,10 +39,36 @@
           (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
 )
 
+(domanda  (attributo ha-batteria)
+          (domanda-generica TRUE)
+          (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?")
+          (risposte-valide si no sconosciuto)
+          (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita" "Non so")
+)
+
 ;; //***************************************************************************
 
 
 ;; // DOMANDE ACCENSIONE PC ****************************************************
+
+(domanda  (attributo stato-accensione)
+          (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
+          (risposte-valide ok fallito)
+          (descrizione-risposte "Si" "No, il dispositivo non si accende")
+)
+
+(domanda  (attributo alimentatore-funzionante-ut-inesperto)
+          (testo-domanda "Dopo aver premuto il tasto di accensione, anche se lo schermo resta nero, esaminate con attenzione il dispositivo e %n controllate se ci sono spie che si illuminano o se le ventole sembrano avviarsi.")
+          (risposte-valide si no)
+          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
+)
+
+(domanda  (attributo alimentatore-funzionante-ut-esperto)
+          (testo-domanda "Dpo aver premuto il tasto di accensione, il dispositivo sembra avviarsi anche se lo schermo resta nero?")
+          (risposte-valide si no)
+          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
+)
+
 
 
 (domanda  (attributo riavvio-forzato)
@@ -59,11 +85,10 @@
 )
 
 (domanda  (attributo batteria-difettosa)
-          (testo-domanda "Rimuovere la batteria del dispositivo
-           e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
+          (testo-domanda "Rimuovere la batteria del dispositivo e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
           (risposte-valide si no )
           (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-           "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
+           "La batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
 )
 
 (domanda  (attributo interruttore-alimentatore)
@@ -75,7 +100,7 @@
 
 (domanda  (attributo spia-alimentatore-pcportatile)
       (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
-      (risposte-valide si no sconosciuto )
+      (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
 
@@ -89,6 +114,8 @@
 
 
 ;; // DOMANDE VIDEO ************************************************************
+
+
 
 (domanda  (attributo disturbo-video)
           (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
