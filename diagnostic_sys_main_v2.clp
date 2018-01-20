@@ -12,6 +12,7 @@
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
+    (slot stato (type SYMBOL) (default attivo))
     (slot tipo (type SYMBOL))
     (multislot nodo-padre (type FACT-ADDRESS))
     (slot descrizione (type STRING))
@@ -105,15 +106,14 @@
 
 
 (deffunction MAIN::ask-stop-program ()
-  (printout t crlf crlf "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
-  (bind ?answer (read))
-  (while (not (member ?answer (create$ 1 2)))
-      (printout t "Continuare l'esecuzione del programma?" crlf "1. Si" crlf "2. No" crlf)
+  (bind ?answer 0)
+  (while (not (member ?answer (create$ 1 2 3 4)))
+      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Continua esecuzione" crlf "2. Revisiona le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
       (bind ?answer (read))
   )
-  (if (eq ?answer 2) then
-      (halt)
-  )
+  (if (eq ?answer 2) then (assert (init-revisiona-domande)))
+  (if (eq ?answer 3) then (reset) (run))
+  (if (eq ?answer 4) then (halt))
 )
 
 (deffunction MAIN::stampa-header-revisione()
@@ -142,7 +142,7 @@
 ;* CF RULES AND FUNCTIONS       *
 ;********************************
 
-(deffunction MAIN::min-multifield($?list)
+(deffunction MAIN::AND-multifield($?list)
   (bind ?min-v (nth$ 1 ?list))
   (loop-for-count (?cnt 2 (length ?list)) do
       (bind ?temp (nth$ ?cnt ?list))
@@ -151,7 +151,7 @@
   (return ?min-v)
 )
 
-(deffunction MAIN::max-multifield($?list)
+(deffunction MAIN::OR-multifield($?list)
   (bind ?max-v (nth$ 1 ?list))
   (loop-for-count (?cnt 2 (length ?list)) do
       (bind ?temp (nth$ ?cnt ?list))
@@ -160,33 +160,50 @@
   (return ?max-v)
 )
 
-(deffunction MAIN::calcola-certezza(?cert $?cert-list)
-  (bind ?min-cert (min-multifield $?cert-list))
-  (return (* ?cert ?min-cert))
+(deffunction MAIN::calcola-certezza(?cert-RHS $?cert-LHS)
+  (bind ?min-cert (AND-multifield $?cert-LHS))
+  (return (* ?cert-RHS ?min-cert))
+)
+
+(deffunction MAIN::combina-CF(?cf1 ?cf2)
+  (if (and (> ?cf1 0) (> ?cf2 0)) then (bind ?CF (- (+ ?cf1 ?cf2) (* ?cf1 ?cf2))))
+  (if (and (< ?cf1 0) (< ?cf2 0)) then (bind ?CF (+ (+ ?cf1 ?cf2) (* ?cf1 ?cf2))))
+  (if (< (* ?cf1 ?cf2) 0) then (bind ?CF (/ (+ ?cf1 ?cf2) (- 1 (min (abs ?cf1)(abs ?cf2))))))
+  (return ?CF)
 )
 
 (defrule MAIN::combina-certezza-nodi
   (declare (salience ?*highest-priority*))
-  ?nodo1 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c1) (nodo-padre $?padre1))
-  ?nodo2 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c2) (nodo-padre $?padre2))
+  ?nodo1 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c1) (nodo-padre $?padre1) (stato attivo))
+  ?nodo2 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c2) (nodo-padre $?padre2) (stato attivo))
   (test (neq ?nodo1 ?nodo2))
   =>
-  (retract ?nodo1)
-  (modify ?nodo2 (certezza  (- (+ ?c1 ?c2) (* ?c1 ?c2))) (nodo-padre ?padre2 ?padre1))
+  ;(printout t "Combine: " ?n1 " - " ?v1 " - " ?c1 "/" ?c2 crlf)
+  ;(retract ?nodo1)
+  (bind ?x1  (modify ?nodo1 (stato inattivo)))
+  (bind ?x2  (modify ?nodo2 (stato inattivo)))
+  (assert (nodo (nome ?n1) (valore ?v1) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?x1 ?x2)))
 )
 
+(defrule MAIN::rimuovi-padri-duplicati
+  (declare (salience ?*highest-priority*))
+  ?n <- (nodo (nodo-padre $?nodi1 ?elem $?nodi2 ?elem $?nodi3))
+  =>
+  (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
+)
 
 ;***********EXAMPLE CF RULES ***********************
 (deffacts exfacts
   (nodo (nome statox) (valore x) (certezza 0.6))
   (nodo (nome statoy) (valore y) (certezza 0.8))
+  (nodo (nome statoz) (valore z) (certezza -0.6))
 )
 (defrule chiedi-x
   ?p1 <- (nodo (nome statox) (valore x) (certezza ?crt1))
   ?p2 <- (nodo (nome statoy) (valore y) (certezza ?crt2))
   =>
   (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
-  (assert (nodo (nome statoz) (valore z) (certezza ?crt)))
+  (assert (nodo (nome statoz) (valore z) (certezza ?crt) (nodo-padre ?p1 ?p2)))
 )
 ;***************************************************
 
@@ -215,23 +232,63 @@
 
 (defrule MAIN::diagnosi-trovata
   ;(declare (salience ?*high-priority*))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.80)))
-  (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.80)) (stato attivo))
+  (diagnosi (attributo ?attr-diagnosi))
+  (not (stampa-diagnosi))
+  (not (ferma-programma))
   =>
   (printout t crlf "***** DIAGNOSI *****" crlf crlf)
   (assert (stampa-diagnosi))
-  (assert(ferma-programma))
+  ;(assert(ferma-programma))
 )
 
 (defrule MAIN::stampa-diagnosi
   ;(declare (salience ?*high-priority*))
   (stampa-diagnosi)
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)))
+  (not (resetta-diagnosi))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
   ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
   =>
-  (printout t " - " ?titolo " [" (* ?cer 100) "%] :" ?desc crlf)
+  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
   (modify ?d (stampata TRUE))
-  (assert(ferma-programma))
+)
+
+(defrule MAIN::fine-stampa-diagnosi
+  ;(declare (salience ?*high-priority*))
+  ?s <- (stampa-diagnosi)
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+  (not (diagnosi (attributo ?attr-diagnosi) (stampata FALSE)))
+  =>
+  ;(retract ?s)
+  (assert (resetta-diagnosi))
+)
+
+(defrule MAIN::resetta-diagnosi
+  (stampa-diagnosi)
+  (resetta-diagnosi)
+  ?d <- (diagnosi (attributo ?attr-diagnosi) (stampata TRUE))
+  =>
+  (modify ?d (stampata FALSE))
+)
+
+(defrule MAIN::fine-resetta-diagnosi
+  ?s <- (stampa-diagnosi)
+  ?r <- (resetta-diagnosi)
+  (not (diagnosi (attributo ?attr-diagnosi) (stampata TRUE)))
+  =>
+  (retract ?s)
+  (retract ?r)
+  (assert (ferma-programma))
+)
+
+(defrule MAIN::fine-domande
+(declare (salience ?*lowest-priority*))
+(nodo (nome chiedi) (valore ?dom))
+(not (domanda (attributo ?dom) (gia-chiesta FALSE)))
+(not (stampa-diagnosi))
+(not (ferma-programma))
+=>
+(assert (stampa-diagnosi))
 )
 
 
@@ -245,9 +302,10 @@
 
 
 (defrule MAIN::ferma-esecuzione
-  (declare (salience ?*low-priority*))
-  (ferma-programma)
+  (declare (salience ?*highest-priority*))
+  ?x <- (ferma-programma)
   =>
+  (retract ?x)
   (ask-stop-program)
 )
 
@@ -313,7 +371,7 @@
 )
 
 
-; REVISIONA DOMANDA
+; REVISIONA DOMANDA (RITRATTAZIONE)
 ;****************************************************************************
 
 
@@ -354,9 +412,25 @@
   (not (elimina-nodi da ?e))
   =>
   (retract ?r)
-  (assert (init-revisiona-domande))
+  (assert (attiva-nodi))
 )
 
+(defrule attiva-nodi-diagnosi-terminali
+  ?r <- (attiva-nodi)
+  ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
+  (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
+  =>
+  (modify ?n1 (stato attivo))
+)
+
+(defrule END-attiva-nodi-diagnosi-terminali
+  ?r <- (attiva-nodi)
+  (not (nodo (nome diagnosi) (valore ?v) (stato inattivo)))
+  (not(nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
+  =>
+  (retract ?r)
+  (assert (init-revisiona-domande))
+)
 
 ; CHIEDI DOMANDA
 ;****************************************************************************
@@ -669,7 +743,7 @@
   ;;(assert (nodo (nome possiede-batteria) (valore si) (nodo-padre ?p1) (descrizione "Il dispositivo possiede una batteria.")))
   (assert (nodo (nome cavi-display-accessibili) (valore no) (certezza (* 1.0 ?c1)) (nodo-padre ?p1) (descrizione "I cavi che collegano il dispositivo al display non sono accessibili.")))
   (assert (nodo (nome alimentatore-caricabatterie) (valore si) (certezza (* 1.0 ?c1)) (nodo-padre ?p1) (descrizione "Il dispositivo possiede un alimentatore caricabatterie esterno.")))
-  (assert (nodo (nome interrutore-alimentatore) (valore acceso) (certezza (* 1.0 ?c1)) (nodo-padre ?p1) (descrizione "Essendo un dispositivo portatile, l'alimentatore non possiede un tasto di accensione esterno.")))
+  (assert (nodo (nome interruttore-alimentatore) (valore acceso) (certezza (* 1.0 ?c1)) (nodo-padre ?p1) (descrizione "Essendo un dispositivo portatile, l'alimentatore non possiede un tasto di accensione esterno.")))
 )
 
 (defrule dispositivo-fisso
@@ -684,7 +758,7 @@
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt1))
   ?p2 <- (nodo (nome ha-batteria) (valore sconosciuto) (certezza ?crt2))
   =>
-  (bind ?crt-ha-batteria (calcola-certezza 0.7 ?crt1 ?crt2))
+  (bind ?crt-ha-batteria (calcola-certezza 0.8 ?crt1 ?crt2))
   (bind ?crt-non-ha-batteria (calcola-certezza 0.3 ?crt1 ?crt2))
   (assert (nodo (nome ha-batteria) (valore si) (certezza ?crt-ha-batteria) (nodo-padre ?p1 ?p2) (descrizione "Essendo il dispositivo un portatile, e' probabile che la batteria sia inserita.")))
   (assert (nodo (nome ha-batteria) (valore no) (certezza ?crt-non-ha-batteria) (nodo-padre ?p1 ?p2) (descrizione "Essendo il dispositivo un portatile, c'e' una piccola probabilita' che la batteria non sia inserita.")))
@@ -782,9 +856,9 @@
   ?p2 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt2))
   =>
   ;; calcola valori di certezza delle diagnosi...
-  (bind ?crt-guasto-alim (calcola-certezza 0.3 ?crt1 ?crt2))
+  (bind ?crt-guasto-alim (calcola-certezza 0.4 ?crt1 ?crt2))
   (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?crt-guasto-alim) (nodo-padre ?p1 ?p2)))
-  (bind ?crt-alim-non-collegata (calcola-certezza 0.3 ?crt1 ?crt2))
+  (bind ?crt-alim-non-collegata (calcola-certezza 0.2 ?crt1 ?crt2))
   (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza ?crt-alim-non-collegata) (nodo-padre ?p1 ?p2)))
   (bind ?crt-guasto-scheda-madre (calcola-certezza 0.1 ?crt1 ?crt2))
   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?crt-guasto-scheda-madre) (nodo-padre ?p1 ?p2)))
@@ -795,8 +869,9 @@
 (defrule alim-collegata-si
   ?p1 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt1))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* 0.5 ?crt1)) (nodo-padre ?p1)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* 0.2 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* 0.6 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* 0.3 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza (* -1.0 ?crt1)) (nodo-padre ?p1)))
 )
 
 (defrule DIAGNOSI-alim-collegata-no
@@ -808,11 +883,17 @@
   (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2 ?p3) (certezza ?crt)))
 )
 
+(defrule spia-alimentatore
+    ?p1 <- (nodo (nome ?att&spia-alimentatore-pcportatile|spia-alimentatore-pcdesktop) (valore ?v) (certezza ?c1))
+    =>
+    (assert (nodo (nome spia-alimentatore) (valore ?v) (nodo-padre ?p1) (certezza ?c1)))
+)
+
 (defrule spia-alimentatore-sconosciuta
   ?p1 <- (nodo (nome spia-alimentatore) (valore sconosciuto) (certezza ?crt1))
   =>
-  (assert (nodo (nome spia-alimentatore) (valore accesa) (certezza (* 0.4 ?crt1)) (nodo-padre ?p1)))
-  (assert (nodo (nome spia-alimentatore) (valore spenta) (certezza (* 0.6 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome spia-alimentatore) (valore accesa) (certezza (* 0.5 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome spia-alimentatore) (valore spenta) (certezza (* 0.5 ?crt1)) (nodo-padre ?p1)))
 )
 
 ;; Per dispositivi laptop ...
@@ -826,6 +907,18 @@
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
   =>
   (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?p1 ?p2 ?p3)))
+)
+
+(defrule inferenza-batteria-difettosa
+  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?crt1))
+  ?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
+  ;; (ha-batteria si) dev'essere una risposta dedotta dal sistema
+  ?p2 <- (nodo (nome ha-batteria) (valore si) (certezza ?crt2) (tipo ?t&~info-utente))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
+  ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
+  =>
+  (bind ?crt-batteria (calcola-certezza 0.6 ?crt1 ?crt2 ?crt3 ?crt4))
+  (assert (nodo (nome batteria-difettosa) (valore si)(certezza ?crt-batteria)(nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 (defrule DIAGNOSI-batteria-difettosa-si
@@ -861,32 +954,27 @@
   ?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?crt6))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza 0.7 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
-  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.4 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
+  (bind ?crt-alim-guasto (calcola-certezza -0.6 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
+  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.7 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
   (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-alim-guasto)))
   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-scheda-madre-guasta)))
 )
 
 (defrule DIAGNOSI-spia-alimentatore-spenta
   ?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
-  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt2))
   ?p2 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt2))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
   ?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?crt6))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza 0.9 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
+  (bind ?crt-alim-guasto (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
   (bind ?crt-scheda-madre-guasta (calcola-certezza 0.2 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
   (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-alim-guasto)))
   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-scheda-madre-guasta)))
 )
 
-(defrule spia-alimentatore
-    ?p1 <- (nodo (nome ?att&spia-alimentatore-pcportatile|spia-alimentatore-pcdesktop) (valore ?v) (certezza ?c1))
-    =>
-    (assert (nodo (nome spia-alimentatore) (valore ?v) (nodo-padre ?p1) (certezza ?c1)))
-)
+
 
 ;; Per dispositivi desktop ...
 
@@ -898,13 +986,6 @@
   ?p5 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt5))
   =>
   (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)))
-)
-
-(defrule spia-alimentatore-pcdesktop-sconosciuta
-  ?p1 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto) (certezza ?crt1))
-  =>
-  (assert (nodo (nome spia-alimentatore-pcdesktop) (valore accesa) (certezza (* 0.4 ?crt1)) (nodo-padre ?p1)))
-  (assert (nodo (nome spia-alimentatore-pcdesktop) (valore spenta) (certezza (* 0.6 ?crt1)) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-interruttore-alimentatore

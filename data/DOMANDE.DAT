@@ -106,7 +106,7 @@
 
 (domanda  (attributo spia-alimentatore-pcdesktop)
       (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
-      (risposte-valide si no sconosciuto )
+      (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
 
