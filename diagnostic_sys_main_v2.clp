@@ -220,6 +220,8 @@
   =>
   (load-facts "data/DOMANDE.DAT")
   (load-facts "data/DIAGNOSI.DAT")
+  (load "rules/modulo-diagnosi.clp")
+  (load "rules/modulo-spiegazione.clp")
   (clear-window)
   (assert (contatore-domande 0))
   (assert (fase 1-profilazione))
@@ -446,7 +448,7 @@
       (retract ?ask)
       (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
       (assert (nodo (nome spiegazione) (valore ?attr)))
-      (focus SPIEGAZIONE)
+      (focus MODULO-SPIEGAZIONE)
     else
       ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
       (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
@@ -1123,131 +1125,17 @@
 
 
 
-(defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
-
-(defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
-
-
-
-(defmodule SPIEGAZIONE(import MAIN ?ALL)(export ?ALL))
-
-; SPIEGAZIONE DOMANDA
-;*******************************************************************************
-
-(deffunction SPIEGAZIONE::leggi-nodi($?p)
-  (loop-for-count (?cnt1 1 (length ?p)) do
-    (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
-    (assert (spiega ?v))
-  )
-)
-
-(deffunction SPIEGAZIONE::stampa-spiegazione-domanda(?n-sp ?n ?dom ?risp)
-  (printout t ?n-sp ". Alla domanda n." ?n ": " crlf ?dom crlf "l'utente ha risposto: "  ?risp crlf crlf)
-)
-
-(deffunction SPIEGAZIONE::stampa-spiegazione-attributo(?n-sp ?spiegazione)
-  (printout t  ?n-sp ". Il sistema ha dedotto che:" crlf ?spiegazione crlf crlf)
-)
-
-; (defrule SPIEGAZIONE::debug
-;   (declare (salience ?*highest-priority*))
-;   =>
-;   (printout t "DEBUG >> Modulo spiegazioni" crlf crlf)
-; )
-
-(defrule SPIEGAZIONE::init-spiegazione-domanda
-  ?target <- (nodo (nome spiegazione) (valore ?attr ))
-  ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
-  (domanda (attributo ?attr))
-  =>
-  (printout t "***** MOTIVAZIONI DOMANDA *****" crlf)
-  (retract ?target)
-  (leggi-nodi ?p)
-  ;(bind ?answer (read))
-  (assert (contatore-spiegazione 0))
-)
-
-; (defrule SPIEGAZIONE::init-spiegazione-domanda-generica
-;   ?target <- (nodo (nome spiegazione) (valore ?attr ))
-;   ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
-;   (domanda (attributo ?attr) (domanda-generica TRUE))
-;   =>
-;   (printout t "***** MOTIVAZIONI DOMANDA *****" crlf crlf)
-;   (printout t "Questa e' una domanda generica necessaria per introdurre al sistema delle informazioni basilari sul dispositivo." crlf)
-;   (retract ?target)
-; )
-
-(defrule SPIEGAZIONE::spiega-domanda
-  ?s <- (spiega ?attr)
-  ?d <- (domanda (attributo ?attr) (gia-chiesta TRUE) (num-domanda ?n-domanda) (risposta-selezionata ?n-risposta) (testo-domanda ?domanda) (descrizione-risposte $?risposte))
-  ?c <- (contatore-spiegazione ?cont)
-  =>
-  (retract ?c)
-  (assert (contatore-spiegazione (+ ?cont 1)))
-  (bind ?risposta (nth$ ?n-risposta ?risposte))
-  (bind ?n-spieg (+ ?cont 1))
-  (stampa-spiegazione-domanda ?n-spieg ?n-domanda ?domanda ?risposta)
-  (retract ?s)
-)
-
-(defrule SPIEGAZIONE::spiega-attributo
-  ?s <- (spiega ?attr)
-  ?a <- (nodo (nome ?attr) (nodo-padre $?p) (descrizione ?descr))
-  ?c <- (contatore-spiegazione ?cont)
-  (not (domanda (attributo ?attr) (gia-chiesta TRUE)))
-  =>
-  (retract ?c)
-  (assert (contatore-spiegazione (+ ?cont 1)))
-  (retract ?s)
-  (bind ?n-spieg (+ ?cont 1))
-  (stampa-spiegazione-attributo ?n-spieg ?descr)
-  (leggi-nodi ?p)
-)
-
-(defrule SPIEGAZIONE::end-spiegazione
-  (not (nodo (nome spiegazione)))
-  (not (spiega ?s))
-  =>
-  (printout t "Premere 0 e INVIO per tornare alla normale esecuzione del programma." crlf)
-  (bind ?answer (read))
-)
+; (defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
+;
+; (defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
 
 
 
-(defmodule MODULO-DIAGNOSI(import MAIN ?ALL)(export ?ALL))
 
-(defrule MODULO-DIAGNOSI::stampa-diagnosi
-  (not (resetta-diagnosi))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
-  ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
-  =>
-  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
-  (modify ?d (stampata TRUE))
-)
 
-(defrule MODULO-DIAGNOSI::fine-stampa-diagnosi
-  (not (resetta-diagnosi))
-  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
-            (diagnosi (attributo ?attr-diagnosi) (stampata FALSE))))
-  =>
-  (assert (resetta-diagnosi))
-)
 
-(defrule MODULO-DIAGNOSI::resetta-diagnosi
-  (resetta-diagnosi)
-  ?d <- (diagnosi (attributo ?attr-diagnosi) (stampata TRUE))
-  =>
-  (modify ?d (stampata FALSE))
-)
 
-(defrule MODULO-DIAGNOSI::fine-resetta-diagnosi
-  ?r <- (resetta-diagnosi)
-  (not (diagnosi (attributo ?attr-diagnosi) (stampata TRUE)))
-  =>
-  (retract ?r)
-  (assert (ferma-programma))
-  (focus MAIN)
-)
+
 
 
   ;******************* MODULO DOMANDE GENERICHE **********************************
