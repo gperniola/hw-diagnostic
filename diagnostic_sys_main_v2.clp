@@ -192,6 +192,15 @@
   (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
 )
 
+; (defrule MAIN::attiva-nodi-diagnosi-terminali
+;   (declare (salience ?*highest-priority*))
+;   ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
+;   (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
+;   =>
+;   (modify ?n1 (stato attivo))
+; )
+
+
 ;***********EXAMPLE CF RULES ***********************
 (deffacts exfacts
   (nodo (nome statox) (valore x) (certezza 0.6))
@@ -255,9 +264,10 @@
 
 (defrule MAIN::fine-stampa-diagnosi
   ;(declare (salience ?*high-priority*))
-  ?s <- (stampa-diagnosi)
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
-  (not (diagnosi (attributo ?attr-diagnosi) (stampata FALSE)))
+  (stampa-diagnosi)
+  (not (resetta-diagnosi))
+  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+            (diagnosi (attributo ?attr-diagnosi) (stampata FALSE))))
   =>
   ;(retract ?s)
   (assert (resetta-diagnosi))
@@ -413,6 +423,7 @@
   =>
   (retract ?r)
   (assert (attiva-nodi))
+  ;(assert (init-revisiona-domande))
 )
 
 (defrule attiva-nodi-diagnosi-terminali
@@ -423,14 +434,14 @@
   (modify ?n1 (stato attivo))
 )
 
-(defrule END-attiva-nodi-diagnosi-terminali
-  ?r <- (attiva-nodi)
-  (not (nodo (nome diagnosi) (valore ?v) (stato inattivo)))
-  (not(nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
-  =>
-  (retract ?r)
-  (assert (init-revisiona-domande))
-)
+; (defrule END-attiva-nodi-diagnosi-terminali
+;   ?r <- (attiva-nodi)
+;   (not (and (nodo (nome diagnosi) (valore ?v) (stato inattivo))
+;             (not(nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))))
+;   =>
+;   (retract ?r)
+;   (assert (init-revisiona-domande))
+; )
 
 ; CHIEDI DOMANDA
 ;****************************************************************************
