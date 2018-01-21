@@ -2,7 +2,6 @@
 ;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
 (domanda  (attributo esperienza-utente)
-          (domanda-generica TRUE)
           (testo-domanda "Indicare il grado di esperienza dell'utente.")
           (risposte-valide utente-esperto utente-inesperto)
           (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
@@ -10,7 +9,6 @@
 )
 
 (domanda  (attributo problema-principale)
-          (domanda-generica TRUE)
           (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
           (risposte-valide accensione-SO video analisi-guidata)
           (descrizione-risposte "Si, problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
@@ -19,28 +17,24 @@
 )
 
 (domanda  (attributo anni-dispositivo)
-          (domanda-generica TRUE)
           (testo-domanda "Quanti anni ha il dispositivo?")
           (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
           (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
 )
 
 (domanda  (attributo garanzia)
-          (domanda-generica TRUE)
           (testo-domanda "Il dispositivo e' ancora in garanzia?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si" "No" "Non so")
 )
 
 (domanda  (attributo tipo-dispositivo)
-          (domanda-generica TRUE)
           (testo-domanda "A quale tipologia appartiene il dispositivo?")
           (risposte-valide pc-desktop pc-portatile)
           (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
 )
 
 (domanda  (attributo ha-batteria)
-          (domanda-generica TRUE)
           (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita" "Non so")
