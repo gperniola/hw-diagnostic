@@ -129,13 +129,7 @@
 
 
 
-;;**********************
-;;*    INITIAL FACTS   *
-;;**********************
-(deffacts MAIN::fatti-iniziali
 
-  (contatore-domande 0)
-)
 
 
 ;********************************
@@ -202,18 +196,18 @@
 
 
 ;***********EXAMPLE CF RULES ***********************
-(deffacts exfacts
-  (nodo (nome statox) (valore x) (certezza 0.6))
-  (nodo (nome statoy) (valore y) (certezza 0.8))
-  (nodo (nome statoz) (valore z) (certezza -0.6))
-)
-(defrule chiedi-x
-  ?p1 <- (nodo (nome statox) (valore x) (certezza ?crt1))
-  ?p2 <- (nodo (nome statoy) (valore y) (certezza ?crt2))
-  =>
-  (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
-  (assert (nodo (nome statoz) (valore z) (certezza ?crt) (nodo-padre ?p1 ?p2)))
-)
+; (deffacts exfacts
+;   (nodo (nome statox) (valore x) (certezza 0.6))
+;   (nodo (nome statoy) (valore y) (certezza 0.8))
+;   (nodo (nome statoz) (valore z) (certezza -0.6))
+; )
+; (defrule chiedi-x
+;   ?p1 <- (nodo (nome statox) (valore x) (certezza ?crt1))
+;   ?p2 <- (nodo (nome statoy) (valore y) (certezza ?crt2))
+;   =>
+;   (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
+;   (assert (nodo (nome statoz) (valore z) (certezza ?crt) (nodo-padre ?p1 ?p2)))
+; )
 ;***************************************************
 
 
@@ -226,79 +220,73 @@
   =>
   (load-facts "data/DOMANDE.DAT")
   (load-facts "data/DIAGNOSI.DAT")
-  ;(assert (facts-loaded))
   (clear-window)
+  (assert (contatore-domande 0))
   (assert (fase 1-profilazione))
+)
+
+(defrule fase-1-profilazione
+  (declare (salience ?*highest-priority*))
+  (fase 1-profilazione)
+  =>
   (set-strategy random)
-  ;(focus DOMANDE-GENERICHE)
+)
+
+(defrule fase-2-analisi
+  (declare (salience ?*highest-priority*))
+  (fase 2-analisi)
+  =>
+  (set-strategy depth)
+)
+
+(defrule fase-3-stampa-diagnosi
+  (declare (salience ?*highest-priority*))
+  (fase 3-stampa-diagnosi)
+  =>
+  (printout t "***** DIAGNOSI DEL PROBLEMA *****" crlf crlf)
+  (focus MODULO-DIAGNOSI)
 )
 
 
-
-
-
 (defrule MAIN::diagnosi-trovata
-  ;(declare (salience ?*high-priority*))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.80)) (stato attivo))
+  (declare (salience ?*low-priority*))
+  ?f <- (fase 2-analisi)
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)) (stato attivo))
   (diagnosi (attributo ?attr-diagnosi))
   (not (stampa-diagnosi))
   (not (ferma-programma))
   =>
   (printout t crlf "***** DIAGNOSI *****" crlf crlf)
-  (assert (stampa-diagnosi))
+  (retract ?f)
+  (assert (fase 3-stampa-diagnosi))
   ;(assert(ferma-programma))
 )
 
-(defrule MAIN::stampa-diagnosi
-  ;(declare (salience ?*high-priority*))
-  (stampa-diagnosi)
-  (not (resetta-diagnosi))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
-  ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
-  =>
-  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
-  (modify ?d (stampata TRUE))
-)
-
-(defrule MAIN::fine-stampa-diagnosi
-  ;(declare (salience ?*high-priority*))
-  (stampa-diagnosi)
-  (not (resetta-diagnosi))
-  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
-            (diagnosi (attributo ?attr-diagnosi) (stampata FALSE))))
-  =>
-  ;(retract ?s)
-  (assert (resetta-diagnosi))
-)
-
-(defrule MAIN::resetta-diagnosi
-  (stampa-diagnosi)
-  (resetta-diagnosi)
-  ?d <- (diagnosi (attributo ?attr-diagnosi) (stampata TRUE))
-  =>
-  (modify ?d (stampata FALSE))
-)
-
-(defrule MAIN::fine-resetta-diagnosi
-  ?s <- (stampa-diagnosi)
-  ?r <- (resetta-diagnosi)
-  (not (diagnosi (attributo ?attr-diagnosi) (stampata TRUE)))
-  =>
-  (retract ?s)
-  (retract ?r)
-  (assert (ferma-programma))
-)
-
 (defrule MAIN::fine-domande
-(declare (salience ?*lowest-priority*))
-(not (fase 1-profilazione))
-(nodo (nome chiedi) (valore ?dom))
-(not (domanda (attributo ?dom) (gia-chiesta FALSE)))
-(not (stampa-diagnosi))
-(not (ferma-programma))
-=>
-(assert (stampa-diagnosi))
+  (declare (salience ?*lowest-priority*))
+  ?f <- (fase 2-analisi)
+  (nodo (nome chiedi) (valore ?dom))
+  (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
+  (not (stampa-diagnosi))
+  (not (ferma-programma))
+  =>
+  (retract ?f)
+  (assert (fase 3-stampa-diagnosi))
 )
+
+(defrule MAIN::ferma-esecuzione
+  (declare (salience ?*highest-priority*))
+  ?x <- (ferma-programma)
+  =>
+  (retract ?x)
+  (ask-stop-program)
+)
+
+
+
+
+
+
 
 
 ; (defrule diagnosi-parziale-trovata
@@ -310,13 +298,7 @@
 ; )
 
 
-(defrule MAIN::ferma-esecuzione
-  (declare (salience ?*highest-priority*))
-  ?x <- (ferma-programma)
-  =>
-  (retract ?x)
-  (ask-stop-program)
-)
+
 
 
 
@@ -1232,7 +1214,40 @@
 
 
 
+(defmodule MODULO-DIAGNOSI(import MAIN ?ALL)(export ?ALL))
 
+(defrule MODULO-DIAGNOSI::stampa-diagnosi
+  (not (resetta-diagnosi))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+  ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
+  =>
+  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
+  (modify ?d (stampata TRUE))
+)
+
+(defrule MODULO-DIAGNOSI::fine-stampa-diagnosi
+  (not (resetta-diagnosi))
+  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+            (diagnosi (attributo ?attr-diagnosi) (stampata FALSE))))
+  =>
+  (assert (resetta-diagnosi))
+)
+
+(defrule MODULO-DIAGNOSI::resetta-diagnosi
+  (resetta-diagnosi)
+  ?d <- (diagnosi (attributo ?attr-diagnosi) (stampata TRUE))
+  =>
+  (modify ?d (stampata FALSE))
+)
+
+(defrule MODULO-DIAGNOSI::fine-resetta-diagnosi
+  ?r <- (resetta-diagnosi)
+  (not (diagnosi (attributo ?attr-diagnosi) (stampata TRUE)))
+  =>
+  (retract ?r)
+  (assert (ferma-programma))
+  (focus MAIN)
+)
 
 
   ;******************* MODULO DOMANDE GENERICHE **********************************
