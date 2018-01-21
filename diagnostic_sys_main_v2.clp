@@ -249,6 +249,37 @@
   (focus MODULO-DIAGNOSI)
 )
 
+;; DA IMPLEMENTARE
+(defrule fase-4-trova-soluzioni
+  (declare (salience ?*highest-priority*))
+  (fase 4-trova-soluzioni)
+  =>
+  (bho)
+)
+
+(defrule fase-5-stampa-soluzioni
+  (declare (salience ?*highest-priority*))
+  (fase 5-stampa-soluzioni)
+  =>
+  (bho)
+)
+
+(defrule fase-ritrattazione
+  (declare (salience ?*highest-priority*))
+  (fase ritrattazione)
+  =>
+  (bho)
+)
+
+(defrule fase-spiegazione
+  (declare (salience ?*highest-priority*))
+  (fase spiegazione)
+  =>
+  (bho)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (defrule MAIN::diagnosi-trovata
   (declare (salience ?*low-priority*))
