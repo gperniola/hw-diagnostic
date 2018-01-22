@@ -49,7 +49,7 @@
 
 
 (deffunction MAIN::stampa-header()
-  (clear-window)
+  ;(clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -108,22 +108,15 @@
 (deffunction MAIN::ask-stop-program ()
   (bind ?answer 0)
   (while (not (member ?answer (create$ 1 2 3 4)))
-      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Continua esecuzione" crlf "2. Revisiona le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
+      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Continua esecuzione" crlf "2. Ritratta le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
       (bind ?answer (read))
   )
-  (if (eq ?answer 2) then (assert (init-revisiona-domande)))
+  (if (eq ?answer 2) then (assert (fase ritrattazione)))
   (if (eq ?answer 3) then (reset) (run))
   (if (eq ?answer 4) then (halt))
 )
 
-(deffunction MAIN::stampa-header-revisione()
-  (clear-window)
-  (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
-)
 
-(deffunction MAIN::stampa-footer-revisione()
-  (printout t crlf "***********************************************************" crlf crlf crlf)
-)
 
 
 
@@ -168,15 +161,16 @@
 
 (defrule MAIN::combina-certezza-nodi
   (declare (salience ?*highest-priority*))
-  ?nodo1 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c1) (nodo-padre $?padre1) (stato attivo))
-  ?nodo2 <- (nodo (nome ?n1) (valore ?v1) (certezza ?c2) (nodo-padre $?padre2) (stato attivo))
+  ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1))
+  ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
   (test (neq ?nodo1 ?nodo2))
   =>
   ;(printout t "Combine: " ?n1 " - " ?v1 " - " ?c1 "/" ?c2 crlf)
   ;(retract ?nodo1)
-  (bind ?x1  (modify ?nodo1 (stato inattivo)))
-  (bind ?x2  (modify ?nodo2 (stato inattivo)))
-  (assert (nodo (nome ?n1) (valore ?v1) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?x1 ?x2)))
+  ;(bind ?x1  (modify ?nodo1 (stato inattivo)))
+  ;(bind ?x2  (modify ?nodo2 (stato inattivo)))
+  (assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2)))
 )
 
 (defrule MAIN::rimuovi-padri-duplicati
@@ -186,13 +180,14 @@
   (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
 )
 
-(defrule MAIN::attiva-nodi-diagnosi-terminali
-  (declare (salience ?*highest-priority*))
-  ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
-  (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
-  =>
-  (modify ?n1 (stato attivo))
-)
+; (defrule MAIN::attiva-nodi-diagnosi-terminali
+;   (declare (salience ?*highest-priority*))
+;   (fase 2-analisi)
+;   ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
+;   (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
+;   =>
+;   (modify ?n1 (stato attivo))
+; )
 
 
 ;***********EXAMPLE CF RULES ***********************
@@ -222,6 +217,7 @@
   (load-facts "data/DIAGNOSI.DAT")
   (load "rules/modulo-diagnosi.clp")
   (load "rules/modulo-spiegazione.clp")
+  (load "rules/modulo-ritrattazione.clp")
   (clear-window)
   (assert (contatore-domande 0))
   (assert (fase 1-profilazione))
@@ -254,28 +250,32 @@
   (declare (salience ?*highest-priority*))
   (fase 4-trova-soluzioni)
   =>
-  (bho)
+  (assert (bho))
 )
 
 (defrule fase-5-stampa-soluzioni
   (declare (salience ?*highest-priority*))
   (fase 5-stampa-soluzioni)
   =>
-  (bho)
+  (assert (bho))
 )
 
 (defrule fase-ritrattazione
   (declare (salience ?*highest-priority*))
-  (fase ritrattazione)
+  ?f1 <- (fase ritrattazione)
+  ; ?f2 <- (fase ?v&~ritrattazione)
   =>
-  (bho)
+  ; (retract ?f1)
+  ; (retract ?f2)
+  ; (assert (fase 2-analisi))
+  (focus MODULO-RITRATTAZIONE)
 )
 
 (defrule fase-spiegazione
   (declare (salience ?*highest-priority*))
   (fase spiegazione)
   =>
-  (bho)
+  (focus MODULO-SPIEGAZIONE)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,147 +316,6 @@
 )
 
 
-
-
-
-
-
-
-; (defrule diagnosi-parziale-trovata
-;   (declare (salience ?*highest-priority*))
-;   (nodo (nome diagnosi) (valore ?val) (descrizione ?desc))
-;   =>
-;   (printout t crlf "DIAGNOSI PARZIALE TROVATA: " ?desc)
-;   (assert(ferma-programma))
-; )
-
-
-
-
-
-
-
-
-
-
-
-; STAMPA ELENCO E REVISIONE DOMANDE
-;*******************************************************************************
-
-(defrule INIT-STAMPA-ELENCO-header
-  (declare (salience ?*highest-priority*))
-  ?p <- (init-revisiona-domande)
-  =>
-  (stampa-header-revisione)
-  (retract ?p)
-  (assert (revisiona-domande))
-)
-
-(defrule LOOP-STAMPA-ELENCO-domande
-  (declare (salience ?*highest-priority*))
-  (revisiona-domande)
-  ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE) (descrizione-risposte $?descr) (risposta-selezionata ?r-selezionata))
-  (not (domanda (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE)))
-  =>
-  (modify ?d (stampata TRUE))
-  (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " (nth ?r-selezionata ?descr) crlf crlf)
-)
-
-(defrule END-STAMPA-ELENCO
-  (declare (salience ?*highest-priority*))
-  ?r <-(revisiona-domande)
-  (not (domanda (gia-chiesta TRUE) (stampata FALSE)))
-  (contatore-domande ?n)
-  =>
-  (printout t crlf crlf)
-  (bind ?risposta (ask-question-revision ?n))
-  (stampa-footer-revisione)
-  (retract ?r)
-  (assert (annulla-stampa-domande))
-  (if (<> ?risposta 0) then
-    (assert (revisiona-da ?risposta))
-  )
-)
-
-(defrule LOOP-STAMPA-ELENCO-reset
-  (declare (salience ?*highest-priority*))
-  (annulla-stampa-domande)
-  ?d <- (domanda (stampata TRUE))
-  =>
-  (modify ?d (stampata FALSE))
-)
-
-(defrule END-STAMPA-ELENCO-reset
-  (declare (salience ?*highest-priority*))
-  ?a <- (annulla-stampa-domande)
-  (not (domanda (stampata TRUE)))
-  =>
-  (retract ?a)
-)
-
-
-; REVISIONA DOMANDA (RITRATTAZIONE)
-;****************************************************************************
-
-
-(defrule revisiona-da
-  (declare (salience ?*highest-priority*))
-  (not(annulla-stampa-domande))
-  ?r <- (revisiona-da ?n)
-  ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
-  ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
-  =>
-  (assert (elimina-nodi-da ?nodo-partenza))
-  (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
-  (modify ?d (risposta-selezionata ?risposta))
-  (retract ?r)
-  (assert (fine-revisione))
-)
-
-(defrule LOOP-elimina-nodi-da
-  (declare (salience ?*highest-priority*))
-  ?p1 <- (elimina-nodi-da ?n)
-  ?p2 <- (nodo (nodo-padre $?x ?n $?y))
-  =>
-  (assert (elimina-nodi-da ?p2))
-  (retract ?p2)
-)
-
-(defrule END-elimina-nodi-da
-  (declare (salience ?*highest-priority*))
-  ?p1 <- (elimina-nodi-da ?n)
-  (not (nodo (nodo-padre $?x ?n $?y)))
-  =>
-  (retract ?p1)
-)
-
-(defrule END-revisiona-domande
-  (declare (salience ?*high-priority*))
-  ?r <- (fine-revisione)
-  (not (elimina-nodi da ?e))
-  =>
-  (retract ?r)
-  ;(assert (attiva-nodi))
-  (assert (init-revisiona-domande))
-)
-
-; (defrule attiva-nodi-diagnosi-terminali
-;   ?r <- (attiva-nodi)
-;   ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
-;   (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
-;   =>
-;   (modify ?n1 (stato attivo))
-; )
-
-; (defrule END-attiva-nodi-diagnosi-terminali
-;   ?r <- (attiva-nodi)
-;   (not (and (nodo (nome diagnosi) (valore ?v) (stato inattivo))
-;             (not(nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))))
-;   =>
-;   (retract ?r)
-;   (assert (init-revisiona-domande))
-; )
-
 ; CHIEDI DOMANDA
 ;****************************************************************************
 
@@ -473,13 +332,13 @@
   (if (= ?risposta 0) then
     (retract ?ask)
     (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
-    (assert (init-revisiona-domande))
+    (assert (fase ritrattazione))
   else
     (if (= ?risposta 9) then
       (retract ?ask)
       (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
       (assert (nodo (nome spiegazione) (valore ?attr)))
-      (focus MODULO-SPIEGAZIONE)
+      (assert (fase spiegazione))
     else
       ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
       (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
