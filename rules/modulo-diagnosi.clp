@@ -2,7 +2,7 @@
 
 (defrule MODULO-DIAGNOSI::stampa-diagnosi
   (not (resetta-diagnosi))
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)))
   ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
   =>
   (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
@@ -11,7 +11,7 @@
 
 (defrule MODULO-DIAGNOSI::fine-stampa-diagnosi
   (not (resetta-diagnosi))
-  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (stato attivo))
+  (not (and (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)))
             (diagnosi (attributo ?attr-diagnosi) (stampata FALSE))))
   =>
   (assert (resetta-diagnosi))

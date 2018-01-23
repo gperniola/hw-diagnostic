@@ -12,15 +12,19 @@
   (printout t crlf "***********************************************************" crlf crlf crlf)
 )
 
-(defrule iniz-ritrattazione
-    =>
-    (assert (avvia-ritrattazione))
-  )
+; (defrule iniz-ritrattazione
+;     ?f <- (fase ritrattazione)
+;     =>
+;     (retract ?f)
+;     (assert (avvia-ritrattazione))
+;   )
 
 (defrule STAMPA-ELENCO-header
-    ?a <- (avvia-ritrattazione)
+    ;?a <- (avvia-ritrattazione)
+    ?f <- (fase ritrattazione)
     =>
-    (retract ?a)
+    ;(retract ?a)
+    (retract ?f)
     (stampa-header-revisione)
     (assert (revisiona-domande))
 )
@@ -78,30 +82,47 @@
   (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
   (modify ?d (risposta-selezionata ?risposta))
   (retract ?r)
-  (assert (fine-revisione))
+
+
+  ; (printout t "- RITRATTAZIONE DA " ?nodo-partenza crlf)
+  ; (bind ?h (read))
 )
 
 (defrule LOOP-elimina-nodi-da
+  (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
   ?p2 <- (nodo (nodo-padre $?x ?n $?y))
   =>
   (assert (elimina-nodi-da ?p2))
+
+  ; (printout t "- eliminazione di " ?p2 crlf)
+  ; (bind ?h (read))
   (retract ?p2)
 )
 
 (defrule END-elimina-nodi-da
+
   ?p1 <- (elimina-nodi-da ?n)
   (not (nodo (nodo-padre $?x ?n $?y)))
   =>
+
+  ; (printout t "- In end-elimina-nodi-da" crlf)
+  ; (bind ?h (read))
   (retract ?p1)
+  (assert (fine-revisione))
 )
 
 (defrule END-revisiona-domande
+  (declare (salience ?*lowest-priority*))
   ?r <- (fine-revisione)
   (not (elimina-nodi da ?e))
   =>
+
+  ; (printout t "- In end-revisiona-domande" crlf)
+  ; (bind ?h (read))
   (retract ?r)
-  (assert (avvia-ritrattazione))
+  (focus MAIN) ;;EXIT POINT
+  ;(assert (avvia-ritrattazione))
   ;(assert (attiva-nodi))
   ;(assert (init-revisiona-domande))
 )

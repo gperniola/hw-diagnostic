@@ -12,7 +12,7 @@
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
-    (slot stato (type SYMBOL) (default attivo))
+    ;(slot stato (type SYMBOL) (default attivo))
     (slot tipo (type SYMBOL))
     (multislot nodo-padre (type FACT-ADDRESS))
     (slot descrizione (type STRING))
@@ -21,13 +21,13 @@
   (deftemplate domanda
     (slot attributo     (type SYMBOL) (default ?NONE))
     (slot gia-chiesta   (default  FALSE))
+    (slot stampata (default FALSE))
     (slot num-domanda (type INTEGER))
     (multislot risposte-valide (type SYMBOL) (default ?NONE))
     (slot risposta-selezionata (type INTEGER))
     (multislot testo-domanda (default ?NONE))
     ;(slot testo-domanda (type STRING) (default ?NONE))
     (multislot descrizione-risposte (type STRING) (default ?NONE))
-    (slot stampata (default FALSE))
     ;(slot domanda-generica (default FALSE))
   )
 
@@ -263,11 +263,11 @@
 (defrule fase-ritrattazione
   (declare (salience ?*highest-priority*))
   ?f1 <- (fase ritrattazione)
-  ; ?f2 <- (fase ?v&~ritrattazione)
+  ?f2 <- (fase ?v&~ritrattazione)
   =>
-  ; (retract ?f1)
-  ; (retract ?f2)
-  ; (assert (fase 2-analisi))
+  ;(retract ?f1)
+  (retract ?f2)
+  (assert (fase 2-analisi))
   (focus MODULO-RITRATTAZIONE)
 )
 
@@ -284,7 +284,7 @@
 (defrule MAIN::diagnosi-trovata
   (declare (salience ?*low-priority*))
   ?f <- (fase 2-analisi)
-  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)) (stato attivo))
+  (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)))
   (diagnosi (attributo ?attr-diagnosi))
   (not (stampa-diagnosi))
   (not (ferma-programma))
@@ -745,7 +745,6 @@
   (declare (salience ?*lowest-priority*))
   ?f <- (fase 1-profilazione)
   =>
-  (set-strategy depth)
   (retract ?f)
   (assert (fase 2-analisi))
 )
