@@ -12,6 +12,16 @@
   (printout t crlf "***********************************************************" crlf crlf crlf)
 )
 
+(deffunction ask-question-revision(?n-domande-chieste)
+  (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
+  (bind ?answer (read))
+  (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+  (while (and (> ?answer ?n-domande-chieste) (< ?answer 0)) do
+    (printout t crlf "Valore inserito non valido, riprovare: ")
+    (bind ?answer (read))
+  )
+?answer)
+
 ; (defrule iniz-ritrattazione
 ;     ?f <- (fase ritrattazione)
 ;     =>
@@ -32,7 +42,9 @@
 (defrule LOOP-STAMPA-ELENCO-domande
   (revisiona-domande)
   ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE) (descrizione-risposte $?descr) (risposta-selezionata ?r-selezionata))
-  (not (domanda (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE)))
+  (nodo (nome chiedi) (valore ?attr))
+  (not (and (domanda (attributo ?attr2) (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE))
+            (nodo (nome chiedi) (valore ?attr2))))
   =>
   (modify ?d (stampata TRUE))
   (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " (nth ?r-selezionata ?descr) crlf crlf)
@@ -40,7 +52,8 @@
 
 (defrule END-STAMPA-ELENCO
   ?r <-(revisiona-domande)
-  (not (domanda (gia-chiesta TRUE) (stampata FALSE)))
+  (not (and (domanda (attributo ?attr) (gia-chiesta TRUE) (stampata FALSE))
+            (nodo (nome chiedi) (valore ?attr))))
   (contatore-domande ?n)
   =>
   (printout t crlf crlf)

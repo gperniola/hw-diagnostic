@@ -59,15 +59,7 @@
                 "***                                                 ***" crlf crlf)
 )
 
-(deffunction MAIN::ask-question-revision(?n-domande-chieste)
-  (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
-  (bind ?answer (read))
-  (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-  (while (and (> ?answer ?n-domande-chieste) (< ?answer 0)) do
-    (printout t crlf "Valore inserito non valido, riprovare: ")
-    (bind ?answer (read))
-  )
-?answer)
+
 
 (deffunction MAIN::ask-question-direct (?j ?question $?allowed-values)
   (printout t "***** REVISIONE DOMANDA N." ?j " *****" crlf ?question crlf)
