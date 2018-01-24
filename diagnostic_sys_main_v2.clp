@@ -254,7 +254,7 @@
   (fase 4-trova-soluzioni)
   ?f <- (fase 3-stampa-diagnosi)
   =>
-  (printout t "FASE SOLUZIONI" crlf) 
+  (printout t "FASE SOLUZIONI" crlf)
   (retract ?f)
 )
 
@@ -263,7 +263,8 @@
   (declare (salience ?*highest-priority*))
   (fase 5-stampa-soluzioni)
   =>
-  (assert (bho))
+  (printout t "***** LISTA SOLUZIONI *****" crlf crlf)
+  (focus MODULO-SOLUZIONE)
 )
 ;;;;;;;;;;;;;;;;;;;
 
