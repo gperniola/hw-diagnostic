@@ -38,6 +38,14 @@
     (slot stampata (default FALSE))
   )
 
+  (deftemplate soluzione
+    (slot attributo   (type SYMBOL))
+    (slot titolo      (type STRING))
+    (slot descrizione (type STRING))
+    (slot stampata (default FALSE))
+
+  )
+
 
 
 
@@ -100,9 +108,10 @@
 (deffunction MAIN::ask-stop-program ()
   (bind ?answer 0)
   (while (not (member ?answer (create$ 1 2 3 4)))
-      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Continua esecuzione" crlf "2. Ritratta le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
+      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Trova soluzioni al problema" crlf "2. Ritratta le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
       (bind ?answer (read))
   )
+  (if (eq ?answer 1) then (assert (fase 4-trova-soluzioni)))
   (if (eq ?answer 2) then (assert (fase ritrattazione)))
   (if (eq ?answer 3) then (reset) (run))
   (if (eq ?answer 4) then (halt))
@@ -207,7 +216,9 @@
   =>
   (load-facts "data/DOMANDE.DAT")
   (load-facts "data/DIAGNOSI.DAT")
+  (load-facts "data/SOLUZIONI.DAT")
   (load "rules/modulo-diagnosi.clp")
+  (load "rules/modulo-soluzione.clp")
   (load "rules/modulo-spiegazione.clp")
   (load "rules/modulo-ritrattazione.clp")
   (clear-window)
@@ -237,20 +248,24 @@
   (focus MODULO-DIAGNOSI)
 )
 
-;; DA IMPLEMENTARE
+
 (defrule fase-4-trova-soluzioni
   (declare (salience ?*highest-priority*))
   (fase 4-trova-soluzioni)
+  ?f <- (fase 3-stampa-diagnosi)
   =>
-  (assert (bho))
+  (printout t "FASE SOLUZIONI" crlf) 
+  (retract ?f)
 )
 
+;; DA IMPLEMENTARE
 (defrule fase-5-stampa-soluzioni
   (declare (salience ?*highest-priority*))
   (fase 5-stampa-soluzioni)
   =>
   (assert (bho))
 )
+;;;;;;;;;;;;;;;;;;;
 
 (defrule fase-ritrattazione
   (declare (salience ?*highest-priority*))
@@ -269,8 +284,6 @@
   =>
   (focus MODULO-SPIEGAZIONE)
 )
-
-;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (defrule MAIN::diagnosi-trovata
@@ -295,6 +308,7 @@
   (not (stampa-diagnosi))
   (not (ferma-programma))
   =>
+  (printout t crlf "***** FINE DOMANDE *****" crlf crlf)
   (retract ?f)
   (assert (fase 3-stampa-diagnosi))
 )
