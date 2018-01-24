@@ -2,6 +2,7 @@
 
 (defrule MODULO-DIAGNOSI::stampa-diagnosi
   (declare (salience ?*high-priority*))
+  (fase 3-stampa-diagnosi)
   (not (resetta-diagnosi))
   ?n <- (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)))
   (not (nodo (nome diagnosi) (valore ?attr-diagnosi) (nodo-padre $?pdr1 ?n $?pdr2)))
