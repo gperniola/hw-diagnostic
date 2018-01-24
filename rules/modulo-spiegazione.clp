@@ -4,9 +4,13 @@
 ;*******************************************************************************
 
 (deffunction MODULO-SPIEGAZIONE::leggi-nodi($?p)
-  (loop-for-count (?cnt1 1 (length ?p)) do
-    (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
-    (assert (spiega ?v))
+  (if (> (length ?p) 0) then
+    (loop-for-count (?cnt1 1 (length ?p)) do
+      (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
+      (assert (spiega ?v))
+    )
+  else
+    (printout t  "- Questa e' una domanda generica posta per identificare il tipo di dispositivo su cui si sta operando." crlf crlf)
   )
 )
 
@@ -25,6 +29,7 @@
 ; )
 
 (defrule MODULO-SPIEGAZIONE::init-spiegazione-domanda
+  ?f <- (fase spiegazione)
   ?target <- (nodo (nome spiegazione) (valore ?attr ))
   ?domanda <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?p))
   (domanda (attributo ?attr))
@@ -34,6 +39,7 @@
   (leggi-nodi ?p)
   ;(bind ?answer (read))
   (assert (contatore-spiegazione 0))
+  (retract ?f)
 )
 
 ; (defrule SPIEGAZIONE::init-spiegazione-domanda-generica
@@ -79,4 +85,5 @@
   =>
   (printout t "Premere 0 e INVIO per tornare alla normale esecuzione del programma." crlf)
   (bind ?answer (read))
+  (focus MAIN)
 )
