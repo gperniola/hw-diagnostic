@@ -108,8 +108,8 @@
   =>
   (assert (elimina-nodi-da ?p2))
 
-  ; (printout t "- eliminazione di " ?p2 crlf)
-  ; (bind ?h (read))
+  (printout t "- eliminazione di " ?p2 crlf)
+  (bind ?h (read))
   (retract ?p2)
 )
 
@@ -118,8 +118,8 @@
   ?p1 <- (elimina-nodi-da ?n)
   (not (nodo (nodo-padre $?x ?n $?y)))
   =>
-
-  ; (printout t "- In end-elimina-nodi-da" crlf)
+  ; (bind ?x (modify ?n (stato attivo)) )
+  ; (printout t "- attivazione da " ?n " a " ?x crlf)
   ; (bind ?h (read))
   (retract ?p1)
   (assert (fine-revisione))

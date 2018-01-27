@@ -1,0 +1,20 @@
+
+(soluzione (attributo sostituisci-alimentatore)
+          (titolo "Sostituire l'alimentatore")
+          (descrizione "Si consiglia di sostituire completamente l'alimentatore.")
+)
+
+(soluzione (attributo sostituisci-scheda-madre)
+          (titolo "Sostituire la scheda madre")
+          (descrizione "Potrebbe essere necessario sostituire la scheda madre. Assicurarsi che la nuova scheda madre sia compatibile con il resto dell'hardware.")
+)
+
+(soluzione (attributo accendi-alimentatore)
+          (titolo "Accendere l'alimentatore")
+          (descrizione "Premere il tasto di accensione dell'alimentatore e verificare se il problema e' risolto.")
+)
+
+(soluzione (attributo connetti-alimentazione)
+          (titolo "Connettere l'alimentazione elettrica al dispositivo")
+          (descrizione "Collegare correttamente i cavi di alimentazione al dispositivo e assicurarsi che ci sia passaggio di corrente dalla presa elettrica.")
+)

@@ -2,7 +2,7 @@
 
 (defrule MODULO-SOLUZIONE::stampa-soluzione
   (declare (salience ?*high-priority*))
-  (fase 3-stampa-soluzione)
+  (fase 5-stampa-soluzioni)
   (not (resetta-soluzione))
   ?n <- (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)))
   ?d <- (soluzione (attributo ?attr-soluzione) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
@@ -28,9 +28,12 @@
 
 (defrule MODULO-SOLUZIONE::fine-resetta-soluzione
   ?r <- (resetta-soluzione)
+  ?f <- (fase 5-stampa-soluzioni)
   (not (soluzione (attributo ?attr-soluzione) (stampata TRUE)))
   =>
   (retract ?r)
-  (assert (ferma-programma-2))
+  (retract ?f)
+  ;(assert (ferma-programma-2))
+  (ask-stop-program-2)
   (focus MAIN)
 )

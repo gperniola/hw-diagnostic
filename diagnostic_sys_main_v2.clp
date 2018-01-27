@@ -1,5 +1,6 @@
 
-(defglobal ?*highest-priority* = 1000)
+(defglobal ?*superhigh-priority* = 1000)
+(defglobal ?*highest-priority* = 998)
 (defglobal ?*high-priority* = 100)
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
@@ -12,7 +13,7 @@
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
-    ;(slot stato (type SYMBOL) (default attivo))
+    (slot stato (type SYMBOL) (default attivo))
     (slot tipo (type SYMBOL))
     (multislot nodo-padre (type FACT-ADDRESS))
     (slot descrizione (type STRING))
@@ -117,6 +118,15 @@
   (if (eq ?answer 4) then (halt))
 )
 
+(deffunction MAIN::ask-stop-program-2 ()
+  (bind ?answer 0)
+  (while (not (member ?answer (create$ 1 2)))
+      (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Riavvia programma" crlf "2. Termina programma" crlf crlf)
+      (bind ?answer (read))
+  )
+  (if (eq ?answer 1) then (reset) (run))
+  (if (eq ?answer 2) then (halt))
+)
 
 
 
@@ -162,16 +172,19 @@
 
 (defrule MAIN::combina-certezza-nodi
   (declare (salience ?*highest-priority*))
-  ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1))
-  ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2))
-  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
+  ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1) (stato attivo))
+  ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2) (stato attivo))
+  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
   (test (neq ?nodo1 ?nodo2))
   =>
-  ;(printout t "Combine: " ?n1 " - " ?v1 " - " ?c1 "/" ?c2 crlf)
+  (printout t "Combine: " ?nodo1 " - " ?nodo2  crlf)
+  (bind ?h (read))
   ;(retract ?nodo1)
-  ;(bind ?x1  (modify ?nodo1 (stato inattivo)))
-  ;(bind ?x2  (modify ?nodo2 (stato inattivo)))
-  (assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2)))
+  (bind ?x1  (modify ?nodo1 (stato inattivo)))
+  (bind ?x2  (modify ?nodo2 (stato inattivo)))
+  (bind ?y(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?x1 ?x2))))
+  (printout t "Combined in: " ?x1 ", " ?x2 " --> " ?y  crlf)
+  ;(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2)))
 )
 
 (defrule MAIN::rimuovi-padri-duplicati
@@ -181,13 +194,27 @@
   (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
 )
 
-; (defrule MAIN::attiva-nodi-diagnosi-terminali
-;   (declare (salience ?*highest-priority*))
+(defrule MAIN::attiva-nodi-terminali
+  (declare (salience ?*superhigh-priority*))
+  (fase 2-analisi)
+  ?nodo <- (nodo (nome ?n) (valore ?v) (stato inattivo))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y)))
+  =>
+  (printout t "Attiva: " ?nodo  crlf)
+  (bind ?h (read))
+  (bind ?y (modify ?nodo (stato attivo)))
+  (printout t "Attivato in: " ?y crlf)
+)
+
+; (defrule MAIN::disattiva-nodi-diagnosi-terminali
+;   (declare (salience ?*superhigh-priority*))
 ;   (fase 2-analisi)
-;   ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
-;   (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
+;   ?nodo <- (nodo (nome ?n) (valore ?v) (stato attivo))
+;   ?child <- (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y))
 ;   =>
-;   (modify ?n1 (stato attivo))
+;   (printout t "Disattiva: " ?nodo " - child: " ?child crlf)
+;   (bind ?h (read))
+;   (modify ?nodo (stato inattivo))
 ; )
 
 
@@ -252,10 +279,10 @@
 (defrule fase-4-trova-soluzioni
   (declare (salience ?*highest-priority*))
   (fase 4-trova-soluzioni)
-  ?f <- (fase 3-stampa-diagnosi)
+  ;?f <- (fase 3-stampa-diagnosi)
   =>
   (printout t "FASE SOLUZIONI" crlf)
-  (retract ?f)
+  ;(retract ?f)
 )
 
 ;; DA IMPLEMENTARE
@@ -271,11 +298,11 @@
 (defrule fase-ritrattazione
   (declare (salience ?*highest-priority*))
   ?f1 <- (fase ritrattazione)
-  ?f2 <- (fase ?v&~ritrattazione)
+;  ?f2 <- (fase ?v&~ritrattazione)
   =>
   ;(retract ?f1)
-  (retract ?f2)
-  (assert (fase 2-analisi))
+  ; (retract ?f2)
+  ; (assert (fase 2-analisi))
   (focus MODULO-RITRATTAZIONE)
 )
 
@@ -292,11 +319,13 @@
   ?f <- (fase 2-analisi)
   (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)))
   (diagnosi (attributo ?attr-diagnosi))
-  (not (stampa-diagnosi))
-  (not (ferma-programma))
+  (not (fase 3-stampa-diagnosi))
+  (not (fase 4-trova-soluzioni))
+  (not (fase 5-stampa-soluzioni))
+  ;(not (ferma-programma))
   =>
   (printout t crlf "***** DIAGNOSI *****" crlf crlf)
-  (retract ?f)
+  ;(retract ?f)
   (assert (fase 3-stampa-diagnosi))
   ;(assert(ferma-programma))
 )
@@ -306,21 +335,31 @@
   ?f <- (fase 2-analisi)
   (nodo (nome chiedi) (valore ?dom))
   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
-  (not (stampa-diagnosi))
-  (not (ferma-programma))
+  (not (fase 3-stampa-diagnosi))
+  (not (fase 4-trova-soluzioni))
+  (not (fase 5-stampa-soluzioni))
+  ;(not (ferma-programma))
   =>
   (printout t crlf "***** FINE DOMANDE *****" crlf crlf)
-  (retract ?f)
+  ;(retract ?f)
   (assert (fase 3-stampa-diagnosi))
 )
 
-(defrule MAIN::ferma-esecuzione
-  (declare (salience ?*highest-priority*))
-  ?x <- (ferma-programma)
-  =>
-  (retract ?x)
-  (ask-stop-program)
-)
+; (defrule MAIN::ferma-esecuzione
+;   (declare (salience ?*highest-priority*))
+;   ?x <- (ferma-programma)
+;   =>
+;   (retract ?x)
+;   (ask-stop-program)
+; )
+;
+; (defrule MAIN::ferma-esecuzione-2
+;   (declare (salience ?*highest-priority*))
+;   ?x <- (ferma-programma-2)
+;   =>
+;   (retract ?x)
+;   (ask-stop-program-2)
+; )
 
 
 ; CHIEDI DOMANDA
@@ -752,7 +791,7 @@
   (declare (salience ?*lowest-priority*))
   ?f <- (fase 1-profilazione)
   =>
-  (retract ?f)
+  ;(retract ?f)
   (assert (fase 2-analisi))
 )
 
@@ -998,6 +1037,63 @@
 
 
 ;;******************************************************************************
+
+
+
+
+
+;; FASE 4 SOLUZIONI ********************
+
+(defrule soluzione-sostituisci-alimentatore
+    (fase 4-trova-soluzioni)
+    ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-guasto) (certezza ?c1) (stato attivo))
+    ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+    =>
+    (assert (nodo (nome soluzione) (valore sostituisci-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+)
+
+(defrule soluzione-sostituisci-scheda-madre
+  (fase 4-trova-soluzioni)
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&scheda-madre-guasta) (certezza ?c1) (stato attivo))
+  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  =>
+  (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+)
+
+(defrule soluzione-accendi-alimentatore
+  (fase 4-trova-soluzioni)
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1) (stato attivo))
+  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  =>
+  (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+)
+
+(defrule soluzione-connetti-alimentazione
+  (fase 4-trova-soluzioni)
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentazione-disconnessa) (certezza ?c1) (stato attivo))
+  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  =>
+  (assert (nodo (nome soluzione) (valore connetti-alimentazione) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+)
+
+
+;; ***** FASE 4: REGOLA PER PASSAGGIO ALLA PROSSIMA FASE
+
+(defrule passa-alla-fase-5
+  (declare (salience ?*lowest-priority*))
+  ?f <- (fase 4-trova-soluzioni)
+  =>
+  (retract ?f)
+  (assert (fase 5-stampa-soluzioni))
+)
+
+
+
+
+
+
+
+
 
 
 
