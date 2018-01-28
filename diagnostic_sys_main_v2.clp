@@ -13,7 +13,7 @@
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
-    (slot stato (type SYMBOL) (default attivo))
+    ;(slot stato (type SYMBOL) (default attivo))
     (slot tipo (type SYMBOL))
     (multislot nodo-padre (type FACT-ADDRESS))
     (slot descrizione (type STRING))
@@ -163,27 +163,36 @@
   (return (* ?cert-RHS ?min-cert))
 )
 
+
+
+
 (deffunction MAIN::combina-CF(?cf1 ?cf2)
-  (if (and (> ?cf1 0) (> ?cf2 0)) then (bind ?CF (- (+ ?cf1 ?cf2) (* ?cf1 ?cf2))))
-  (if (and (< ?cf1 0) (< ?cf2 0)) then (bind ?CF (+ (+ ?cf1 ?cf2) (* ?cf1 ?cf2))))
-  (if (< (* ?cf1 ?cf2) 0) then (bind ?CF (/ (+ ?cf1 ?cf2) (- 1 (min (abs ?cf1)(abs ?cf2))))))
+  (if (and (> ?cf1 0) (> ?cf2 0)) then (bind ?CF (- (+ ?cf1 ?cf2) (* ?cf1 ?cf2)))
+      (printout t "[" ?cf1 " + " ?cf2 "] - [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
+  )
+  (if (and (< ?cf1 0) (< ?cf2 0)) then (bind ?CF (+ (+ ?cf1 ?cf2) (* ?cf1 ?cf2)))
+      (printout t "[" ?cf1 " + " ?cf2 "] + [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
+  )
+  (if (< (* ?cf1 ?cf2) 0) then (bind ?CF (/ (+ ?cf1 ?cf2) (- 1 (min (abs ?cf1)(abs ?cf2)))))
+      (printout t "[" ?cf1 " + " ?cf2 "] / [ 1 - minabs [" ?cf1 ", " ?cf2 " ] = " ?CF crlf)
+  )
   (return ?CF)
 )
 
 (defrule MAIN::combina-certezza-nodi
   (declare (salience ?*highest-priority*))
-  ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1) (stato attivo))
-  ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2) (stato attivo))
-  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
+  ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1))
+  ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
   (test (neq ?nodo1 ?nodo2))
   =>
-  (printout t "Combine: " ?nodo1 " - " ?nodo2  crlf)
-  (bind ?h (read))
+  ;(printout t "Combine: " ?nodo1 " - " ?nodo2  crlf)
+  ;(bind ?h (read))
   ;(retract ?nodo1)
-  (bind ?x1  (modify ?nodo1 (stato inattivo)))
-  (bind ?x2  (modify ?nodo2 (stato inattivo)))
-  (bind ?y(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?x1 ?x2))))
-  (printout t "Combined in: " ?x1 ", " ?x2 " --> " ?y  crlf)
+  ; (bind ?x1  (modify ?nodo1 (stato inattivo)))
+  ; (bind ?x2  (modify ?nodo2 (stato inattivo)))
+  (bind ?y(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2))))
+  ;(printout t "Combined in: " ?x1 ", " ?x2 " --> " ?y  crlf)
   ;(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2)))
 )
 
@@ -194,17 +203,17 @@
   (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
 )
 
-(defrule MAIN::attiva-nodi-terminali
-  (declare (salience ?*superhigh-priority*))
-  (fase 2-analisi)
-  ?nodo <- (nodo (nome ?n) (valore ?v) (stato inattivo))
-  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y)))
-  =>
-  (printout t "Attiva: " ?nodo  crlf)
-  (bind ?h (read))
-  (bind ?y (modify ?nodo (stato attivo)))
-  (printout t "Attivato in: " ?y crlf)
-)
+; (defrule MAIN::attiva-nodi-terminali
+;   (declare (salience ?*superhigh-priority*))
+;   (fase 2-analisi)
+;   ?nodo <- (nodo (nome ?n) (valore ?v) (stato inattivo))
+;   (not (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y)))
+;   =>
+;   ;(printout t "Attiva: " ?nodo  crlf)
+;   ;(bind ?h (read))
+;   (bind ?y (modify ?nodo (stato attivo)))
+;   ;(printout t "Attivato in: " ?y crlf)
+; )
 
 ; (defrule MAIN::disattiva-nodi-diagnosi-terminali
 ;   (declare (salience ?*superhigh-priority*))
@@ -1046,32 +1055,32 @@
 
 (defrule soluzione-sostituisci-alimentatore
     (fase 4-trova-soluzioni)
-    ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-guasto) (certezza ?c1) (stato attivo))
-    ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+    ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-guasto) (certezza ?c1))
+    (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
     =>
     (assert (nodo (nome soluzione) (valore sostituisci-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
 
 (defrule soluzione-sostituisci-scheda-madre
   (fase 4-trova-soluzioni)
-  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&scheda-madre-guasta) (certezza ?c1) (stato attivo))
-  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&scheda-madre-guasta) (certezza ?c1))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
   =>
   (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
 
 (defrule soluzione-accendi-alimentatore
   (fase 4-trova-soluzioni)
-  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1) (stato attivo))
-  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
   =>
   (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
 
 (defrule soluzione-connetti-alimentazione
   (fase 4-trova-soluzioni)
-  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentazione-disconnessa) (certezza ?c1) (stato attivo))
-  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentazione-disconnessa) (certezza ?c1))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
   =>
   (assert (nodo (nome soluzione) (valore connetti-alimentazione) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
