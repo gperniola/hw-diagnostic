@@ -1,0 +1,36 @@
+FASE 1: Domande di carattere generale per identificare il dispositivo e il grado di esperienza dell'utente.
+	1- Stabilire se l'utente è esperto o se necessita di essere guidato nell'accensione del dispositivo
+		1.2- Se l'utente è esperto, chiedere se si conosce il tipo di problema o necessita di una guida nell'analisi del dispositivo
+	2- Stabilire l'età del dispositivo
+		2.1- Se l'età è inferiore a 5 anni, chiedere se il dispositivo è ancora in garanzia
+	3- Stabilire se il dispositivo è un pc fisso o portatile
+
+
+***TODO
+
+- regole per creare il profilo e avviare la fase 2 (alcune regole come batteria e cavi accessibili gia' ci sono)
+- diversi set di domande in base all'esperienza dell'utente per video e accensione
+*******
+
+FASE 1.1: Creare i profili per dispositivo e utente sulla base delle risposte ricevute nella FASE 1.
+	-Profilo utente esperto a conoscenza del problema:
+		-Chiedere a che tipologia appartiene il problema?
+
+	-Profilo utente esperto non a conoscenza del problema:
+		- Seguire l'utente nell'accensione del pc, utilizzando anche termini tecnici
+
+	-Profilo utente non esperto:
+		-Seguire l'utente nell'accensione del pc, passo per passo usando termini non tecnici
+
+	-Profilo pc fisso:
+		- ha un monitor esterno
+		- i cavi video sono accessibili
+
+	Profilo pc portatile:
+		- ha una batteria
+		- i cavi video non sono accessibili
+		- ha un alimentatore caricabatterie
+
+FASE 2: Sulla base del profilo delineato nella FASE 1, porre domande specifiche volte ad individuare la causa del problema (diagnosi).
+
+FASE 3: Sulla base delle diagnosi trovate nella FASE 2 e dal profilo delineato nella FASE 1, proporre una lista di soluzioni ai possibili problemi. 

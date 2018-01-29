@@ -1,68 +1,61 @@
 
 ;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
-(domanda  (attributo esperienza-utente)
-          (testo-domanda "Indicare il grado di esperienza dell'utente.")
-          (risposte-valide utente-esperto utente-inesperto)
-          (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
-                                "Dispongo di competenze informatiche limitate o non conosco i termini tecnici utilizzati")
-)
+    (domanda  (attributo tipo-dispositivo)
+              (domanda-generica TRUE)
+              (testo-domanda "A quale tipologia appartiene il dispositivo?")
+              (risposte-valide pc-desktop pc-portatile)
+              (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
+    )
 
-(domanda  (attributo problema-principale)
-          (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
-          (risposte-valide accensione-SO video analisi-guidata)
-          (descrizione-risposte "Si, problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
-                                "Si, disturbo del segnale video o problema del display"
-                                "No, non ho idea di quale sia il problema")
-)
+    (domanda  (attributo stato-accensione)
+              (domanda-generica TRUE)
+              (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
+              (risposte-valide ok fallito)
+              (descrizione-risposte "Si" "No, il dispositivo non si accende")
+    )
 
-(domanda  (attributo anni-dispositivo)
-          (testo-domanda "Quanti anni ha il dispositivo?")
-          (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
-          (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
-)
+    (domanda  (attributo problema-principale)
+              (domanda-generica TRUE)
+              (testo-domanda "Qual'e' la categoria che sembra piu' appropriata per il problema da analizzare?")
+              (risposte-valide accensione-SO video altro)
+              (descrizione-risposte "Problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
+                                    "Disturbo del segnale video, problema del display"
+                                    "Altro")
+    )
 
-(domanda  (attributo garanzia)
-          (testo-domanda "Il dispositivo e' ancora in garanzia?")
-          (risposte-valide si no sconosciuto)
-          (descrizione-risposte "Si" "No" "Non so")
-)
+    (domanda  (attributo anni-dispositivo)
+              (domanda-generica TRUE)
+              (testo-domanda "Quanti anni ha il dispositivo?")
+              (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
+              (descrizione-risposte "Meno di due anni" "Meno di cinque anni" "Meno di dieci anni" "Piu' di dieci anni" "Non so")
+    )
 
-(domanda  (attributo tipo-dispositivo)
-          (testo-domanda "A quale tipologia appartiene il dispositivo?")
-          (risposte-valide pc-desktop pc-portatile)
-          (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
-)
+    (domanda  (attributo garanzia)
+              (domanda-generica TRUE)
+              (testo-domanda "Il dispositivo è ancora in garanzia?")
+              (risposte-valide si no sconosciuto)
+              (descrizione-risposte "Si" "No" "Non so")
+    )
 
-(domanda  (attributo ha-batteria)
-          (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?")
-          (risposte-valide si no sconosciuto)
-          (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita" "Non so")
-)
+     (domanda  (attributo installazione-nuovo-hw)
+              (domanda-generica TRUE)
+            (testo-domanda "Sono state installate nuove componenti hardware prima che il problema cominciasse a verificarsi?")
+              (risposte-valide si no non-so)
+             (descrizione-risposte "Si" "No" "Non so")
+     )
+
+    (domanda  (attributo momento-manifestazione-problema)
+              (domanda-generica TRUE)
+              (testo-domanda "In quale momento si verifica il problema?")
+              (risposte-valide avvio caricamento-SO SO)
+              (descrizione-risposte "Sin dall'avvio del dispositivo o nelle prime fasi di caricamento" "Durante il caricamento del sistema operativo o al momento del login" "Dopo il caricamento del sistema operativo")
+    )
 
 ;; //***************************************************************************
 
 
 ;; // DOMANDE ACCENSIONE PC ****************************************************
-
-(domanda  (attributo stato-accensione)
-          (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
-          (risposte-valide ok fallito)
-          (descrizione-risposte "Si" "No, il dispositivo non si accende")
-)
-
-(domanda  (attributo alimentatore-funzionante-ut-inesperto)
-          (testo-domanda "Dopo aver premuto il tasto di accensione, anche se lo schermo resta nero, esaminate con attenzione il dispositivo e %n controllate se ci sono spie che si illuminano o se le ventole sembrano avviarsi.")
-          (risposte-valide si no)
-          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
-)
-
-(domanda  (attributo alimentatore-funzionante-ut-esperto)
-          (testo-domanda "Dpo aver premuto il tasto di accensione, il dispositivo sembra avviarsi anche se lo schermo resta nero?")
-          (risposte-valide si no)
-          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
-)
-
 
 
 (domanda  (attributo riavvio-forzato)
@@ -79,10 +72,11 @@
 )
 
 (domanda  (attributo batteria-difettosa)
-          (testo-domanda "Rimuovere la batteria del dispositivo e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
+          (testo-domanda "Rimuovere la batteria del dispositivo
+           e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
           (risposte-valide si no )
           (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-           "La batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
+           "la batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
 )
 
 (domanda  (attributo interruttore-alimentatore)
@@ -94,13 +88,13 @@
 
 (domanda  (attributo spia-alimentatore-pcportatile)
       (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
-      (risposte-valide accesa spenta sconosciuto )
+      (risposte-valide si no sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
 
 (domanda  (attributo spia-alimentatore-pcdesktop)
       (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
-      (risposte-valide accesa spenta sconosciuto )
+      (risposte-valide si no sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
 )
 
@@ -108,8 +102,6 @@
 
 
 ;; // DOMANDE VIDEO ************************************************************
-
-
 
 (domanda  (attributo disturbo-video)
           (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
