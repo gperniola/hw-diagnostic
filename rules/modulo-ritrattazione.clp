@@ -4,7 +4,7 @@
 ;*******************************************************************************
 
 (deffunction stampa-header-revisione()
-  ;(clear-window)
+  (clear-window)
   (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
 )
 
@@ -107,9 +107,9 @@
   ?p2 <- (nodo (nodo-padre $?x ?n $?y))
   =>
   (assert (elimina-nodi-da ?p2))
-
-  (printout t "- eliminazione di " ?p2 crlf)
-  (bind ?h (read))
+  ;
+  ; (printout t "- eliminazione di " ?p2 crlf)
+  ; (bind ?h (read))
   (retract ?p2)
 )
 

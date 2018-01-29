@@ -7,6 +7,7 @@
   ?n <- (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)))
   (not (nodo (nome diagnosi) (valore ?attr-diagnosi) (nodo-padre $?pdr1 ?n $?pdr2)))
   ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
+
   =>
   (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
   (modify ?d (stampata TRUE))

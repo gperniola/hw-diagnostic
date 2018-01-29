@@ -1,6 +1,6 @@
 
-(defglobal ?*superhigh-priority* = 1000)
-(defglobal ?*highest-priority* = 998)
+
+(defglobal ?*highest-priority* = 1000)
 (defglobal ?*high-priority* = 100)
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
@@ -58,7 +58,7 @@
 
 
 (deffunction MAIN::stampa-header()
-  ;(clear-window)
+  (clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -168,13 +168,13 @@
 
 (deffunction MAIN::combina-CF(?cf1 ?cf2)
   (if (and (> ?cf1 0) (> ?cf2 0)) then (bind ?CF (- (+ ?cf1 ?cf2) (* ?cf1 ?cf2)))
-      (printout t "[" ?cf1 " + " ?cf2 "] - [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
+      ;(printout t "[" ?cf1 " + " ?cf2 "] - [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
   )
   (if (and (< ?cf1 0) (< ?cf2 0)) then (bind ?CF (+ (+ ?cf1 ?cf2) (* ?cf1 ?cf2)))
-      (printout t "[" ?cf1 " + " ?cf2 "] + [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
+      ;(printout t "[" ?cf1 " + " ?cf2 "] + [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
   )
   (if (< (* ?cf1 ?cf2) 0) then (bind ?CF (/ (+ ?cf1 ?cf2) (- 1 (min (abs ?cf1)(abs ?cf2)))))
-      (printout t "[" ?cf1 " + " ?cf2 "] / [ 1 - minabs [" ?cf1 ", " ?cf2 " ] = " ?CF crlf)
+      ;(printout t "[" ?cf1 " + " ?cf2 "] / [ 1 - minabs [" ?cf1 ", " ?cf2 " ] = " ?CF crlf)
   )
   (return ?CF)
 )
@@ -333,7 +333,7 @@
   (not (fase 5-stampa-soluzioni))
   ;(not (ferma-programma))
   =>
-  (printout t crlf "***** DIAGNOSI *****" crlf crlf)
+  ;(printout t crlf "***** DIAGNOSI *****" crlf crlf)
   ;(retract ?f)
   (assert (fase 3-stampa-diagnosi))
   ;(assert(ferma-programma))
@@ -349,7 +349,7 @@
   (not (fase 5-stampa-soluzioni))
   ;(not (ferma-programma))
   =>
-  (printout t crlf "***** FINE DOMANDE *****" crlf crlf)
+  ;(printout t crlf "***** FINE DOMANDE *****" crlf crlf)
   ;(retract ?f)
   (assert (fase 3-stampa-diagnosi))
 )
