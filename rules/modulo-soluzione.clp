@@ -1,5 +1,15 @@
 (defmodule MODULO-SOLUZIONE(import MAIN ?ALL)(export ?ALL))
 
+(defrule MODULO-SOLUZIONE::stampa-header
+  (declare (salience ?*highest-priority*))
+  (fase 5-stampa-soluzioni)
+  (not (resetta-soluzione))
+  =>
+  (printout t "             *********** POSSIBILI SOLUZIONI ***********" crlf crlf)
+  (printout t "  SOLUZIONE                                                CERTEZZA" crlf)
+  (printout t " -------------------------------------------------------------------" crlf)
+)
+
 (defrule MODULO-SOLUZIONE::stampa-soluzione
   (declare (salience ?*high-priority*))
   (fase 5-stampa-soluzioni)
@@ -7,7 +17,9 @@
   ?n <- (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)))
   ?d <- (soluzione (attributo ?attr-soluzione) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
   =>
-  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
+  ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
+
+  (format t " %-60s %2d%%%n %-60s %n %n" ?titolo (integer (* ?cer 100)) ?desc)
   (modify ?d (stampata TRUE))
 )
 

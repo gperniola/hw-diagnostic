@@ -280,7 +280,7 @@
   (declare (salience ?*highest-priority*))
   (fase 3-stampa-diagnosi)
   =>
-  (printout t "***** DIAGNOSI DEL PROBLEMA *****" crlf crlf)
+  ;(printout t "***** DIAGNOSI DEL PROBLEMA *****" crlf crlf)
   (focus MODULO-DIAGNOSI)
 )
 
@@ -290,7 +290,7 @@
   (fase 4-trova-soluzioni)
   ;?f <- (fase 3-stampa-diagnosi)
   =>
-  (printout t "FASE SOLUZIONI" crlf)
+  ;(printout t "FASE SOLUZIONI" crlf)
   ;(retract ?f)
 )
 
@@ -299,7 +299,7 @@
   (declare (salience ?*highest-priority*))
   (fase 5-stampa-soluzioni)
   =>
-  (printout t "***** LISTA SOLUZIONI *****" crlf crlf)
+  ;(printout t "***** LISTA SOLUZIONI *****" crlf crlf)
   (focus MODULO-SOLUZIONE)
 )
 ;;;;;;;;;;;;;;;;;;;
@@ -889,7 +889,7 @@
   ?p2 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?crt2))
   ?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?crt1 ?crt2 ?crt3))
+  (bind ?crt (calcola-certezza 0.1 ?crt1 ?crt2 ?crt3))
   (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2 ?p3) (certezza ?crt)))
 )
 
@@ -927,7 +927,7 @@
   ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?crt1))
   ?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
   ;; (ha-batteria si) dev'essere una risposta dedotta dal sistema
-  ?p2 <- (nodo (nome ha-batteria) (valore si) (certezza ?crt2) (tipo ?t&~info-utente))
+  ?p2 <- (nodo (nome ha-batteria) (valore si) (certezza ?crt2) (tipo ?t&~info-utente)) ;; l'utente non sa se il disp. ha una batteria o meno
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
   =>
@@ -948,9 +948,9 @@
   ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt2))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
-  ?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   =>
-  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5)))
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?p1 ?p2 ?p3 ?p4)))
 )
 
 
@@ -969,7 +969,7 @@
   ?p2 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt2))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
-  ?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?crt6))
   =>
   (bind ?crt-alim-guasto (calcola-certezza -0.6 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
@@ -984,7 +984,7 @@
   ?p2 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt2))
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt3))
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
-  ?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?crt6))
   =>
   (bind ?crt-alim-guasto (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))

@@ -1,5 +1,16 @@
 (defmodule MODULO-DIAGNOSI(import MAIN ?ALL)(export ?ALL))
 
+(defrule MODULO-DIAGNOSI::stampa-header
+  (declare (salience ?*highest-priority*))
+  (fase 3-stampa-diagnosi)
+  (not (resetta-diagnosi))
+  =>
+  (printout t "              *********** POSSIBILI DIAGNOSI ***********" crlf crlf)
+  (printout t "  DIAGNOSI                                                 CERTEZZA" crlf)
+  (printout t " -------------------------------------------------------------------" crlf)
+)
+
+
 (defrule MODULO-DIAGNOSI::stampa-diagnosi
   (declare (salience ?*high-priority*))
   (fase 3-stampa-diagnosi)
@@ -9,7 +20,8 @@
   ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
 
   =>
-  (printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
+  ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
+  (format t " %-60s %2d%%%n" ?titolo (integer (* ?cer 100)))
   (modify ?d (stampata TRUE))
 )
 
