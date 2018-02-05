@@ -377,6 +377,7 @@
 
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
+  (not (fase ?fase&3-stampa-diagnosi|4-trova-soluzioni|5-stampa-soluzioni))
   ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr)))
@@ -940,6 +941,8 @@
   ?p1 <- (nodo (nome batteria-difettosa) (valore si) (certezza ?crt1))
   =>
   (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* 1.0 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* -0.5 ?crt1)) (nodo-padre ?p1)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* -0.5 ?crt1)) (nodo-padre ?p1)))
 )
 
 (defrule chiedi-spia-alimentatore-pcportatile
@@ -972,10 +975,10 @@
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?crt6))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza -0.6 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
-  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.7 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-scheda-madre-guasta)))
+  (bind ?crt-alim-guasto (calcola-certezza -0.6 ?crt1 ?crt2 ?crt3 ?crt4 ?crt6))
+  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.7 ?crt1 ?crt2 ?crt3 ?crt4 ?crt6))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4  ?p6) (certezza ?crt-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4  ?p6) (certezza ?crt-scheda-madre-guasta)))
 )
 
 (defrule DIAGNOSI-spia-alimentatore-spenta
@@ -987,10 +990,10 @@
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
   ?p6 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?crt6))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
-  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.2 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5 ?crt6))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5 ?p6) (certezza ?crt-scheda-madre-guasta)))
+  (bind ?crt-alim-guasto (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4  ?crt6))
+  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.2 ?crt1 ?crt2 ?crt3 ?crt4  ?crt6))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p6) (certezza ?crt-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p6) (certezza ?crt-scheda-madre-guasta)))
 )
 
 
@@ -1026,7 +1029,7 @@
   ?p4 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt4))
   ?p5 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?crt5))
   =>
-  (bind ?crt-alim-spento (calcola-certezza 0.9 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5))
+  (bind ?crt-alim-spento (calcola-certezza 1.0 ?crt1 ?crt2 ?crt3 ?crt4 ?crt5))
   (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3 ?p4 ?p5) (certezza ?crt-alim-spento)))
 )
 
