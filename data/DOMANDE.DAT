@@ -45,23 +45,23 @@
 
 ;; // DOMANDE ACCENSIONE PC ****************************************************
 
-(domanda  (attributo stato-accensione)
+(domanda  (attributo controllo-accensione)
           (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
-          (risposte-valide ok fallito)
+          (risposte-valide funzionante possibile-non-funzionante)
           (descrizione-risposte "Si" "No, il dispositivo non si accende")
 )
 
-(domanda  (attributo alimentatore-funzionante-ut-inesperto)
+(domanda  (attributo controllo-accensione-ut-inesperto)
           (testo-domanda "Dopo aver premuto il tasto di accensione, anche se lo schermo resta nero, esaminate con attenzione il dispositivo e %n controllate se ci sono spie che si illuminano o se le ventole sembrano avviarsi.")
-          (risposte-valide si no)
+          (risposte-valide funzionante non-funzionante)
           (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
 )
 
-(domanda  (attributo alimentatore-funzionante-ut-esperto)
-          (testo-domanda "Dpo aver premuto il tasto di accensione, il dispositivo sembra avviarsi anche se lo schermo resta nero?")
-          (risposte-valide si no)
-          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
-)
+; // (domanda  (attributo alimentatore-funzionante-ut-esperto)
+; //          (testo-domanda "Dpo aver premuto il tasto di accensione, il dispositivo sembra avviarsi anche se lo schermo resta nero?")
+; //          (risposte-valide si no)
+; //          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
+; //  )
 
 
 
