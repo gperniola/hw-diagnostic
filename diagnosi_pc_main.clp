@@ -9,7 +9,7 @@
 
 (deffunction next-id ()
    (bind ?*id* (+ ?*id* 1))
-   (return (sym-cat N ?*id*))
+   (return ?*id*)
 )
 
 ;;******************
@@ -18,14 +18,25 @@
 
   (deftemplate nodo
     (slot id-nodo (default-dynamic (next-id)))
+    (slot attivo  (default TRUE))
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
-    ;(slot stato (type SYMBOL) (default attivo))
     (slot tipo (type SYMBOL))
     (multislot nodo-padre (type FACT-ADDRESS))
     (slot descrizione (type STRING))
   )
+
+(deffacts examples
+  (nodo (nome diagnosi) (valore A) (certezza 0.2))
+  (nodo (nome diagnosi) (valore B) (certezza 0.8))
+  (nodo (nome diagnosi) (valore C) (certezza 0.5))
+  (nodo (nome diagnosi) (valore D) (certezza -0.3))
+  (nodo (nome diagnosi) (valore E) (certezza 0.5))
+  (nodo (nome diagnosi) (valore F) (certezza 0.8))
+  )
+
+
 
   (deftemplate domanda
     (slot attributo     (type SYMBOL) (default ?NONE))
@@ -1083,18 +1094,31 @@
 ;     (printout t "FOUND " ?x crlf)
 ;   )
 
-(defrule modify-sol
+
+(defrule ex-sol
   (fase 4-trova-soluzioni)
-  ?p1 <-  (nodo (id-nodo ?i) (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
-  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+
+      ?p1 <- (nodo (id-nodo ?id1) (attivo TRUE) (nome diagnosi) (valore ?v1&A|B|C|D|E|F) (certezza ?c1))
+      ;; assicura che p1 sia il nodo con certezza piu' alta
+      (not (nodo (id-nodo ?id2) (attivo TRUE) (nome diagnosi) (valore ?v2&A|B|C|D|E|F) (certezza ?c2&:(> ?c2 ?c1))))
+      ;; se abbiamo due o piu' nodi con la stessa certezza massima, prendiamo sempre il nodo con id piu' alto per evitare di attivare la stessa regola piu' volte
+      (not (nodo (id-nodo ?id3&:(> ?id3 ?id1)) (attivo TRUE) (nome diagnosi) (valore ?v3&A|B|C|D|E|F) (certezza ?c3&:(eq ?c3 ?c1))))
   =>
-  (printout  t "FACT: " ?p1 " ID: " ?i crlf)
-  (bind ?x (modify ?p1 (valore WOWOWOW)))
-  (printout  t "MODDED: " ?x crlf)
-
-  (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
-
+  (printout t "MAX IS: " ?v1 " WITH: " ?c1 crlf)
 )
+
+; (defrule modify-sol
+;   (fase 4-trova-soluzioni)
+;   ?p1 <-  (nodo (id-nodo ?i) (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
+;   (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+;   =>
+;   (printout  t "FACT: " ?p1 " ID: " ?i crlf)
+;   (bind ?x (modify ?p1 (valore WOWOWOW)))
+;   (printout  t "MODDED: " ?x crlf)
+;
+;   (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+;
+; )
 
 
 (defrule soluzione-sostituisci-alimentatore
@@ -1113,13 +1137,13 @@
   (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
 
-; (defrule soluzione-accendi-alimentatore
-;   (fase 4-trova-soluzioni)
-;   ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
-;   (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
-;   =>
-;   (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
-; )
+(defrule soluzione-accendi-alimentatore
+  (fase 4-trova-soluzioni)
+  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  =>
+  (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+)
 
 (defrule soluzione-connetti-alimentazione
   (fase 4-trova-soluzioni)
