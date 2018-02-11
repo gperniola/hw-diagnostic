@@ -5,11 +5,19 @@
 (defglobal ?*low-priority* = -100)
 (defglobal ?*lowest-priority* = -1000)
 
+(defglobal ?*id* = 0)
+
+(deffunction next-id ()
+   (bind ?*id* (+ ?*id* 1))
+   (return (sym-cat N ?*id*))
+)
+
 ;;******************
 ;;*    TEMPLATES   *
 ;;******************
 
   (deftemplate nodo
+    (slot id-nodo (default-dynamic (next-id)))
     (slot nome    (type SYMBOL))
     (multislot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
@@ -1064,6 +1072,31 @@
 
 ;; FASE 4 SOLUZIONI ********************
 
+; (defrule or-solution
+;   (fase 4-trova-soluzioni)
+;   (or
+;         (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-guasto) (certezza ?c1))
+;         (nodo (nome ?n2&diagnosi) (valore ?v2&scheda-madre-guasta) (certezza ?c2))
+;   )
+;   =>
+;     (bind ?x (max ?c1 ?c2))
+;     (printout t "FOUND " ?x crlf)
+;   )
+
+(defrule modify-sol
+  (fase 4-trova-soluzioni)
+  ?p1 <-  (nodo (id-nodo ?i) (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+  =>
+  (printout  t "FACT: " ?p1 " ID: " ?i crlf)
+  (bind ?x (modify ?p1 (valore WOWOWOW)))
+  (printout  t "MODDED: " ?x crlf)
+
+  (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+
+)
+
+
 (defrule soluzione-sostituisci-alimentatore
     (fase 4-trova-soluzioni)
     ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-guasto) (certezza ?c1))
@@ -1080,13 +1113,13 @@
   (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
 )
 
-(defrule soluzione-accendi-alimentatore
-  (fase 4-trova-soluzioni)
-  ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
-  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
-  =>
-  (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
-)
+; (defrule soluzione-accendi-alimentatore
+;   (fase 4-trova-soluzioni)
+;   ?p1 <- (nodo (nome ?n&diagnosi) (valore ?v&alimentatore-spento) (certezza ?c1))
+;   (not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?p1 $?pdr2)))
+;   =>
+;   (assert (nodo (nome soluzione) (valore accendi-alimentatore) (certezza (* 0.95 ?c1)) (nodo-padre ?p1)))
+; )
 
 (defrule soluzione-connetti-alimentazione
   (fase 4-trova-soluzioni)
