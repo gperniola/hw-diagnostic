@@ -89,9 +89,9 @@
   (not(annulla-stampa-domande))
   ?r <- (revisiona-da ?n)
   ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
-  ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri))
+  ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri) (id-nodo ?id-partenza))
   =>
-  (assert (elimina-nodi-da ?nodo-partenza))
+  (assert (elimina-nodi-da ?id-partenza))
   (bind ?risposta (ask-question-direct ?n ?domanda ?descr))
   (modify ?d (risposta-selezionata ?risposta))
   (retract ?r)
@@ -104,9 +104,9 @@
 (defrule LOOP-elimina-nodi-da
   (declare (salience ?*highest-priority*))
   ?p1 <- (elimina-nodi-da ?n)
-  ?p2 <- (nodo (nodo-padre $?x ?n $?y))
+  ?p2 <- (nodo (nodo-padre $?x ?n $?y) (id-nodo ?id-p2))
   =>
-  (assert (elimina-nodi-da ?p2))
+  (assert (elimina-nodi-da ?id-p2))
   ;
   ; (printout t "- eliminazione di " ?p2 crlf)
   ; (bind ?h (read))
@@ -128,7 +128,7 @@
 (defrule END-revisiona-domande
   (declare (salience ?*lowest-priority*))
   ?r <- (fine-revisione)
-  (not (elimina-nodi da ?e))
+  (not (elimina-nodi-da ?e))
   =>
 
   ; (printout t "- In end-revisiona-domande" crlf)
@@ -140,14 +140,15 @@
   ;(assert (init-revisiona-domande))
 )
 
-; (defrule attiva-nodi-diagnosi-terminali
-;   ;(declare (salience ?*highest-priority*))
-;   (attiva-nodi)
-;   ?n1 <- (nodo (nome diagnosi) (valore ?v) (stato inattivo))
-;   (not (nodo (nome diagnosi) (valore ?v) (nodo-padre $?x ?n1 $?y)))
-;   =>
-;   (modify ?n1 (stato attivo))
-; )
+(defrule attiva-nodi-diagnosi-terminali
+  (declare (salience ?*highest-priority*))
+  ;(attiva-nodi)
+  ?p <- (nodo (nome ?n) (valore ?v) (attivo FALSE) (id-nodo ?id))
+  (not (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?id $?y)))
+  =>
+  (modify ?p (attivo TRUE))
+  (printout t "Reactivated node " ?id crlf)
+)
 
 ; (defrule attiva-nodi-diagnosi-terminali
 ;   ?r <- (attiva-nodi)

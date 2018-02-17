@@ -14,7 +14,7 @@
   (declare (salience ?*high-priority*))
   (fase 5-stampa-soluzioni)
   (not (resetta-soluzione))
-  ?n <- (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)))
+  ?n <- (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)) (attivo TRUE))
   ?d <- (soluzione (attributo ?attr-soluzione) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
   =>
   ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
@@ -25,7 +25,7 @@
 
 (defrule MODULO-SOLUZIONE::fine-stampa-soluzione
   (not (resetta-soluzione))
-  (not (and (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)))
+  (not (and (nodo (nome soluzione) (valore ?attr-soluzione) (certezza ?cer&:(> ?cer 0.10)) (attivo TRUE))
             (soluzione (attributo ?attr-soluzione) (stampata FALSE))))
   =>
   (assert (resetta-soluzione))
