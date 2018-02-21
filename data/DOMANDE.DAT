@@ -18,7 +18,7 @@
 
 (domanda  (attributo anni-dispositivo)
           (testo-domanda "Quanti anni ha il dispositivo?")
-          (risposte-valide meno-2-anni meno-5-anni meno-10-anni piu-10-anni sconosciuto)
+          (risposte-valide meno-2-anni 2-5-anni 5-10-anni piu-10-anni sconosciuto)
           (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
 )
 
@@ -109,13 +109,16 @@
 
 ;; // DOMANDE VIDEO ************************************************************
 
-
+(domanda  (attributo problema-video-avvio)
+          (testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
+          (risposte-valide si no )
+          (descrizione-risposte "Si" "No")
+)
 
 (domanda  (attributo disturbo-video)
           (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
-          (risposte-valide fasce macchie linee-oriz schermo-nero )
-          (descrizione-risposte "Linee colorate verticali, raggruppate in fasce piu' larghe" "Una o piu' macchie di colore nero o bianco che coprono porzioni dello schermo"
-          "Linee di colore nero/grigio orizzontali, possono essere intermittenti" "Schermo completamente nero, come se spento")
+          (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
+          (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
 )
 
 (domanda  (attributo monitor-esterno)

@@ -9,6 +9,12 @@
           (descrizione "Potrebbe essere necessario sostituire la scheda madre. Assicurarsi che la nuova scheda madre sia compatibile con il resto dell'hardware.")
 )
 
+(soluzione (attributo riparazione-scheda-madre)
+          (titolo "Riparare la scheda madre")
+          (descrizione "Potrebbe essere possibile riparare la scheda madre se il guasto e' marginale.")
+)
+
+
 (soluzione (attributo accendi-alimentatore)
           (titolo "Accendere l'alimentatore")
           (descrizione "Premere il tasto di accensione dell'alimentatore e verificare se il problema e' risolto.")
@@ -17,4 +23,14 @@
 (soluzione (attributo connetti-alimentazione)
           (titolo "Connettere l'alimentazione elettrica al dispositivo")
           (descrizione "Collegare correttamente i cavi di alimentazione al dispositivo e assicurarsi che ci sia passaggio di corrente dalla presa elettrica.")
+)
+
+(soluzione (attributo dispositivo-in-assistenza)
+          (titolo "Contattare l'assistenza tecnica")
+          (descrizione "Utilizzare la garanzia del dispositivo per sostituire il pezzo guasto.")
+)
+
+(soluzione (attributo sostituzione-dispositivo)
+          (titolo "Sostituire il dispositivo")
+          (descrizione "Purtroppo a causa della natura del guasto, l'eta' o il tipo di dispositivo, si consiglia l'acquisto di un nuovo dispositivo.")
 )
