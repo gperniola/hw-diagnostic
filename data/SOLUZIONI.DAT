@@ -34,3 +34,41 @@
           (titolo "Sostituire il dispositivo")
           (descrizione "Purtroppo a causa della natura del guasto, l'eta' o il tipo di dispositivo, si consiglia l'acquisto di un nuovo dispositivo.")
 )
+
+
+; // SOLUZIONI VIDEO
+
+(soluzione (attributo connetti-cavi-video)
+          (titolo "Connettere i cavi video e accendere il monitor")
+          (descrizione "Assicurarsi che sia il cavo del segnale video e il cavo di alimentazione siano correttamente connessi e che il monitor sia acceso.")
+)
+
+(soluzione (attributo controllo-cavi-video)
+          (titolo "Assicurarsi che il cavo del segnale video sia correttamente connesso")
+          (descrizione "Se il cavo del segnale video non e' saldamente connesso potrebbero verificarsi interferenze e disturbo dell'immagine sul display.")
+)
+
+(soluzione (attributo controllo-cavi-video-portatile)
+          (titolo "Verificare che il cavo del segnale video sia saldamente connesso")
+          (descrizione "Il cavo del segnale video potrebbe essersi disconnesso, potrebbe essere necessario smontare il dispositivo per verificare che i cavi siano connessi.")
+)
+
+(soluzione (attributo sostituisci-vga)
+          (titolo "Sostituire la scheda video")
+          (descrizione "La scheda video potrebbe essere danneggiata e richiedere la sostituzione.")
+)
+
+(soluzione (attributo soluzione-SW-video)
+          (titolo "Controllo dei file e aggiornamento driver")
+          (descrizione "Il problema potrebbe essere causato da diversi problemi software. Provare ad aggiornare i driver video o controllare l'integrita' dei file sul disco fisso.")
+)
+
+(soluzione (attributo sostituisci-display)
+          (titolo "Sostituire il display")
+          (descrizione "Potrebbe essere necessario sostituire il display.")
+)
+
+(soluzione (attributo sostituisci-inverter)
+          (titolo "Sostituire inverter e lampade del display")
+          (descrizione "Potrebbe essere necessario sostituire l'inverter e le lampade del display.")
+)

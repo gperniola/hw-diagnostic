@@ -130,15 +130,15 @@
 )
 
 (domanda  (attributo blocco-cursore)
-          (testo-domanda "Sullo schermo nero viene comunque visualizzato il cursore del mouse?")
-          (risposte-valide si no)
-          (descrizione-risposte "Si, la freccia del mouse e' visibile" "No, lo schermo e' completamente nero")
+          (testo-domanda "Dopo l'avvio del dispositivo e' possibile vedere il cursore del mouse o il logo di windows?")
+          (risposte-valide si no non-so)
+          (descrizione-risposte "Si, la freccia del mouse o il logo di windows sono visibili" "No, lo schermo e' completamente nero" "Non so")
 )
 
-(domanda  (attributo fasce-bios)
-          (testo-domanda "Le fasce sono visibili sin dall'avvio del dispositivo oppure appaiono in un secondo momento? Ad esempio al momento del caricamento del desktop?")
+(domanda  (attributo problema-video-all-avvio)
+          (testo-domanda "Il problema video si manifesta sin dall'accensione del dispositivo oppure in un secondo momento? Ad esempio al momento del caricamento del sistema operativo?")
           (risposte-valide si no)
-          (descrizione-risposte "Le fasce appaiono sin dall'avvio" "Le fasce appaiono in un secondo momento")
+          (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
 )
 
 (domanda  (attributo cavi-display)
