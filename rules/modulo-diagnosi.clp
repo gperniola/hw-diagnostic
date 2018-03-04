@@ -30,6 +30,7 @@
   =>
   ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
   (format t " %-60s %2d%%%n" ?titolo (integer (* ?cer 100)))
+  ;(format t " %-60s %2d/10%n" ?titolo (integer (/(* ?cer 100) 10)))
   (modify ?d (stampata TRUE))
 )
 

@@ -63,6 +63,26 @@
           (descrizione "Il problema potrebbe essere causato da diversi problemi software. Provare ad aggiornare i driver video o controllare l'integrita' dei file sul disco fisso.")
 )
 
+(soluzione (attributo aggiorna-driver-video)
+          (titolo "Aggiorna driver video")
+          (descrizione "Per risolvere il problema, provare ad aggiornare o reinstallare i driver video.")
+)
+
+(soluzione (attributo controllo-integrita-files)
+          (titolo "Controlla integrita' files")
+          (descrizione "Per risolvere il problema, provare ad avviare un controllo di integrita' sul disco fisso.")
+)
+
+(soluzione (attributo ripara-file-SO)
+          (titolo "Ripara sistema operativo")
+          (descrizione "Per risolvere il problema, provare ad avviare lo strumento di riparazione del sistema operativo. Potrebbe essere necessario il CD di installazione.")
+)
+
+(soluzione (attributo resetta-CMOS)
+          (titolo "Resetta memoria del BIOS")
+          (descrizione "Per risolvere il problema, provare riportare il BIOS alle impostazioni di fabbrica. Su alcuni dispositivi e' presente un pulsante per tale funzione posto sul retro del dispositivo o sulla scheda madre. ")
+)
+
 (soluzione (attributo sostituisci-display)
           (titolo "Sostituire il display")
           (descrizione "Potrebbe essere necessario sostituire il display.")
@@ -71,4 +91,34 @@
 (soluzione (attributo sostituisci-inverter)
           (titolo "Sostituire inverter e lampade del display")
           (descrizione "Potrebbe essere necessario sostituire l'inverter e le lampade del display.")
+)
+
+;//SOLUZIONI BOOT
+
+(soluzione (attributo rimuovi-memorie-esterne)
+          (titolo "Rimuovere CD e memorie USB collegate al dispositivo")
+          (descrizione "Controllare che nel lettore non siano presenti CD/DVD e che non ci siano memorie USB esterne collegate al momento dell'accensione del dispositivo.")
+)
+
+(soluzione (attributo controlla-messaggio-POST)
+          (titolo "Controllare sul manuale della scheda madre il codice d'errore")
+          (descrizione "Il messaggio d'errore riportato dal sistema dovrebbe indicare chiaramente la causa del problema. Altrimenti potrebbe essere utile cercare sul manuale della
+          scheda madre, o in una guida online il codice d'errore trovato.")
+)
+
+(soluzione (attributo controlla-beep-code)
+          (titolo "Controllare sul manuale della scheda madre a cosa corrisponde il codice sonoro")
+          (descrizione "Ogni scheda madre ha un proprio codice sonoro utilizzato per indicare il tipo di problema riscontrato. Utilizzare il manuale della propria scheda madre o una
+          guida online per identificare il problema.")
+)
+
+(soluzione (attributo controlla-scheda-POST)
+          (titolo "Utilizzare una scheda POST per identificare il problema")
+          (descrizione "Se il sistema non mostra messaggi d'errore potrebbe essere necessario utilizzare una scheda POST per identificare quale componente sta causando il problema.
+          Si consiglia di rivolgersi ad un centro assistenza specializzato per esaminare il dispositivo.")
+)
+
+(soluzione (attributo sostituisci-batteria-CMOS)
+          (titolo "Sostituire la batteria CMOS")
+          (descrizione "La batteria CMOS e' una piccola pila da 3V che puo' essere sostituita presso qualsiasi centro assistenza specializzato.")
 )

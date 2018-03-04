@@ -157,6 +157,57 @@
 ;; //***************************************************************************
 
 
+
+;; // **************POST AND SO
+
+(domanda  (attributo inattivita-dispositivo)
+          (testo-domanda "Il dispositivo e' spento e inattivo da piu' di un mese?")
+          (risposte-valide si no )
+          (descrizione-risposte "Si" "No")
+)
+
+(domanda  (attributo conflitto-HW-SW)
+          (testo-domanda "Sono state installate nuove componenti, programmi o aggiornamenti del sistema subito prima che il problema si verificasse?")
+          (risposte-valide si-HW si-SW si-aggiornamenti no non-so )
+          (descrizione-risposte "Si, sono state installate nuove componenti hardware (ad esempio RAM, disco fisso, stampante ecc.)"
+          "Si, sono stati installati nuovi programmi software"
+          "Si, sono stati installati aggiornamenti del sistema" "No" "Non so")
+)
+
+
+
+(domanda  (attributo fase-POST-ut-esperto)
+          (testo-domanda "Il dispositivo manifesta problemi nella fase di POST del BIOS? (Prima del caricamento del sistema operativo)")
+          (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
+          (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
+                                "Il dispositivo si blocca/riavvia dopo un beep code"
+                                "Il dispositivo si riavvia dopo una schermata blu di errore"
+                                "Il dispositivo si riavvia senza mostrare errori"
+                                "Il dispositivo non manifesta nessuno dei problemi elencati")
+)
+
+(domanda  (attributo fase-POST-ut-inesperto)
+          (testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere.
+          Questa fase e' caratterizzata da diverse schermate con testo bianco su sfondo nero che si susseguono fino a quando il logo di Windows appare sullo schermo. Si verificano errori in questa fase?")
+          (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
+          (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
+                                "Il dispositivo si blocca/riavvia dopo aver prodotto un messaggio sonoro"
+                                "Il dispositivo si riavvia dopo una schermata blu di errore"
+                                "Il dispositivo si riavvia senza mostrare errori"
+                                "Il dispositivo non manifesta nessuno dei problemi elencati")
+)
+
+(domanda  (attributo fase-caricamento-SO-ut-esperto)
+          (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
+          (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
+          (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
+                                "Il dispositivo si blocca/riavvia al momento del caricamento"
+                                "Il dispositivo si blocca/riavvia al momento del login"
+                                "Il dispositivo non manifesta nessuno dei problemi elencati")
+)
+
+
+
 ;; //DEPRECATE******************************************************************
 
 ; (domanda  (attributo problema-boot-o-SO)

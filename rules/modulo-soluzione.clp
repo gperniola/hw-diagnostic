@@ -20,6 +20,7 @@
   ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
 
   (format t " %-60s %2d%%%n %-60s %n %n" ?titolo (integer (* ?cer 100)) ?desc)
+  ;(format t " %-60s %2d/10%n %-60s %n %n" ?titolo (integer (/(* ?cer 100) 10)) ?desc)
   (modify ?d (stampata TRUE))
 )
 

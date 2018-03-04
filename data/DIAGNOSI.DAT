@@ -52,10 +52,10 @@
 
 ;; //DIAGNOSI PROBLEMI ACCENSIONE E SO *****************************************
 
-    (diagnosi (attributo problema-caricamento-SO)
-              (titolo "Caricamento del sistema operativo fallito")
-              (descrizione "Potrebbe esserci un problema con il caricamento del sistema operativo.")
-    )
+    ;// (diagnosi (attributo problema-caricamento-SO)
+    ;//           (titolo "Caricamento del sistema operativo fallito")
+    ;//           (descrizione "Potrebbe esserci un problema con il caricamento del sistema operativo.")
+    ;// )
 
     (diagnosi (attributo alimentazione-disconnessa)
               (titolo "Alimentazione non connessa al dispositivo")
@@ -83,3 +83,44 @@
     )
 
 ;; //***************************************************************************
+
+(diagnosi (attributo CMOS-corrotta)
+          (titolo "Impostazioni di memoria del BIOS non corrette")
+          (descrizione "Il problema potrebbe essere causato da delle impostazioni errate nel BIOS.")
+)
+
+(diagnosi (attributo batteria-CMOS-esausta)
+          (titolo "Batteria CMOS esausta")
+          (descrizione "E' possibile che la batteria che alimenta il BIOS potrebbe essere esausta a causa dell'eta' o o di un lungo periodo di inattivita' del dispositivo.")
+)
+
+(diagnosi (attributo errore-POST-hardware)
+          (titolo "Guasto di una o piu' componenti hardware del dispositivo")
+          (descrizione "La cause che portano a questo errore possono essere innumerevoli, e' probabile che ci sia un guasto in una delle componenti hardware del dispositivo.")
+)
+
+(diagnosi (attributo errore-POST-boot)
+          (titolo "Errore nel caricamento del sistema operativo nella fase di boot")
+          (descrizione "E' possibile che il sistema stia cercando di caricare il sistema operativo dalla memoria sbagliata (ad esempio memoria USB, CD o disco fisso secondario).")
+)
+
+
+(diagnosi (attributo infetto-da-virus)
+          (titolo "Sistema infetto da virus o malware")
+          (descrizione "Il problema potrebbe essere causato da virus o malware che hanno compromesso alcune funzionalità critiche del sistema.")
+)
+
+(diagnosi (attributo problema-caricamento-SO)
+          (titolo "Caricamento del sistema operativo fallito")
+          (descrizione "Le cause che possono portare a questo problema possono essere tante, e' probabile che alcuni file critici per il sistema operativo siano corrotti, oppure che possa esserci un guasto nella memoria RAM.")
+)
+
+(diagnosi (attributo conflitto-HW)
+          (titolo "Conflitto con l'ultima componente hardware installata")
+          (descrizione "Il problema potrebbe essere causato da un incompatibilita' con il sistema dell'ultima componente hardware installata, oppure dell'installazione dei driver non andata a buon fine.")
+)
+
+(diagnosi (attributo conflitto-SW)
+          (titolo "Conflitto con gli ultimi aggiornamenti o programmi installati")
+          (descrizione "Il problema potrebbe essere causato da un incompatibilita' del sistema con gli ultimi aggiornamenti o programmi installati, oppure di un aggiornamento non andato a buon fine.")
+)
