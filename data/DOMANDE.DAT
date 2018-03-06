@@ -10,10 +10,11 @@
 
 (domanda  (attributo problema-principale)
           (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
-          (risposte-valide accensione-SO video analisi-guidata)
-          (descrizione-risposte "Si, problema relativo all'accensione del dispositivo, caricamento e funzionamento del sistema operativo"
+          (risposte-valide accensione video caricamento-SO analisi-guidata)
+          (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
                                 "Si, disturbo del segnale video o problema del display"
-                                "No, non ho idea di quale sia il problema")
+                                "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
+                                "No, non conosco il problema")
 )
 
 (domanda  (attributo anni-dispositivo)
@@ -197,15 +198,23 @@
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
 )
 
-(domanda  (attributo fase-caricamento-SO-ut-esperto)
-          (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
-          (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
-          (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
-                                "Il dispositivo si blocca/riavvia al momento del caricamento"
-                                "Il dispositivo si blocca/riavvia al momento del login"
-                                "Il dispositivo non manifesta nessuno dei problemi elencati")
-)
-
+;// (domanda  (attributo fase-caricamento-SO-ut-esperto)
+;//           (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
+;//           (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
+;//           (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
+;//                                 "Il dispositivo si blocca/riavvia al momento del caricamento"
+;//                                 "Il dispositivo si blocca/riavvia al momento del login"
+;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
+;// )
+;//
+;// (domanda  (attributo fase-caricamento-SO-ut-inesperto)
+;//           (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
+;//           (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
+;//           (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
+;//                                 "Il dispositivo si blocca/riavvia al momento del caricamento"
+;//                                 "Il dispositivo si blocca/riavvia al momento del login"
+;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
+;// )
 
 
 ;; //DEPRECATE******************************************************************

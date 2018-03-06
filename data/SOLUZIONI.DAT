@@ -73,11 +73,6 @@
           (descrizione "Per risolvere il problema, provare ad avviare un controllo di integrita' sul disco fisso.")
 )
 
-(soluzione (attributo ripara-file-SO)
-          (titolo "Ripara sistema operativo")
-          (descrizione "Per risolvere il problema, provare ad avviare lo strumento di riparazione del sistema operativo. Potrebbe essere necessario il CD di installazione.")
-)
-
 (soluzione (attributo resetta-CMOS)
           (titolo "Resetta memoria del BIOS")
           (descrizione "Per risolvere il problema, provare riportare il BIOS alle impostazioni di fabbrica. Su alcuni dispositivi e' presente un pulsante per tale funzione posto sul retro del dispositivo o sulla scheda madre. ")
@@ -121,4 +116,37 @@
 (soluzione (attributo sostituisci-batteria-CMOS)
           (titolo "Sostituire la batteria CMOS")
           (descrizione "La batteria CMOS e' una piccola pila da 3V che puo' essere sostituita presso qualsiasi centro assistenza specializzato.")
+)
+
+
+
+(soluzione (attributo ripara-file-SO)
+          (titolo "Effettuare un ripristino o riparazione del sistema")
+          (descrizione "Per risolvere il problema, provare ad avviare lo strumento di ripristino del sistema operativo. Potrebbe essere necessario accedere a windows in modalita' provvisoria o utilizzare il CD di installazione.")
+)
+
+(soluzione (attributo scansione-antivirus)
+          (titolo "Effettuare una scansione antivirus")
+          (descrizione "Effettuare una scansione antivirus dell'intero disco fisso. Potrebbe essere necessario avviare windows in modalita' provvisoria.")
+)
+
+(soluzione (attributo controlla-stop-error)
+          (titolo "Controllare il codice di errore della schermata blu")
+          (descrizione "Solitamente una schermata d'errore blu e' accompagnata da un codice d'errore, dato l'enorme numero di questi errori si consiglia di prendere nota
+          del codice e controllare il problema a cui corrisponde utilizzando il manuale sul sito windows.")
+)
+
+(soluzione (attributo ripristina-configurazione-sistema)
+          (titolo "ripristinare l'ultima configurazione di sistema funzionante")
+          (descrizione "Ripristinare l'ultima configurazione di sistema funzionante, questa opzione e' solitamente disponibile nel menu' di boot del BIOS.")
+)
+
+(soluzione (attributo rimuovi-HW-installato)
+          (titolo "Disinstallare e rimuovere, se possibile, le ultime componenti hardware installate")
+          (descrizione "Potrebbe essere necessario rimuovere le ultime componenti installate sul dispositivo e disinstallare i driver correlati.")
+)
+
+(soluzione (attributo rimuovi-HW-installato)
+          (titolo "Disinstallare, se possibile, gli ultimi programmi o aggiornamenti installati")
+          (descrizione "Potrebbe essere necessario disinstallare gli ultimi programmi o aggiornamenti di sistema installati.")
 )
