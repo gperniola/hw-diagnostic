@@ -6,7 +6,7 @@
   (not (resetta-diagnosi))
   =>
   (printout t "              *********** POSSIBILI DIAGNOSI ***********" crlf crlf)
-  (printout t "  DIAGNOSI                                                 CERTEZZA" crlf)
+  (printout t "  CERTEZZA         DIAGNOSI                                         " crlf)
   (printout t " -------------------------------------------------------------------" crlf)
 )
 
@@ -16,9 +16,11 @@
   (fase 3-stampa-diagnosi)
   (not (resetta-diagnosi))
   ?n <- (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.10)) (attivo TRUE))
-  ;(not (nodo (nome diagnosi) (valore ?attr-diagnosi) (nodo-padre $?pdr1 ?n $?pdr2)))
   ?d <- (diagnosi (attributo ?attr-diagnosi) (titolo ?titolo) (descrizione ?desc) (stampata FALSE))
-
+  (not (and
+            (nodo (nome diagnosi) (valore ?attr-diagnosi2) (certezza ?cer2&:(> ?cer2 ?cer)) (attivo TRUE))
+            (diagnosi (attributo ?attr-diagnosi2) (titolo ?titolo2) (descrizione ?desc2) (stampata FALSE))
+  ))
   ; (not
   ;   (and
   ;      ?n2 <- (nodo (nome diagnosi) (valore ?attr-diagnosi2) (certezza ?cer2&:(> ?cer2 ?cer)))
@@ -29,7 +31,10 @@
   ;; ORDINAMENTO NON FUNZIONANTE PERCHE ?N2 NON DICHIARABILE IN NOT
   =>
   ;(printout t "[" (integer (* ?cer 100)) "%] - " ?titolo ": " ?desc crlf)
-  (format t " %-60s %2d%%%n" ?titolo (integer (* ?cer 100)))
+  ;(format t " %-60s %2d%%%n" ?titolo (integer (* ?cer 100)))
+  ;(format t "  %2d%%  -  %-60s %n" (integer (* ?cer 100)) ?titolo )
+  (format t "   %2d/10  -  %-60s %n" (integer (* ?cer 10)) ?titolo )
+  (format t "             %-60s %n%n" ?desc)
   ;(format t " %-60s %2d/10%n" ?titolo (integer (/(* ?cer 100) 10)))
   (modify ?d (stampata TRUE))
 )

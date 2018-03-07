@@ -731,7 +731,7 @@
   (bind ?crt-accensione (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-inesperto settato a 1
   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?crt-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
   (bind ?crt-prob-video (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome problema-video-avvio)(valore si)(certezza ?crt-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
+  (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
   ;(bind ?crt-tipo-problema (calcola-certezza 0.5 ?crt1 ?crt2))
     ;(assert (nodo (nome tipologia-problema) (valore scheda-madre) (certezza ?crt-tipo-problema) (descrizione "Il problema potrebbe essere causato da un corto circuito sulla scheda madre.") (nodo-padre ?p1 ?p2)))
     ;(assert (nodo (nome tipologia-problema) (valore scheda-video) (certezza ?crt-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto della scheda video.") (nodo-padre ?p1 ?p2)))
@@ -926,19 +926,19 @@
 
 ;; DOMANDE VIDEO ***************************************************************
 
-(defrule chiedi-problema-video-avvio
+(defrule chiedi-problema-video-dispositivo
   (fase 2-analisi)
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  (not (nodo (nome problema-principale) (valore video) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2)))
   (not (nodo (nome disturbo-video)(valore ?v)(certezza ?crt3&:(> ?crt3 0))(attivo TRUE)(id-nodo ?id-p3)))
   =>
-  (assert (nodo (nome chiedi) (valore problema-video-avvio) (nodo-padre ?id-p1)))
+  (assert (nodo (nome chiedi) (valore problema-video-dispositivo) (nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-disturbo-video
   (fase 2-analisi)
   (or
-      ?p1 <- (nodo (nome problema-video-avvio)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+      ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
       ?p1 <- (nodo (nome problema-principale) (valore video)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   )
   (not (nodo (nome disturbo-video) (valore ?v)(certezza ?crt2&:(> ?crt2 0))(attivo TRUE)(id-nodo ?id-p2)))
@@ -1224,7 +1224,7 @@
   (fase 2-analisi)
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-  ?p3 <- (nodo (nome problema-video-avvio)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
+  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
   ?p4 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
   =>
   (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
@@ -1234,13 +1234,13 @@
   (fase 2-analisi)
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-  ?p3 <- (nodo (nome problema-video-avvio)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
+  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
   ?p4 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
   =>
   (assert (nodo (nome chiedi) (valore fase-POST-ut-inesperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
 
-(defrule chiedi-problema-POST-ut-esperto-2
+(defrule chiedi-problema-POST-ut-esperto
   (fase 2-analisi)
   ?p1 <- (nodo (nome problema-principale)(valore caricamento-SO)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))

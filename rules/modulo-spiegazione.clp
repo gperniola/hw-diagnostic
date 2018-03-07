@@ -6,7 +6,7 @@
 (deffunction MODULO-SPIEGAZIONE::leggi-nodi($?p)
   (if (> (length ?p) 0) then
     (loop-for-count (?cnt1 1 (length ?p)) do
-      (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) nome))
+      (bind ?v (fact-slot-value (nth$ ?cnt1 ?p) attributo))
       (assert (spiega ?v))
     )
   else

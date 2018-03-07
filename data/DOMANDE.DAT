@@ -110,7 +110,7 @@
 
 ;; // DOMANDE VIDEO ************************************************************
 
-(domanda  (attributo problema-video-avvio)
+(domanda  (attributo problema-video-dispositivo)
           (testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
