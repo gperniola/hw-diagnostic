@@ -3,17 +3,17 @@
 
 
 
-// (domanda  (attributo problema-principale)
-// (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
-//           (risposte-valide accensione video caricamento-SO analisi-guidata)
-//           (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
-//                                 "Si, disturbo del segnale video o problema del display"
-//                                 "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
-//                                 "No, non conosco il problema")
-// (spiegazione "Questa domanda permette all'utente di saltare alcune fasi di ricerca del problema per avere una risposta piu' rapida.")
-// (help "Rispondere 1,2 o 3 se l'utente ha gia' individuato in quale fase dell'accensione si verifica il problema. Se non si conosce
-// il problema o non si e' sicuri a quale categoria appartenga, rispondere 4.")
-// )
+;// (domanda  (attributo problema-principale)
+;// (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
+;//           (risposte-valide accensione video caricamento-SO analisi-guidata)
+;//           (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
+;//                                 "Si, disturbo del segnale video o problema del display"
+;//                                 "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
+;//                                 "No, non conosco il problema")
+;// (spiegazione "Questa domanda permette all'utente di saltare alcune fasi di ricerca del problema per avere una risposta piu' rapida.")
+;// (help "Rispondere 1,2 o 3 se l'utente ha gia' individuato in quale fase dell'accensione si verifica il problema. Se non si conosce
+;// il problema o non si e' sicuri a quale categoria appartenga, rispondere 4.")
+;// )
 
 (domanda  (attributo anni-dispositivo)
 (testo-domanda "Quanti anni ha il dispositivo?")
