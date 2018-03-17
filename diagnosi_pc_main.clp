@@ -27,16 +27,6 @@
     (slot descrizione (type STRING))
   )
 
-; (deffacts examples
-;   (nodo (nome diagnosi) (valore A) (certezza 0.2))
-;   (nodo (nome diagnosi) (valore B) (certezza 0.8))
-;   (nodo (nome diagnosi) (valore C) (certezza 0.5))
-;   (nodo (nome diagnosi) (valore D) (certezza -0.3))
-;   (nodo (nome diagnosi) (valore E) (certezza 0.5))
-;   (nodo (nome diagnosi) (valore F) (certezza 0.8))
-;   )
-
-
 
   (deftemplate domanda
     (slot attributo     (type SYMBOL) (default ?NONE))
@@ -68,16 +58,18 @@
   )
 
 
-
-
 (defmodule MAIN(export ?ALL))
 
 ;;****************
 ;;* DEFFUNCTIONS *
 ;;****************
 
+(deffunction MAIN::ask-question (?num-domanda ?nodo-domanda)
+  (bind ?testo-domanda (fact-slot-value ?nodo-domanda testo-domanda))
+  (bind ?spiegazione (fact-slot-value ?nodo-domanda spiegazione))
+  (bind ?aiuto (fact-slot-value ?nodo-domanda help))
+  (bind ?descrizioni (fact-slot-value ?nodo-domanda descrizione-risposte))
 
-(deffunction MAIN::stampa-header()
   ;(clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
@@ -86,38 +78,7 @@
                 "*     Rispondere alle domande inserendo il numero     *" crlf
                 "**       corrispondente alla risposta corretta.      **" crlf
                 "***                                                 ***" crlf crlf)
-)
 
-
-
-; (deffunction MAIN::ask-question-direct (?j ?question $?allowed-values)
-;   (printout t "***** REVISIONE DOMANDA N." ?j " *****" crlf ?question crlf)
-;   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
-;       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
-;   )
-;   (printout t "Inserire risposta: ")
-;   (bind ?answer (read))
-;   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-;   (while  (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) do
-;       (printout t crlf "Valore inserito non valido, riprovare: ")
-;       (bind ?answer (read))
-;       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
-;    ?answer)
-
-
-
-
-
-
-(deffunction MAIN::ask-question (?num-domanda ?nodo-domanda)
-  (bind ?testo-domanda (fact-slot-value ?nodo-domanda testo-domanda))
-  (bind ?spiegazione (fact-slot-value ?nodo-domanda spiegazione))
-  (bind ?aiuto (fact-slot-value ?nodo-domanda help))
-  (bind ?descrizioni (fact-slot-value ?nodo-domanda descrizione-risposte))
-
-
-
-  (stampa-header)
   (printout t "***** DOMANDA N." ?num-domanda " *****" crlf)
   (format t "%s%n%n" ?testo-domanda)
   ;(printout t crlf crlf)
@@ -141,73 +102,6 @@
 
   (return ?answer)
 )
-
-
-
-
-
-
-; (deffunction MAIN::ask-question (?j ?question ?spiegazione ?help $?allowed-values)
-;   (stampa-header)
-;   (printout t "***** DOMANDA N." ?j " *****" crlf)
-;   (format t "%s%n%n" ?question)
-;   ;(printout t crlf crlf)
-;   (loop-for-count (?cnt1 1 (length ?allowed-values)) do
-;       (printout t ?cnt1 ". " (nth$ ?cnt1 ?allowed-values) crlf)
-;   )
-;   (printout t crlf "9. Perche' questa domanda?")
-;   (printout t crlf "0. Aiutami a rispondere a questa domanda." crlf crlf)
-;   (printout t "Inserire risposta: ")
-;   (bind ?answer (read))
-;   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-;
-;   (while (not (and (>= ?answer 1) (<= ?answer (length ?allowed-values))))
-;       (if (= ?answer 0) then (printout t ?help crlf crlf))
-;       (if (= ?answer 9) then (printout t ?spiegazione crlf crlf))
-;       (printout t "Inserire risposta: ")
-;       (bind ?answer (read))
-;       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-;   )
-;   (printout t crlf crlf)
-;   return ?answer)
-
-  ;
-  ; (while (and (not (member (nth$ ?answer ?allowed-values) ?allowed-values)) (not (= ?answer 0)) (not (= ?answer 9))) do
-  ;     (printout t crlf "Valore inserito non valido, riprovare: ")
-  ;     (bind ?answer (read))
-  ;     (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
-  ; (printout t crlf crlf)
-  ;  ?answer)
-
-
-; (deffunction MAIN::ask-stop-program ()
-;   (bind ?answer 0)
-;   (while (not (member ?answer (create$ 1 2 3 4)))
-;       (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Trova soluzioni al problema" crlf "2. Ritratta le risposte date" crlf "3. Riavvia programma" crlf "4. Termina programma" crlf crlf)
-;       (bind ?answer (read))
-;   )
-;   (if (eq ?answer 1) then (assert (fase-cerca-soluzioni)))
-;   (if (eq ?answer 2) then (assert (fase ritrattazione)))
-;   (if (eq ?answer 3) then (reset) (run))
-;   (if (eq ?answer 4) then (halt))
-; )
-;
-; (deffunction MAIN::ask-stop-program-2 ()
-;   (bind ?answer 0)
-;   (while (not (member ?answer (create$ 1 2)))
-;       (printout t crlf "Selezionare un opzione per continuare:" crlf "1. Riavvia programma" crlf "2. Termina programma" crlf crlf)
-;       (bind ?answer (read))
-;   )
-;   (if (eq ?answer 1) then (reset) (run))
-;   (if (eq ?answer 2) then (halt))
-; )
-
-
-
-
-
-
-
 
 
 ;********************************
@@ -237,9 +131,6 @@
   (return (* ?cert-RHS ?min-cert))
 )
 
-
-
-
 (deffunction MAIN::combina-CF(?cf1 ?cf2)
   (if (and (> ?cf1 0) (> ?cf2 0)) then (bind ?CF (- (+ ?cf1 ?cf2) (* ?cf1 ?cf2)))
       ;(printout t "[" ?cf1 " + " ?cf2 "] - [" ?cf1 " * " ?cf2 " ] = " ?CF crlf)
@@ -257,17 +148,11 @@
   (declare (salience ?*highest-priority*))
   ?nodo1 <- (nodo (nome ?n) (valore ?v) (certezza ?c1) (attivo TRUE) (id-nodo ?i1))
   ?nodo2 <- (nodo (nome ?n) (valore ?v) (certezza ?c2) (attivo TRUE) (id-nodo ?i2))
-  ;(not (nodo (nome ?n) (valore ?v) (nodo-padre $?pdr1 ?nodo&?nodo1|?nodo2 $?pdr2)))
   (test (neq ?nodo1 ?nodo2))
   =>
-  ;(printout t "Combine: " ?nodo1 " - " ?nodo2  crlf)
-  ;(bind ?h (read))
-  ;(retract ?nodo1)
   (modify ?nodo1 (attivo FALSE))
   (modify ?nodo2 (attivo FALSE))
   (assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?i1 ?i2)))
-  ;(printout t "Combined in: " ?x1 ", " ?x2 " --> " ?y  crlf)
-  ;(assert (nodo (nome ?n) (valore ?v) (certezza (combina-CF ?c1 ?c2)) (nodo-padre ?nodo1 ?nodo2)))
 )
 
 (defrule MAIN::rimuovi-padri-duplicati
@@ -276,46 +161,6 @@
   =>
   (modify ?n (nodo-padre ?nodi1 ?elem ?nodi2 ?nodi3))
 )
-
-; (defrule MAIN::attiva-nodi-terminali
-;   (declare (salience ?*superhigh-priority*))
-;   ;(fase 2-analisi)
-;   ?nodo <- (nodo (nome ?n) (valore ?v) (stato inattivo))
-;   (not (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y)))
-;   =>
-;   ;(printout t "Attiva: " ?nodo  crlf)
-;   ;(bind ?h (read))
-;   (bind ?y (modify ?nodo (stato attivo)))
-;   ;(printout t "Attivato in: " ?y crlf)
-; )
-
-; (defrule MAIN::disattiva-nodi-diagnosi-terminali
-;   (declare (salience ?*superhigh-priority*))
-;   ;(fase 2-analisi)
-;   ?nodo <- (nodo (nome ?n) (valore ?v) (stato attivo))
-;   ?child <- (nodo (nome ?n) (valore ?v) (nodo-padre $?x ?nodo $?y))
-;   =>
-;   (printout t "Disattiva: " ?nodo " - child: " ?child crlf)
-;   (bind ?h (read))
-;   (modify ?nodo (stato inattivo))
-; )
-
-
-;***********EXAMPLE CF RULES ***********************
-; (deffacts exfacts
-;   (nodo (nome statox) (valore x) (certezza 0.6))
-;   (nodo (nome statoy) (valore y) (certezza 0.8))
-;   (nodo (nome statoz) (valore z) (certezza -0.6))
-; )
-; (defrule chiedi-x
-;   ?p1 <- (nodo (nome statox) (valore x) (certezza ?crt1))
-;   ?p2 <- (nodo (nome statoy) (valore y) (certezza ?crt2))
-;   =>
-;   (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
-;   (assert (nodo (nome statoz) (valore z) (certezza ?crt) (nodo-padre ?p1 ?p2)))
-; )
-;***************************************************
-
 
 ;;******************
 ;;* CONTROL RULES  *
@@ -327,215 +172,53 @@
   (load-facts "data/DOMANDE.DAT")
   (load-facts "data/DIAGNOSI.DAT")
   (load-facts "data/SOLUZIONI.DAT")
-  ; (load "rules/modulo-diagnosi.clp")
-  ; (load "rules/modulo-soluzione.clp")
   (load "rules/modulo-stampa-diagnosi-soluzioni.clp")
   (load "rules/modulo-spiegazione.clp")
   (load "rules/modulo-ritrattazione.clp")
   ;(clear-window)
   (assert (contatore-domande 0))
-  ;(assert (nodo-domanda-attuale 0))
-  ;(assert (fase 1-profilazione))
   (set-strategy random)
 )
 
-
-(defrule MAIN::stampa-info
-  (declare (salience 1200))
-  (nodo (nome ?v&esperienza-utente|problema-principale|anni-dispositivo|garanzia|tipo-dispositivo|ha-batteria))
-  =>
-  (printout t "- Found " ?v crlf)
-)
-
-(defrule MAIN::domande-info-generali-trovate
-  (declare (salience ?*highest-priority*))
-  (nodo (nome esperienza-utente))
-  (nodo (nome problema-principale))
-  (nodo (nome anni-dispositivo))
-  (nodo (nome garanzia))
-  (nodo (nome tipo-dispositivo))
-  (nodo (nome ha-batteria))
-  =>
-  (printout t "SET STRATEGY DEPTH" crlf)
-  (set-strategy depth)
-  ;(assert(fase-ricerca-diagnosi))
-)
-
-(defrule MAIN::nodo-collegamento
+(defrule MAIN::profilazione-completata
   (declare (salience ?*highest-priority*))
   (nodo (nome esperienza-utente) (id-nodo ?id-p1) (attivo TRUE))
-  (nodo (nome problema-principale) (id-nodo ?id-p2) (attivo TRUE))
+  ;(nodo (nome problema-principale) (id-nodo ?id-p2) (attivo TRUE))
   (nodo (nome anni-dispositivo) (id-nodo ?id-p3) (attivo TRUE))
   (nodo (nome garanzia) (id-nodo ?id-p4) (attivo TRUE))
   (nodo (nome tipo-dispositivo) (id-nodo ?id-p5) (attivo TRUE))
   (nodo (nome ha-batteria) (id-nodo ?id-p6) (attivo TRUE))
   =>
-  (assert (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4 ?id-p5 ?id-p6)))
+  (set-strategy depth)
+  (assert (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (nodo-padre ?id-p1 ?id-p3 ?id-p4 ?id-p5 ?id-p6)))
   )
 
-; (defrule MAIN::diagnosi-certa-trovata
-;   (declare (salience ?*low-priority*)) ;controllare se PRIORITA' NORMALE e' ok
-;   (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)) (attivo TRUE))
-;   (diagnosi (attributo ?attr-diagnosi))
-;   =>
-;   (printout t "DIAGNOSI FOUND" crlf)
-;   (focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
-; )
 
-(defrule MAIN::fine-domande
+(defrule MAIN::fine-domande-passa-a-ricerca-soluzioni
   (declare (salience ?*lowest-priority*))
-  ;?f <- ;(fase 2-analisi)
   (nodo (nome chiedi) (valore ?dom))
   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
   (not (fase-cerca-soluzioni))
-  ;(not (fase 3-stampa-diagnosi))
-  ;(not (fase-cerca-soluzioni))
-  ;(not (fase 5-stampa-soluzioni))
-  ;(not (ferma-programma))
   =>
-  (printout t "DIAGNOSI FOUND > CERCA SOLUZIONI" crlf)
-  ;(printout t crlf "***** FINE DOMANDE *****" crlf crlf)
-  ;(retract ?f)
-  ;(assert (fase 3-stampa-diagnosi))
-  ;(focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
   (assert (fase-cerca-soluzioni))
 )
 
-(defrule MAIN::fine-domande2
+(defrule MAIN::fine-ricerca-soluzioni-passa-a-stampa
   (declare (salience ?*lowest-priority*))
-  ;?f <- ;(fase 2-analisi)
   (nodo (nome chiedi) (valore ?dom))
   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
   ?f <- (fase-cerca-soluzioni)
-  ;(not (fase 3-stampa-diagnosi))
-  ;(not (fase-cerca-soluzioni))
-  ;(not (fase 5-stampa-soluzioni))
-  ;(not (ferma-programma))
   =>
-  (printout t "CERCA SOLUZIONI > STAMPA DIAGNOSI" crlf)
-  ;(printout t crlf "***** FINE DOMANDE *****" crlf crlf)
-  ;(retract ?f)
-  ;(assert (fase 3-stampa-diagnosi))
-  ;(focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
   (retract ?f)
   (focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
 )
 
-(defrule MAIN::avvia-ritrattazione
+(defrule MAIN::passa-a-modulo-ritrattazione
   (declare (salience ?*highest-priority*))
   (fase-ritrattazione)
   =>
   (focus MODULO-RITRATTAZIONE)
 )
-
-; (defrule fase-1-profilazione
-;   (declare (salience ?*highest-priority*))
-;   (fase 1-profilazione)
-;   =>
-;   (set-strategy random)
-; )
-
-; (defrule fase-2-analisi
-;   (declare (salience ?*highest-priority*))
-;   ;(fase 2-analisi)
-;   =>
-;   (set-strategy depth)
-; )
-;
-; (defrule fase-3-stampa-diagnosi
-;   (declare (salience ?*highest-priority*))
-;   (fase 3-stampa-diagnosi)
-;   =>
-;   ;(printout t "***** DIAGNOSI DEL PROBLEMA *****" crlf crlf)
-;   (focus MODULO-DIAGNOSI)
-; )
-;
-;
-; (defrule fase-4-trova-soluzioni
-;   (declare (salience ?*highest-priority*))
-;   (fase-cerca-soluzioni)
-;   ;?f <- (fase 3-stampa-diagnosi)
-;   =>
-;   ;(printout t "FASE SOLUZIONI" crlf)
-;   ;(retract ?f)
-; )
-;
-; ;; DA IMPLEMENTARE
-; (defrule fase-5-stampa-soluzioni
-;   (declare (salience ?*highest-priority*))
-;   (fase 5-stampa-soluzioni)
-;   =>
-;   ;(printout t "***** LISTA SOLUZIONI *****" crlf crlf)
-;   (focus MODULO-SOLUZIONE)
-; )
-; ;;;;;;;;;;;;;;;;;;;
-;
-; (defrule fase-ritrattazione
-;   (declare (salience ?*highest-priority*))
-;   ?f1 <- (fase ritrattazione)
-; ;  ?f2 <- (fase ?v&~ritrattazione)
-;   =>
-;   ;(retract ?f1)
-;   ; (retract ?f2)
-;   ; (assert ;(fase 2-analisi))
-;   (focus MODULO-RITRATTAZIONE)
-; )
-;
-; (defrule fase-spiegazione
-;   (declare (salience ?*highest-priority*))
-;   (fase spiegazione)
-;   =>
-;   (focus MODULO-SPIEGAZIONE)
-; )
-;
-; (defrule MAIN::diagnosi-trovata
-;   (declare (salience ?*low-priority*))
-;   ?f <- ;(fase 2-analisi)
-;   (nodo (nome diagnosi) (valore ?attr-diagnosi) (certezza ?cer&:(> ?cer 0.95)))
-;   (diagnosi (attributo ?attr-diagnosi))
-;   (not (fase 3-stampa-diagnosi))
-;   (not (fase-cerca-soluzioni))
-;   (not (fase 5-stampa-soluzioni))
-;   ;(not (ferma-programma))
-;   =>
-;   ;(printout t crlf "***** DIAGNOSI 0.95 *****" crlf crlf)
-;   ;(retract ?f)
-;   (assert (fase 3-stampa-diagnosi))
-;   ;(assert(ferma-programma))
-; )
-;
-; (defrule MAIN::fine-domande
-;   (declare (salience ?*lowest-priority*))
-;   ?f <- ;(fase 2-analisi)
-;   (nodo (nome chiedi) (valore ?dom))
-;   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
-;   (not (fase 3-stampa-diagnosi))
-;   (not (fase-cerca-soluzioni))
-;   (not (fase 5-stampa-soluzioni))
-;   ;(not (ferma-programma))
-;   =>
-;   ;(printout t crlf "***** FINE DOMANDE *****" crlf crlf)
-;   ;(retract ?f)
-;   (assert (fase 3-stampa-diagnosi))
-; )
-
-
-; (defrule MAIN::ferma-esecuzione
-;   (declare (salience ?*highest-priority*))
-;   ?x <- (ferma-programma)
-;   =>
-;   (retract ?x)
-;   (ask-stop-program)
-; )
-;
-; (defrule MAIN::ferma-esecuzione-2
-;   (declare (salience ?*highest-priority*))
-;   ?x <- (ferma-programma-2)
-;   =>
-;   (retract ?x)
-;   (ask-stop-program-2)
-; )
-
 
 ; CHIEDI DOMANDA
 ;****************************************************************************
@@ -543,125 +226,24 @@
 
 (defrule chiedi-domanda
   (declare (salience ?*low-priority*))
-  ;(not (fase ?fase&3-stampa-diagnosi|4-trova-soluzioni|5-stampa-soluzioni))
+
   ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p)(id-nodo ?id-ask))
   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (spiegazione ?spieg) (help ?aiuto)
           (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE))
   (not (nodo (nome ?attr))) ; ATTENZIONE: controllare se eliminabile
   ?cont-dom <- (contatore-domande ?i)
-  ; ?nodo-dom-precedente <- (nodo-domanda-attuale ?id-dom-prec)
   =>
   (bind ?j (+ ?i 1))
-  ;(bind ?risposta (ask-question ?j ?domanda ?spieg ?aiuto ?descrizioni))
   (bind ?risposta (ask-question ?j ?f))
   (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
   (retract ?cont-dom)
   (assert (contatore-domande ?j))
-
-  ; (modify ?ask (nodo-padre ?p ?id-dom-prec))
-  ; (retract ?nodo-dom-precedente)
-  ; (assert (nodo-domanda-attuale ?id-ask))
-
   (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (sorgente-info utente) (nodo-padre ?id-ask)))
-
 )
-
-
-; (defrule usa-risposta-utente-memorizzata
-;   ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p) (id-nodo ?id-ask))
-;   ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta TRUE) (risposta-selezionata ?risp))
-;   (not (nodo (nome ?attr)))
-;   =>
-;   (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (sorgente-info utente) (nodo-padre ?id-ask)))
-; )
-
-
-
-
 
 ;;******************************************************************************
 ;;*    REGOLE PER CHIDERE DOMANDE ALL'UTENTE                                   *
 ;;******************************************************************************
-
-
-
-
-
-
-
-
-
-;;******************************************************************************
-;;*     DIAGNOSI                                                               *
-;;******************************************************************************
-
-;; DIAGNOSI ACCENSIONE E SO ****************************************************
-
-; (defrule diagnosi-alimentazione-disconnessa
-;   ?p1 <- (nodo (nome stato-accensione) (valore fallito) (certezza ?crt1))
-;   ?p2 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?crt2))
-;   ?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
-;   =>
-;   (bind ?crt (calcola-certezza 0.9 ?crt1 ?crt2 ?crt3))
-;   (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?p1 ?p2 ?p3) (certezza ?crt)))
-; )
-
-; (defrule diagnosi-batteria-difettosa
-;   ?p1 <- (nodo (nome batteria-difettosa) (valore si) (certezza ?crt1))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* 1.0 ?crt1)) (nodo-padre ?p1)))
-; )
-
-; (defrule diagnosi-alimentatore-spento
-;   ?p1 <- (nodo (nome interruttore-alimentatore) (valore spento))
-;   ?p2 <- (nodo (nome stato-accensione) (valore fallito))
-;   ?p3 <- (nodo (nome alimentazione-collegata) (valore si))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?p1 ?p2 ?p3)))
-; )
-
-; (defrule diagnosi-alimentatore-guasto
-; ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-; ?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-; (or
-;   ?p3 <- (nodo (nome ronzio-alimentatore) (valore si))
-;   ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore ?v&no|sconosciuto))
-;   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore ?v&no|sconosciuto))
-; )
-; =>
-; (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?p1 ?p2 ?p3)))
-; )
-;
-; (defrule diagnosi-scheda-madre-guasta
-; ?p1 <- (nodo (nome stato-accensione) (valore fallito))
-; ?p2 <- (nodo (nome alimentazione-collegata) (valore si))
-; (or
-;   ?p3 <- (nodo (nome spia-alimentatore-pcportatile) (valore sconosciuto))
-;   ?p3 <- (nodo (nome spia-alimentatore-pcdesktop) (valore sconosciuto))
-; )
-; =>
-; (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?p1 ?p2 ?p3)))
-; )
-
-;;******************************************************************************
-
-
-
-
-
-
-;; REGOLE PER INFERENZA ********************************************************
-
-; (defrule cavi-display-portatile
-;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile))
-;   =>
-;   (assert (nodo (nome muovere-cavi-display) (valore interni) (nodo-padre ?p1 )))
-;   (assert (nodo (nome cavi-display) (valore interni) (nodo-padre ?p1 )))
-; )
-
-
-
-
 
 ;; *****************************************************************************
 ;; ************ REGOLE PER FASE 1: PROFILAZIONE UTENTE E DISPOSITIVO ***********
@@ -685,14 +267,14 @@
   (assert (nodo (nome chiedi) (valore esperienza-utente)))
 )
 
-(defrule chiedi-problema-principale
-  ; (or (fase 1-profilazione) ;(fase 2-analisi))
-  (not (nodo (nome chiedi) (valore problema-principale)))
-  (domanda (attributo problema-principale)(gia-chiesta FALSE))
-  ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto) (id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome chiedi) (valore problema-principale) (nodo-padre ?id-p1)))
-)
+; (defrule chiedi-problema-principale
+;   ; (or (fase 1-profilazione) ;(fase 2-analisi))
+;   (not (nodo (nome chiedi) (valore problema-principale)))
+;   (domanda (attributo problema-principale)(gia-chiesta FALSE))
+;   ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto) (id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome chiedi) (valore problema-principale) (nodo-padre ?id-p1)))
+; )
 
 (defrule chiedi-anni-dispositivo
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
@@ -719,20 +301,6 @@
   =>
   (assert (nodo (nome chiedi) (valore ha-batteria) (nodo-padre ?id-p1)))
 )
-
-;; ***** FASE 1: REGOLA PER PASSAGGIO ALLA PROSSIMA FASE
-
-
-
-; (defrule passa-alla-fase-2
-;   (declare (salience ?*lowest-priority*))
-;   ?f <- (fase 1-profilazione)
-;   =>
-;   ;(retract ?f)
-;   (assert ;(fase 2-analisi))
-; )
-
-;;*********************************************************
 
 ;; ***** FASE 2: DEDUZIONI DEL SISTEMA
 
@@ -766,12 +334,12 @@
   (assert (nodo (nome ha-batteria) (valore no) (certezza ?crt-non-ha-batteria) (nodo-padre ?id-p1 ?id-p2) (descrizione "Essendo il dispositivo un portatile, c'e' una piccola probabilita' che la batteria non sia inserita.")))
 )
 
-(defrule utente-inesperto
-  ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome esperienza-utente) (valore utente-inesperto) (id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome problema-principale) (valore analisi-guidata) (nodo-padre ?id-p1)))
-)
+; (defrule utente-inesperto
+;   ; ;(fase 2-analisi)
+;   ?p1 <- (nodo (nome esperienza-utente) (valore utente-inesperto) (id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome problema-principale) (valore analisi-guidata) (nodo-padre ?id-p1)))
+; )
 
 (defrule eta-dispositivo-sconosciuta
   ; ;(fase 2-analisi)
@@ -828,17 +396,17 @@
   ;(fase 2-analisi)
   ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
-  ?p1 <- (nodo (nome problema-principale) (valore ?v&analisi-guidata|accensione) (certezza ?crt1) (id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome problema-principale) (valore ?v&analisi-guidata|accensione) (certezza ?crt1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome chiedi) (valore controllo-accensione) (nodo-padre ?id-px ?id-p1)))
+  (assert (nodo (nome chiedi) (valore controllo-accensione) (nodo-padre ?id-px)))
 )
 
-(defrule problema-video-accensione-funzionante
-  ;(fase 2-analisi)
-  ?p1 <- (nodo (nome problema-principale) (valore video) (certezza ?crt1) (id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?crt1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo ha un problema video, quindi il dispositivo dovrebbe accendersi.")))
-)
+; (defrule problema-video-accensione-funzionante
+;   ;(fase 2-analisi)
+;   ?p1 <- (nodo (nome problema-principale) (valore video) (certezza ?crt1) (id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?crt1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo ha un problema video, quindi il dispositivo dovrebbe accendersi.")))
+; )
 
 (defrule controllo-accensione-ut-inesperto
   ;(fase 2-analisi)
@@ -1081,25 +649,23 @@
 
 (defrule chiedi-problema-video-dispositivo
   ;(fase 2-analisi)
-  ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
+  ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  (not (nodo (nome problema-principale) (valore video) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2)))
+  ;(not (nodo (nome problema-principale) (valore video) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2)))
   (not (nodo (nome disturbo-video)(valore ?v)(certezza ?crt3&:(> ?crt3 0))(attivo TRUE)(id-nodo ?id-p3)))
   =>
-  (assert (nodo (nome chiedi) (valore problema-video-dispositivo) (nodo-padre ?id-p1 ?id-px)))
+  (assert (nodo (nome chiedi) (valore problema-video-dispositivo) (nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-disturbo-video
   ;(fase 2-analisi)
-  ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
-  (or
-      ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-      ?p1 <- (nodo (nome problema-principale) (valore video)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  )
+  ; ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
+  ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+
   (not (nodo (nome disturbo-video) (valore ?v)(certezza ?crt2&:(> ?crt2 0))(attivo TRUE)(id-nodo ?id-p2)))
   =>
-  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?id-px ?id-p1)))
+  (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?id-p1)))
 )
 
 (defrule disturbo-fasce-verticali
@@ -1143,36 +709,6 @@
           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
 )
 
-
-
-
-; (defrule interferenza-video
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo(nome disturbo-video)(valore ?v&fasce-verticali|linee-orizzontali)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.8 ?crt1))(nodo-padre ?id-p1)
-;           (descrizione "E' possibile ci siano interferenze sul segnale video.")))
-; )
-;
-; (defrule guasto-circuito-video
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome disturbo-video)(valore ?v&fasce-verticali|schermo-nero|linee-orizzontali)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.7 ?crt1))(nodo-padre ?id-p1)
-;           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
-; )
-
-; (defrule momento-problema-avvio
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome momento-manifestazione-problema)(valore avvio)(certezza (* 1 ?crt1))(nodo-padre ?id-p1)
-;           (descrizione "Il problema si manifesta sin dall'avvio del dispositivo")))
-; )
-
-
-
-
 (defrule chiedi-monitor-esterno
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome disturbo-video)(valore ?v1&fasce-verticali|linee-orizzontali|schermo-nero)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1198,43 +734,8 @@
   (assert (nodo (nome chiedi) (valore problema-video-all-avvio) (nodo-padre ?id-p1)))
 )
 
-; (defrule chiedi-blocco-cursore
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   ?p2 <- (nodo (nome problema-video-all-avvio)(valore no)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-;   ?p3 <- (nodo (nome cavi-display)(valore ok)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
-;   =>
-;   (assert (nodo (nome chiedi) (valore blocco-cursore) (nodo-padre ?id-p1)))
-; )
 
-; (defrule cursore-sconosciuto
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome blocco-cursore)(valore non-so)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome blocco-cursore) (valore si)(certezza (* 0.5 ?c1))(nodo-padre ?id-p1)))
-;   (assert (nodo (nome blocco-cursore) (valore no)(certezza (* 0.5 ?c1))(nodo-padre ?id-p1)))
-; )
 
-; (defrule chiedi-muovere-cavi-display
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome tipo-disturbo-video) (valore interferenza) (certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
-;   ?p2 <- (nodo (nome cavi-display-accessibili) (valore si)(certezza ?crt2)(attivo TRUE) (id-nodo ?id-p2))
-;   ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
-;   ?p3 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
-;   =>
-;   (assert (nodo (nome chiedi) (valore muovere-cavi-display) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-; ) SPOSTARE IN DIAGNOSI
-
-;;******************************************************************************
-;; DIAGNOSI VIDEO **************************************************************
-
-; (defrule diagnosi-cavi-display-non-connessi
-;   ?p1 <- (nodo (nome muovere-cavi-display) (valore risolto) (id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore cavi-display-non-connessi) (nodo-padre ?id-p1)))
-; )
-;;Se il problema persiste e' possibile che il cavo sia danneggiato.
 
 (defrule diagnosi-problema-SW-video-1
   ?p1 <- (nodo (nome disturbo-video)(valore fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1289,24 +790,6 @@
   (assert (nodo (nome diagnosi) (valore guasto-inverter)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
 )
 
-; (defrule diagnosi-display-guasto-2
-;   ?p1 <- (nodo (nome disturbo-video) (valore schermo-nero) (id-nodo ?id-p1))
-;   (or
-;     ?p2 <- (nodo (nome cavi-display) (valore ok) (id-nodo ?id-p2))
-;     ?p2 <- (nodo (nome cavi-display-accessibili) (valore no) (id-nodo ?id-p2))
-;   )
-;   ?p3 <- (nodo (nome monitor-esterno) (valore ?v2&funzionante|no) (id-nodo ?id-p3))
-;   ?p4 <- (nodo (nome blocco-cursore) (valore no) (id-nodo ?id-p4))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
-; )
-
-; (defrule diagnosi-cavi-display-portatile-guasti
-;   ?p1 <- (nodo (nome diagnosi) (valore guasto-display) (id-nodo ?id-p1))
-;   ?p2 <- (nodo (nome cavi-display-accessibili) (valore no) (id-nodo ?id-p2))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore cavi-display-portatile-guasti) (nodo-padre ?id-p1 ?id-p2)))
-; )
 
 (defrule diagnosi-interferenze-cavo
   ?p1 <- (nodo (nome tipo-disturbo-video)(valore interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1316,11 +799,6 @@
   (assert (nodo (nome diagnosi) (valore interferenze-cavo)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
 )
 
-; (defrule diagnosi-display-guasto-3
-;   ?p1 <- (nodo (nome disturbo-video) (valore macchie) (id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore guasto-display) (nodo-padre ?id-p1)))
-; )
 
 (defrule diagnosi-guasto-vga
   ?p1 <- (nodo (nome tipo-disturbo-video) (valore guasto-circuito-video)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1378,37 +856,37 @@
 
 (defrule chiedi-problema-POST-ut-esperto
   ;(fase 2-analisi)
-  ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
+  ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
   ?p4 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
   =>
-  (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-px ?id-p1 ?id-p3 ?id-p4)))
+  (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
 
 (defrule chiedi-problema-POST-ut-inesperto
   ;(fase 2-analisi)
-  ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
+  ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
   ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
   ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
   ?p4 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
   =>
-  (assert (nodo (nome chiedi) (valore fase-POST-ut-inesperto) (nodo-padre ?id-px ?id-p1 ?id-p3 ?id-p4)))
+  (assert (nodo (nome chiedi) (valore fase-POST-ut-inesperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
 
-(defrule chiedi-problema-POST-ut-esperto2
-  ;(fase 2-analisi)
-  ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
-
-  ?p1 <- (nodo (nome problema-principale)(valore caricamento-SO)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-  =>
-  (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-px ?id-p1 ?id-p2)))
-)
+; (defrule chiedi-problema-POST-ut-esperto2
+;   ;(fase 2-analisi)
+;   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
+;
+;   ;?p1 <- (nodo (nome problema-principale)(valore caricamento-SO)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+;   =>
+;   (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-px ?id-p1 ?id-p2)))
+; )
 
 
 
@@ -1805,119 +1283,3 @@
   (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?crt-ripristina-SO) (nodo-padre ?id-p1)))
   (assert (nodo (nome soluzione) (valore rimuovi-SW-installato) (certezza ?crt-rimuovi-SW) (nodo-padre ?id-p1)))
 )
-
-
-
-
-;; ***** FASE 4: REGOLA PER PASSAGGIO ALLA PROSSIMA FASE
-
-; (defrule passa-alla-fase-5
-;   (declare (salience ?*lowest-priority*))
-;   ?f <- (fase-cerca-soluzioni)
-;   =>
-;   (retract ?f)
-;   (assert (fase 5-stampa-soluzioni))
-; )
-
-
-
-
-
-
-
-
-
-
-
-
-; (defrule deduci-SO-windows
-;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&pc-desktop|pc-portatile))
-;   =>
-;   (assert (nodo (nome sistema-operativo) (valore windows) (tipo inferenza) (nodo-padre ?p1)))
-; )
-;
-; (defrule deduci-SO-android
-;   ?p1 <- (nodo (nome tipo-dispositivo) (valore ?dispositivo&tablet|smartphone))
-;   =>
-;   (assert (nodo (nome SO) (valore android) (tipo inferenza) (nodo-padre ?p1)))
-; )
-
-
-
-
-
-
-
-
-; (defmodule ELENCO-DIAGNOSI (import MAIN ?ALL)(export ?ALL))
-;
-; (defmodule ELENCO-DOMANDE(import MAIN ?ALL)(export ?ALL))
-
-
-
-
-
-
-
-
-
-
-  ;******************* MODULO DOMANDE GENERICHE **********************************
-
-  ; (defmodule DOMANDE-GENERICHE (import MAIN deftemplate ?ALL)(import MAIN defglobal ?ALL) (import MAIN deffunction ?ALL)(export ?ALL))
-  ;
-  ;
-  ;     (defrule DOMANDE-GENERICHE::init
-  ;       (declare (salience ?*highest-priority*))
-  ;       =>
-  ;       (set-strategy random)
-  ;       (printout t "DEBUG >> DOMANDE-GENERICHE >> strategy set to random." crlf crlf)
-  ;     )
-  ;
-  ;
-  ;
-  ;
-  ;     (defrule DOMANDE-GENERICHE::chiedi-domanda-generica
-  ;       ;(declare (salience ?*low-priority*))
-  ;       ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
-  ;       ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta FALSE)(domanda-generica TRUE))
-  ;       (not (nodo (nome ?attr)))
-  ;       ?cont-dom <- (contatore-domande ?i)
-  ;       =>
-  ;       (bind ?j (+ ?i 1))
-  ;       (bind ?risposta (ask-question ?j ?domanda ?descrizioni))
-  ;       (if (= ?risposta 0) then
-  ;         (retract ?ask)
-  ;         (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
-  ;         (assert (init-revisiona-domande))
-  ;       else
-  ;         (if (= ?risposta 9) then
-  ;           (retract ?ask)
-  ;           (assert (nodo (nome chiedi)(valore ?attr)(nodo-padre ?p))) ;;NECESSARIO PER RIPROPORRE LA STESSA DOMANDA NEL CASO DI ANNULLAMENTO REVISIONE
-  ;           (assert (nodo (nome spiegazione) (valore ?attr)))
-  ;           (focus SPIEGAZIONE)
-  ;         else
-  ;           ;;(assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
-  ;           (modify ?f (gia-chiesta TRUE)(num-domanda ?j)(risposta-selezionata ?risposta))
-  ;           ;;(retract ?ask)
-  ;           (retract ?cont-dom)
-  ;           (assert (contatore-domande ?j))
-  ;         )
-  ;       )
-  ;     )
-  ;
-  ;     (defrule DOMANDE-GENERICHE::usa-risposta-utente-gen
-  ;       ?ask <- (nodo (nome chiedi)(valore ?attr)(nodo-padre $?p))
-  ;       ?f <- (domanda (attributo ?attr) (testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descrizioni) (gia-chiesta TRUE) (risposta-selezionata ?risp) (domanda-generica TRUE))
-  ;       (not (nodo (nome ?attr)))
-  ;       =>
-  ;       (assert (nodo (nome ?attr) (valore (nth$ ?risp ?risposte)) (descrizione (nth$ ?risp ?descrizioni)) (tipo info-utente) (nodo-padre ?ask)))
-  ;     )
-
-
-
-
-
-
-
-  ;*******************************************************************************

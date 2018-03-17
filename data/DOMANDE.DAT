@@ -1,44 +1,62 @@
 
 ;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
-(domanda  (attributo esperienza-utente)
-          (testo-domanda "Indicare il grado di esperienza dell'utente.")
-          (risposte-valide utente-esperto utente-inesperto)
-          (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
-                                "Dispongo di competenze informatiche limitate o non conosco i termini tecnici utilizzati")
-)
 
-(domanda  (attributo problema-principale)
-          (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
-          (risposte-valide accensione video caricamento-SO analisi-guidata)
-          (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
-                                "Si, disturbo del segnale video o problema del display"
-                                "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
-                                "No, non conosco il problema")
-)
+
+// (domanda  (attributo problema-principale)
+// (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
+//           (risposte-valide accensione video caricamento-SO analisi-guidata)
+//           (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
+//                                 "Si, disturbo del segnale video o problema del display"
+//                                 "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
+//                                 "No, non conosco il problema")
+// (spiegazione "Questa domanda permette all'utente di saltare alcune fasi di ricerca del problema per avere una risposta piu' rapida.")
+// (help "Rispondere 1,2 o 3 se l'utente ha gia' individuato in quale fase dell'accensione si verifica il problema. Se non si conosce
+// il problema o non si e' sicuri a quale categoria appartenga, rispondere 4.")
+// )
 
 (domanda  (attributo anni-dispositivo)
-          (testo-domanda "Quanti anni ha il dispositivo?")
+(testo-domanda "Quanti anni ha il dispositivo?")
           (risposte-valide meno-2-anni 2-5-anni 5-10-anni piu-10-anni sconosciuto)
           (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
+(spiegazione "Questa domanda permette di rendere piu' precisa la ricerca di diagnosi e soluzioni sulla base di quanto il dispositivo potrebbe soffrire di determinati
+problemi legati all'eta'.")
+(help "Rispondere con l'eta' (o una stima dell'eta') del dispositivo. ")
 )
 
 (domanda  (attributo garanzia)
-          (testo-domanda "Il dispositivo e' ancora in garanzia?")
+(testo-domanda "Il dispositivo e' ancora in garanzia?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si" "No" "Non so")
+(spiegazione "Questa domanda aiuta il sistema a trovare soluzioni utili per risolvere il problema. ")
+(help "Verificare se il dispositivo e' ancora coperto da garanzia.")
 )
 
 (domanda  (attributo tipo-dispositivo)
-          (testo-domanda "A quale tipologia appartiene il dispositivo?")
+(testo-domanda "A quale tipologia appartiene il dispositivo?")
           (risposte-valide pc-desktop pc-portatile)
           (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
+(spiegazione "Alcune diagnosi, soluzioni e domande possono variare sensibilmente in base alla tipologia del dispositivo. ")
+(help "Rispondere in base alla tipologia del dispositivo.")
+)
+
+(domanda  (attributo esperienza-utente)
+(testo-domanda "Indicare il grado di esperienza dell'utente.")
+          (risposte-valide utente-esperto utente-inesperto)
+          (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
+                                "Dispongo di competenze informatiche limitate o non conosco i termini tecnici utilizzati")
+(spiegazione "Questa domanda viene posta per indicare al sistema quali domande porre all'utente, in modo che risultino piu' comprensibili se l'utente e' inesperto.")
+(help "Si consiglia di rispondere come 'utente esperto' se si ha un minimo di esperienza sulle componenti del dispositivo.")
 )
 
 (domanda  (attributo ha-batteria)
-          (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?")
+(testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?
+ATTENZIONE: Per il corretto svolgimento dell'analisi e' necessario che il dispositivo sia connesso ad una presa elettrica.")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita" "Non so")
+(spiegazione "Questa domanda permette al sistema di identificare possibili problemi relativi all'alimentazione della batteria.")
+(help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
+necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
 )
 
 ;; //***************************************************************************
@@ -47,62 +65,70 @@
 ;; // DOMANDE ACCENSIONE PC ****************************************************
 
 (domanda  (attributo controllo-accensione)
-          (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
+(testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
           (risposte-valide funzionante possibile-non-funzionante)
           (descrizione-risposte "Si" "No, il dispositivo non si accende")
+(spiegazione "Questa domanda permette di capire se il problema e' legato alle componenti responsabili per l'alimentazione elettrica del dispositivo.")
+(help "Nel caso di un PC Desktop, il pulsante e' posto sulla parte frontale del case. Nel caso di un PC portatile, il pulsante e' solitamente situato sopra la tastiera.
+Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda (In alcuni casi la spia e' posta sul pulsante stesso).")
 )
 
 (domanda  (attributo controllo-accensione-ut-inesperto)
-          (testo-domanda "Dopo aver premuto il tasto di accensione, anche se lo schermo resta nero, esaminate con attenzione il dispositivo e %n controllate se ci sono spie che si illuminano o se le ventole sembrano avviarsi.")
+(testo-domanda "Dopo aver premuto il tasto di accensione, anche se lo schermo resta nero, esaminate con attenzione il dispositivo e
+controllate se ci sono spie che si illuminano o se le ventole sembrano cominciare a girare.")
           (risposte-valide funzionante non-funzionante)
           (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
+(spiegazione "E' possibile che il problema possa essere causato da un guasto allo schermo e non dall'alimentazione del dispositivo.")
+(help "...")
 )
 
-; // (domanda  (attributo alimentatore-funzionante-ut-esperto)
-; //          (testo-domanda "Dpo aver premuto il tasto di accensione, il dispositivo sembra avviarsi anche se lo schermo resta nero?")
-; //          (risposte-valide si no)
-; //          (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
-; //  )
-
-
-
-(domanda  (attributo riavvio-forzato)
-          (testo-domanda "Il dispositivo si riavvia da solo durante l'esecuzione?")
-          (risposte-valide si no)
-          (descrizione-risposte "Si" "No")
-)
 
 (domanda  (attributo alimentazione-collegata)
-          (testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato alla rete elettrica.")
+(testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato al dispositivo e alla presa elettrica. Verificate anche che ci sia passaggio di corrente sulla presa.")
           (risposte-valide si no )
           (descrizione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende"
            "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
+(spiegazione "E' necessario che il dispositivo sia connesso alla rete elettrica per far si che funzioni correttamente.")
+(help "Potete verificare che sulla presa ci sia passaggio di corrente collegandovi ad esempio una lampada e verificando che si accenda.
+Nel caso di un PC Desktop, la spina di alimentazione va collegata direttamente sull'alimentatore sul retro del case. La presa a tre poli e' di solito
+posta in basso (sui dispositivi piu' datati e' invece posta in alto).
+Nel caso di un PC portatile la presa potrebbe essere posta sul retro o su uno dei lati del dispositivo.")
 )
 
 (domanda  (attributo batteria-difettosa)
-          (testo-domanda "Rimuovere la batteria del dispositivo e utilizzare l'alimentazione elettrica diretta per avviare il dispositivo.")
+(testo-domanda "Rimuovere la batteria del dispositivo e premere nuovamente il tasto di accensione.")
           (risposte-valide si no )
           (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-           "La batteria è stata rimossa e il dispositivo collegato all'alimentazione elettrica ma continua a non accendersi")
+           "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
+(spiegazione "E' possibile che un guasto alla batteria non permetta al dispositivo di avviarsi anche se questo e' connesso alla rete elettrica domestica.")
+(help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
+necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
 )
 
 (domanda  (attributo interruttore-alimentatore)
-          (testo-domanda "Assicurarsi che l'interruttore sull'alimentatore sia acceso. L'interrutore si trova sulla parte posteriore del PC, in prossimita' del cavo d'alimentazione.")
+(testo-domanda "Verificare se il dispositivo possiede un interruttore di alimentazione e che questo sia acceso.")
           (risposte-valide acceso spento )
           (descrizione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi"
            "L'interruttore e' spento")
+(spiegazione "E' necessario che l'alimentatore sia acceso per permettere al dispositivo di funzionare correttamente")
+(help "L'interruttore e' situato sull'alimentatore, accanto al cavo di alimentazione nella parte posteriore del case. Su alcuni modelli l'interruttore potrebbe non essere presente.")
 )
 
 (domanda  (attributo spia-alimentatore-pcportatile)
-      (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
+(testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
-      (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
+      (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
+(spiegazione "Questa domanda ci permette di capire se e' piu' probabile che il guasto sia dovuto all'alimentatore o alla scheda madre")
+(help "Su alcuni modelli la spia e' presente direttamente sull'alimentatore. Su altri dispositivi la spia e' locata sulla parte frontale o
+accanto alla spina dell'alimentazione")
 )
 
 (domanda  (attributo spia-alimentatore-pcdesktop)
-      (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
+(testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
-      (descrizione-risposte "Si, la spia e' accesa" "No, la spia e' presente ma NON e' accesa" "Non so / Non riesco a localizzare la spia")
+      (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
+(spiegazione "Questa domanda ci permette di capire se e' piu' probabile che il guasto sia dovuto all'alimentatore o alla scheda madre")
+(help "Su alcuni modelli la spia e' posta sull'alimentatore, nella parte posteriore del case. Su altri modelli invece la spia potrebbe non e' presente.")
 )
 
 ;; //***************************************************************************
@@ -111,48 +137,63 @@
 ;; // DOMANDE VIDEO ************************************************************
 
 (domanda  (attributo problema-video-dispositivo)
-          (testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
+(testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
+(spiegazione "Questa domanda serve a verificare se si riscontrano problemi particolari al monitor al momento dell'accensione.")
+(help "Rispondere 'Si' se ci sono problemi al monitor durante le prime fasi d'accensione del dispositivo.")
 )
 
 (domanda  (attributo disturbo-video)
-          (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
+(testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
           (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
           (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
 )
+(spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o scheda video, oppure se potrebbe essere
+causato da un interferenza del segnale video.")
+(help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte (ad esempio, le fasce potrebbero essere
+intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
 
 (domanda  (attributo monitor-esterno)
-          (testo-domanda "E' possibile collegare un monitor esterno/secondario al dispositivo?")
+(testo-domanda "E' possibile collegare un monitor esterno al dispositivo?")
           (risposte-valide funzionante errore no)
-          (descrizione-risposte "Si, il monitor esterno/secondario funziona e non presenta i problemi del monitor principale"
-          "Si, ma il monitor esterno/secondario presenta lo stesso problema del monitor principale"
+          (descrizione-risposte "Si, il monitor esterno funziona e non presenta i problemi del monitor principale"
+          "Si, ma il monitor esternopresenta lo stesso problema del monitor principale"
           "No, non dispongo di un altro monitor")
+(spiegazione "Se in possesso di un altro monitor, questa domanda permette di capire se il problema e' dovuto ad un guasto del monitor o di qualche altro componente del dispositivo.")
+(help "Se il dispositivo e' un PC desktop allora e' possibile collegare il monitor secondario al posto di quello normalmente utilizzato e verificare se il problema persiste.
+Se il dispositivo e' un PC portatile, e' necessario verificare che sia presente una presa per poter collegare un monitor esterno. Solitamente queste prese sono posizionate sui lati del dispositivo.
+ATTENZIONE: E' necessario verificare che il monitor esterno abbia una presa compatibile a quella del dispositivo. In caso di dubbi si consiglia di verificare sul manuale del PC e del monitor.")
 )
 
-(domanda  (attributo blocco-cursore)
-          (testo-domanda "Dopo l'avvio del dispositivo e' possibile vedere il cursore del mouse o il logo di windows?")
-          (risposte-valide si no non-so)
-          (descrizione-risposte "Si, la freccia del mouse o il logo di windows sono visibili" "No, lo schermo e' completamente nero" "Non so")
-)
 
 (domanda  (attributo problema-video-all-avvio)
-          (testo-domanda "Il problema video si manifesta sin dall'accensione del dispositivo oppure in un secondo momento? Ad esempio al momento del caricamento del sistema operativo?")
+(testo-domanda "Il problema si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al momento del caricamento del sistema operativo?")
           (risposte-valide si no)
           (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
+(spiegazione "Se il problema si manifesta sin dal momento in cui il monitor si attiva, allora ci sono buone probabilita' che il problema sia dovuto ad un guasto di una componente come monitor o scheda video
+piuttosto che ad un errore di natura software.")
+(help "Controllate il monitor al momento dell'accensione del dispositivo. Verificate se il problema appare sin da subito oppure se nelle prime schermate non c'e' nessun problema video. ")
 )
 
 (domanda  (attributo cavi-display)
-          (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso.")
+(testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso.")
           (risposte-valide ok errore )
           (descrizione-risposte "I cavi sono correttamente collegati ma il display presenta comunque il problema"
           "I cavi non sono correttamente collegati oppure il display non e' acceso")
+(spiegazione "Per il corretto funzionamento del monitor e' necessario che  sia il cavo di alimentazione che quello del segnale video siano correttamente collegati.")
+(help "Assicuratevi che il cavo di alimentazione del monitor sia collegato alla rete elettrica domestica. Controllate che sulla presa ci sia passaggio di corrente,
+ad esempio collegandovi una lampada e verificando che si accenda. Verificate anche che il cavo del segnale video (di solito una spina di colore blu o grigia) sia correttamente
+correttametne connessa sia al monitor sia sul retro del case del PC. Infine, assicuratevi che il monitor sia acceso.")
 )
 
 (domanda  (attributo muovere-cavi-display)
-          (testo-domanda "Verificare che lo spinotto del cavo video sia correttamente inserito nella presa, provare a muovere lo spinotto per verificare se il problema sparisce")
+          (testo-domanda "Verificare che la spina del cavo video sia correttamente inserita nella presa. Provate a reinserire la spina e controllate se il problema sparisce.")
           (risposte-valide risolto non-risolto )
-          (descrizione-risposte "Muovendo i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
+          (descrizione-risposte "Risistemando i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
+(spiegazione "A volte, se la spina del cavo video non e' saldamente collegata possono verificarsi dei disturbi sul monitor.")
+(help "Assicuratevi che la spina del cavo video sia saldamente connessa sia dietro il monitor e sia sulla parte posteriore del case (la spina e' di solito di colore blu o grigia).
+Con il PC acceso, provate a staccare e reinserire la spina e osservate se il problema sul monitor sparisce.")
 )
 
 ;; //***************************************************************************
@@ -162,40 +203,52 @@
 ;; // **************POST AND SO
 
 (domanda  (attributo inattivita-dispositivo)
-          (testo-domanda "Il dispositivo e' spento e inattivo da piu' di un mese?")
+(testo-domanda "Il dispositivo e' inattivo da piu' di due mesi o viene usato raramente?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
+(spiegazione "Un lungo periodo di inattività del dispositivo potrebbe velocizzare il processo con cui la batteria del BIOS si scarica, portando quindi alla necessita' di sostituirla.")
+(help "Rispondere 'Si' se il dispositivo e' inutilizzato da almeno due mesi oppure se lo si utilizza per pochissimo tempo con lunghi periodi di inattivita' nel mezzo. ")
+
 )
 
 (domanda  (attributo conflitto-HW-SW)
-          (testo-domanda "Sono state installate nuove componenti, programmi o aggiornamenti del sistema subito prima che il problema si verificasse?")
+(testo-domanda "Sono state installate nuove componenti, programmi o aggiornamenti del sistema subito prima che il problema si verificasse?")
           (risposte-valide si-HW si-SW si-aggiornamenti no non-so )
           (descrizione-risposte "Si, sono state installate nuove componenti hardware (ad esempio RAM, disco fisso, stampante ecc.)"
           "Si, sono stati installati nuovi programmi software"
           "Si, sono stati installati aggiornamenti del sistema" "No" "Non so")
+(spiegazione "Spesso una delle cause piu' comuni ai problemi del caricamento del sistema operativo e' l'installazione di nuove componenti nel sistema. Questo puo' essere causato
+da problemi su diversi livelli, ad esempio la nuova componente potrebbe non essere compatibile, oppure l'istallazione potrebbe non essere andata a buon fine.")
+(help "Indicare se sono state installate nuove componenti nel sistema. Per componenti hardware si intendono anche periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor o memorie esterne.")
 )
 
 
 
 (domanda  (attributo fase-POST-ut-esperto)
-          (testo-domanda "Il dispositivo manifesta problemi nella fase di POST del BIOS? (Prima del caricamento del sistema operativo)")
+(testo-domanda "Il dispositivo manifesta problemi nella fase di controllo del BIOS? (Ovvero prima del caricamento del sistema operativo)")
           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
                                 "Il dispositivo si blocca/riavvia dopo un beep code"
-                                "Il dispositivo si riavvia dopo una schermata blu di errore"
+                                "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
+(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del sistema operativo.")
+(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare da qualche secondo fino ad un minuto ed
+e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi riscontrabili piu' comuni.")
 )
 
 (domanda  (attributo fase-POST-ut-inesperto)
-          (testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere.
+(testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere.
           Questa fase e' caratterizzata da diverse schermate con testo bianco su sfondo nero che si susseguono fino a quando il logo di Windows appare sullo schermo. Si verificano errori in questa fase?")
           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-                                "Il dispositivo si blocca/riavvia dopo aver prodotto un messaggio sonoro"
-                                "Il dispositivo si riavvia dopo una schermata blu di errore"
+                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice sonoro"
+                                "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
+(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del sistema operativo.")
+(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare da qualche secondo fino ad un minuto ed
+e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi riscontrabili piu' comuni.")
 )
 
 ;// (domanda  (attributo fase-caricamento-SO-ut-esperto)
@@ -215,38 +268,3 @@
 ;//                                 "Il dispositivo si blocca/riavvia al momento del login"
 ;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
 ;// )
-
-
-;; //DEPRECATE******************************************************************
-
-; (domanda  (attributo problema-boot-o-SO)
-;           (testo-domanda "Il problema si verifica nella fase di boot o dopo aver caricato il sistema operativo?")
-;           (risposte-valide boot SO nessuno)
-;           (descrizione-risposte "Nella fase di boot" "Dopo il caricamento del sistema operativo" "Il sistema funziona correttamente")
-; )
-;
-; (domanda  (attributo bluescreen)
-;           (testo-domanda "Il sistema termina con un errore bluescreen?")
-;           (risposte-valide si no non-so)
-;           (descrizione-risposte "Si" "No" "Non so")
-; )
-;
-; (domanda  (attributo segnali-bios)
-;           (testo-domanda "Il dispositivo emana dei segnali sonori al momento del boot?")
-;           (risposte-valide si no )
-;           (descrizione-risposte "Si" "No")
-; )
-;
-; (domanda  (attributo ronzio-alimentatore)
-;           (testo-domanda "E' possibile udire un suono simile ad un ronzio provenire dall'alimentatore quando è connesso alla rete elettrica?")
-;           (risposte-valide si no )
-;           (descrizione-risposte "Si" "No")
-; )
-;
-; (domanda  (attributo ventole)
-;           (testo-domanda "Le ventole nella parte posteriore del dispositivo funzionano correttamente?")
-;           (risposte-valide si-tiepida si-calda no-aria no-ventole )
-;           (descrizione-risposte "Si, le ventole funzionano ed emanano aria fredda/tiepida" "Si, le ventole funzionano ed emanano aria molto calda" "No, le ventole non sembrano funzionare o non emanano aria" "Il dispositivo non possiede ventole")
-; )
-
-;; //***************************************************************************

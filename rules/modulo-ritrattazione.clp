@@ -1,111 +1,7 @@
 (defmodule MODULO-RITRATTAZIONE(import MAIN ?ALL)(export ?ALL))
 
-
-
-; STAMPA ELENCO E REVISIONE DOMANDE
-;*******************************************************************************
-
-; (deffunction stampa-header-revisione()
-;   (clear-window)
-;   (printout t crlf "******************** REVISIONE DOMANDE ********************" crlf crlf)
-; )
-;
-; (deffunction stampa-footer-revisione()
-;   (printout t crlf "***********************************************************" crlf crlf crlf)
-; )
-;
-; (deffunction ask-question-revision(?n-domande-chieste)
-;   (printout t "Inserire il numero di domanda da modificare oppure" crlf "premere 0 per tornare alla normale esecuzione del programma: ")
-;   (bind ?answer (read))
-;   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-;   (while (and (> ?answer ?n-domande-chieste) (< ?answer 0)) do
-;     (printout t crlf "Valore inserito non valido, riprovare: ")
-;     (bind ?answer (read))
-;   )
-; ?answer)
-;
-; ; (defrule iniz-ritrattazione
-; ;     ?f <- (fase ritrattazione)
-; ;     =>
-; ;     (retract ?f)
-; ;     (assert (avvia-ritrattazione))
-; ;   )
-;
-; (defrule STAMPA-ELENCO-header
-;     ;?a <- (avvia-ritrattazione)
-;     ?f <- (fase ritrattazione)
-;     =>
-;     ;(retract ?a)
-;     (retract ?f)
-;     (stampa-header-revisione)
-;     (assert (revisiona-domande))
-; )
-;
-; (defrule LOOP-STAMPA-ELENCO-domande
-;   (revisiona-domande)
-;   ?d <- (domanda (testo-domanda ?testo) (attributo ?attr) (num-domanda ?n) (gia-chiesta TRUE) (stampata FALSE) (descrizione-risposte $?descr) (risposta-selezionata ?r-selezionata))
-;   (nodo (nome chiedi) (valore ?attr))
-;   (not (and (domanda (attributo ?attr2) (num-domanda ?m&:(< ?m ?n))  (gia-chiesta TRUE)(stampata FALSE))
-;             (nodo (nome chiedi) (valore ?attr2))))
-;   =>
-;   (modify ?d (stampata TRUE))
-;   (printout t "Domanda " ?n ": " ?testo crlf "Risposta: " (nth ?r-selezionata ?descr) crlf crlf)
-; )
-;
-; (defrule END-STAMPA-ELENCO
-;   ?r <-(revisiona-domande)
-;   (not (and (domanda (attributo ?attr) (gia-chiesta TRUE) (stampata FALSE))
-;             (nodo (nome chiedi) (valore ?attr))))
-;   (contatore-domande ?n)
-;   =>
-;   (printout t crlf crlf)
-;   (bind ?risposta (ask-question-revision ?n))
-;   (stampa-footer-revisione)
-;   (retract ?r)
-;   (assert (annulla-stampa-domande))
-;   (if (<> ?risposta 0) then (assert (revisiona-da ?risposta))
-;     else (focus MAIN) ;;*****EXIT POINT
-;   )
-; )
-;
-; (defrule LOOP-STAMPA-ELENCO-reset
-;   (annulla-stampa-domande)
-;   ?d <- (domanda (stampata TRUE))
-;   =>
-;   (modify ?d (stampata FALSE))
-; )
-;
-; (defrule END-STAMPA-ELENCO-reset
-;   ?a <- (annulla-stampa-domande)
-;   (not (domanda (stampata TRUE)))
-;   =>
-;   (retract ?a)
-; )
-
-
-
 (deffunction ordina-per-n-domanda(?f1 ?f2)
    (> (fact-slot-value ?f1 num-domanda) (fact-slot-value ?f2 num-domanda)))
-
-; (deffunction resetta-domande-da (?n)
-;     (bind ?domande (find-all-facts ((?d domanda))(>= ?d:num-domanda ?n)))
-;     (progn$ (?x ?domande)
-;       (modify ?x (num-domanda 0) (gia-chiesta FALSE) (risposta-selezionata 0))
-;     )
-; )
-;
-; (deffunction reimposta-nodo-domanda-attuale (?n)
-;   (if (= ?n 1) then (return 0)
-;   else
-;     (bind ?domanda (find-fact ((?d domanda))(eq ?d:num-domanda (- ?n 1))))
-;     (bind ?attr (fact-slot-value (nth$ 1 ?domanda) attributo))
-;     (bind ?nodo-chiedi (find-fact ((?c nodo))(and(eq ?c:nome chiedi) (eq ?c:valore ?attr))))
-;     (return (fact-slot-value (nth$ 1 ?nodo-chiedi) id-nodo))
-;   )
-; )
-
-
-
 
 
 (deffunction MODULO-RITRATTAZIONE::elimina-nodi-da (?n)
@@ -119,7 +15,6 @@
         )
     )
 )
-
 
 
 (deffunction MODULO-RITRATTAZIONE::ritratta-da-domanda (?n)
@@ -193,81 +88,6 @@
   (retract ?fase)
 )
 
-
-; RITRATTAZIONE
-;****************************************************************************
-
-
-;
-; (defrule MODULO-RITRATTAZIONE::print-ritratta
-;   (declare (salience 1200))
-;   (or
-;     ?x <- (fase-ritrattazione)
-;     ?x <- (fase-ricerca-diagnosi)
-;     ?x <- (contatore-domande ?i)
-;     ?x <- (nodo-domanda-attuale ?a)
-;   )
-;   =>
-;   (printout t "CONDITION: " ?x crlf)
-; )
-;
-; (defrule MODULO-RITRATTAZIONE::print-ritratta2
-;   (declare (salience 1200))
-;   ?r <- (ritratta-da ?n)
-;   ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
-;   ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri) (id-nodo ?id-partenza))
-;   =>
-;   (printout t "CONDITION RITRATTA OK " crlf)
-; )
-;
-;
-; (defrule MODULO-RITRATTAZIONE::ritratta-domande-da
-;   ?fase <- (fase-ritrattazione)
-;   ?r <- (ritratta-da ?n)
-;   ?cnt-dom <- (contatore-domande ?i)
-;   ;;;;;;?nodo-dom-attuale <- (nodo-domanda-attuale ?a)
-;   ?d <- (domanda (attributo ?attr)(testo-domanda ?domanda) (risposte-valide $?risposte) (descrizione-risposte $?descr) (num-domanda ?n) (gia-chiesta TRUE))
-;   ?nodo-partenza <- (nodo (nome chiedi) (valore ?attr) (nodo-padre $?padri) (id-nodo ?id-partenza))
-;   =>
-;   (printout t "BREAKPOINT HERE" crlf)
-;   (assert (elimina-nodi-da ?id-partenza))
-;   (resetta-domande-da ?n)
-;   ;;;; (retract ?nodo-dom-attuale)
-;   ;;;;; (assert (nodo-domanda-attuale (reimposta-nodo-domanda-attuale ?n)))
-;   (retract ?cnt-dom)
-;   (assert (contatore-domande (- ?n 1)))
-;   (retract ?r)
-;   (retract ?fase)
-;   (printout t "BREAKPOINT END "  crlf)
-; )
-;
-; (defrule MODULO-RITRATTAZIONE::LOOP-elimina-nodi-da
-;   (declare (salience ?*highest-priority*))
-;   ?p1 <- (elimina-nodi-da ?n)
-;   ?p2 <- (nodo (nodo-padre $?x ?n $?y) (id-nodo ?id-p2))
-;   =>
-;   (assert (elimina-nodi-da ?id-p2))
-;   (retract ?p2)
-; )
-;
-; (defrule MODULO-RITRATTAZIONE::END-elimina-nodi-da
-;
-;   ?p1 <- (elimina-nodi-da ?n)
-;   (not (nodo (nodo-padre $?x ?n $?y)))
-;   =>
-;   (retract ?p1)
-;   (assert (fine-revisione))
-; )
-;
-; (defrule MODULO-RITRATTAZIONE::END-revisiona-domande
-;   (declare (salience ?*lowest-priority*))
-;   ?r <- (fine-revisione)
-;   ?r2 <- (fase-ritrattazione)
-;   (not (elimina-nodi-da ?e))
-;   =>
-;   (retract ?r)
-;   (retract ?r2)
-; )
 
 (defrule MODULO-RITRATTAZIONE::riattiva-nodi-senza-figli-uguali
   (declare (salience ?*highest-priority*))
