@@ -323,16 +323,16 @@
   (assert (nodo (nome alimentatore-caricabatterie) (valore no) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1) (descrizione "Il dispositivo non possiede un alimentatore caricabatterie esterno.")))
 )
 
-(defrule portatile-ha-batteria
-  ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome ha-batteria) (valore sconosciuto) (certezza ?crt2) (id-nodo ?id-p2))
-  =>
-  (bind ?crt-ha-batteria (calcola-certezza 0.8 ?crt1 ?crt2))
-  (bind ?crt-non-ha-batteria (calcola-certezza 0.3 ?crt1 ?crt2))
-  (assert (nodo (nome ha-batteria) (valore si) (certezza ?crt-ha-batteria) (nodo-padre ?id-p1 ?id-p2) (descrizione "Essendo il dispositivo un portatile, e' probabile che la batteria sia inserita.")))
-  (assert (nodo (nome ha-batteria) (valore no) (certezza ?crt-non-ha-batteria) (nodo-padre ?id-p1 ?id-p2) (descrizione "Essendo il dispositivo un portatile, c'e' una piccola probabilita' che la batteria non sia inserita.")))
-)
+; (defrule portatile-ha-batteria
+;   ; ;(fase 2-analisi)
+;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?CF1) (id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome ha-batteria) (valore sconosciuto) (certezza ?CF2) (id-nodo ?id-p2))
+;   =>
+;   (bind ?CF-ha-batteria (calcola-certezza 0.8 ?CF1 ?CF2))
+;   (bind ?CF-non-ha-batteria (calcola-certezza 0.3 ?CF1 ?CF2))
+;   (assert (nodo (nome ha-batteria) (valore si) (certezza ?CF-ha-batteria) (nodo-padre ?id-p1 ?id-p2) (descrizione "Essendo il dispositivo un portatile, e' probabile che la batteria sia inserita.")))
+;   (assert (nodo (nome ha-batteria) (valore no) (certezza ?CF-non-ha-batteria) (nodo-padre ?id-p1 ?id-p2) (descrizione "Essendo il dispositivo un portatile, c'e' una piccola probabilita' che la batteria non sia inserita.")))
+; )
 
 ; (defrule utente-inesperto
 ;   ; ;(fase 2-analisi)
@@ -343,49 +343,49 @@
 
 (defrule eta-dispositivo-sconosciuta
   ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?crt1) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome anni-dispositivo) (valore 2-5-anni)    (certezza (* 0.75 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome anni-dispositivo) (valore meno-2-anni) (certezza (* 0.25 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome anni-dispositivo) (valore 5-10-anni)   (certezza (* 0.35 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome anni-dispositivo) (valore piu-10-anni) (certezza (* 0.10 ?crt1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome anni-dispositivo) (valore 2-5-anni)    (certezza (* 0.75 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome anni-dispositivo) (valore meno-2-anni) (certezza (* 0.25 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome anni-dispositivo) (valore 5-10-anni)   (certezza (* 0.35 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome anni-dispositivo) (valore piu-10-anni) (certezza (* 0.10 ?CF1)) (nodo-padre ?id-p1)))
 )
 
 (defrule garanzia-2-anni
   ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome anni-dispositivo) (valore meno-2-anni) (sorgente-info utente) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome anni-dispositivo) (valore meno-2-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.8 ?crt1 ?crt2))
-  (assert (nodo (nome garanzia) (valore si) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.8 ?CF1 ?CF2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule garanzia-5-anni
   ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome anni-dispositivo) (valore 2-5-anni) (sorgente-info utente) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome anni-dispositivo) (valore 2-5-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.4 ?crt1 ?crt2))
-  (assert (nodo (nome garanzia) (valore si) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.4 ?CF1 ?CF2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule garanzia-anni-sconosciuti
   ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt-garanzia (calcola-certezza 0.5 ?crt1 ?crt2))
-  (assert (nodo (nome garanzia) (valore si) (certezza ?crt-garanzia) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-garanzia (calcola-certezza 0.5 ?CF1 ?CF2))
+  (assert (nodo (nome garanzia) (valore si) (certezza ?CF-garanzia) (nodo-padre ?id-p1 ?id-p2)))
 
 )
 
 (defrule garanzia-10-anni-piu
   ; ;(fase 2-analisi)
-  ?p1 <- (nodo (nome anni-dispositivo) (valore  ?val&5-10-anni|piu-10-anni) (sorgente-info utente) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome anni-dispositivo) (valore  ?val&5-10-anni|piu-10-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 1.0 ?crt1 ?crt2))
-  (assert (nodo (nome garanzia) (valore no) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
+  (assert (nodo (nome garanzia) (valore no) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 
@@ -396,22 +396,22 @@
   ;(fase 2-analisi)
   ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
-  ;?p1 <- (nodo (nome problema-principale) (valore ?v&analisi-guidata|accensione) (certezza ?crt1) (id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome problema-principale) (valore ?v&analisi-guidata|accensione) (certezza ?CF1) (id-nodo ?id-p1))
   =>
   (assert (nodo (nome chiedi) (valore controllo-accensione) (nodo-padre ?id-px)))
 )
 
 ; (defrule problema-video-accensione-funzionante
 ;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome problema-principale) (valore video) (certezza ?crt1) (id-nodo ?id-p1))
+;   ?p1 <- (nodo (nome problema-principale) (valore video) (certezza ?CF1) (id-nodo ?id-p1))
 ;   =>
-;   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?crt1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo ha un problema video, quindi il dispositivo dovrebbe accendersi.")))
+;   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?CF1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo ha un problema video, quindi il dispositivo dovrebbe accendersi.")))
 ; )
 
 (defrule controllo-accensione-ut-inesperto
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome esperienza-utente) (valore utente-inesperto) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome esperienza-utente) (valore utente-inesperto) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome chiedi) (valore controllo-accensione-ut-inesperto) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -419,84 +419,84 @@
 
 (defrule stato-accensione-ut-esperto
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt-accensione (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-esperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-esperto settato a 1
+  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
 )
 
 (defrule stato-accensione-funzionante
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome controllo-accensione) (valore funzionante) (certezza ?crt1) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome controllo-accensione) (valore funzionante) (certezza ?CF1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?crt1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
+  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?CF1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
 )
 
 (defrule stato-accensione-ut-inesperto
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore non-funzionante) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt-accensione (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
+  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
   )
 
 (defrule stato-accensione-funzionante-con-schermo-nero
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore funzionante) (certezza ?crt2) (id-nodo ?id-p2))
+  ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?crt-schermo-nero (calcola-certezza 0.9 ?crt1 ?crt2))
-  (assert (nodo (nome disturbo-video) (valore schermo-nero) (certezza ?crt-schermo-nero) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende ma lo schermo e nero e non sembra dare segni di vita.")))
-  (bind ?crt-accensione (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?crt-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
-  (bind ?crt-prob-video (calcola-certezza 1 ?crt1 ?crt2)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
-  ;(bind ?crt-tipo-problema (calcola-certezza 0.5 ?crt1 ?crt2))
-    ;(assert (nodo (nome tipologia-problema) (valore scheda-madre) (certezza ?crt-tipo-problema) (descrizione "Il problema potrebbe essere causato da un corto circuito sulla scheda madre.") (nodo-padre ?p1 ?p2)))
-    ;(assert (nodo (nome tipologia-problema) (valore scheda-video) (certezza ?crt-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto della scheda video.") (nodo-padre ?p1 ?p2)))
-    ;(assert (nodo (nome tipologia-problema) (valore cavi-video) (certezza ?crt-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto dei cavi che collegano la scheda video al display.") (nodo-padre ?p1 ?p2)))
+  (bind ?CF-schermo-nero (calcola-certezza 0.9 ?CF1 ?CF2))
+  (assert (nodo (nome disturbo-video) (valore schermo-nero) (certezza ?CF-schermo-nero) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende ma lo schermo e nero e non sembra dare segni di vita.")))
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
+  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
+  (bind ?CF-prob-video (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
+  (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
+  ;(bind ?CF-tipo-problema (calcola-certezza 0.5 ?CF1 ?CF2))
+    ;(assert (nodo (nome tipologia-problema) (valore scheda-madre) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un corto circuito sulla scheda madre.") (nodo-padre ?p1 ?p2)))
+    ;(assert (nodo (nome tipologia-problema) (valore scheda-video) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto della scheda video.") (nodo-padre ?p1 ?p2)))
+    ;(assert (nodo (nome tipologia-problema) (valore cavi-video) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto dei cavi che collegano la scheda video al display.") (nodo-padre ?p1 ?p2)))
   )
 
 (defrule alim-funzionante-no
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?crt1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
-  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt1) (id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
   =>
   (printout t "correct rule" crlf)
   ;; calcola valori di certezza delle diagnosi...
-  (bind ?crt-guasto-alim (calcola-certezza 0.4 ?crt1))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?crt-guasto-alim) (nodo-padre ?id-p1)))
-  (bind ?crt-alim-non-collegata (calcola-certezza 0.2 ?crt1))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza ?crt-alim-non-collegata) (nodo-padre ?id-p1)))
-  (bind ?crt-guasto-scheda-madre (calcola-certezza 0.1 ?crt1))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?crt-guasto-scheda-madre) (nodo-padre ?id-p1)))
+  (bind ?CF-guasto-alim (calcola-certezza 0.4 ?CF1))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-guasto-alim) (nodo-padre ?id-p1)))
+  (bind ?CF-alim-non-collegata (calcola-certezza 0.2 ?CF1))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza ?CF-alim-non-collegata) (nodo-padre ?id-p1)))
+  (bind ?CF-guasto-scheda-madre (calcola-certezza 0.1 ?CF1))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-guasto-scheda-madre) (nodo-padre ?id-p1)))
   ;; chiedi la prossima domanda...
   (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?id-p1)))
 )
 
 (defrule alim-collegata-si
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt1) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* 0.6 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* 0.3 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza (* -1.0 ?crt1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* 0.6 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* 0.3 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza (* -1.0 ?CF1)) (nodo-padre ?id-p1)))
 )
 
 (defrule DIAGNOSI-alim-collegata-no
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?crt2) (id-nodo ?id-p2))
-  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
+  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
   =>
-  (bind ?crt (calcola-certezza 1.0 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?id-p1 ?id-p2) (certezza ?crt)))
-  (bind ?crt-diagnosi-escluse (calcola-certezza -1 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?crt-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?crt-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?id-p1 ?id-p2) (certezza ?CF)))
+  (bind ?CF-diagnosi-escluse (calcola-certezza -1 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule spia-alimentatore
@@ -509,55 +509,55 @@
 
 (defrule spia-alimentatore-sconosciuta
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome spia-alimentatore) (valore sconosciuto) (certezza ?crt1) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome spia-alimentatore) (valore sconosciuto) (certezza ?CF1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome spia-alimentatore) (valore accesa) (certezza (* 0.5 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome spia-alimentatore) (valore spenta) (certezza (* 0.5 ?crt1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome spia-alimentatore) (valore accesa) (certezza (* 0.5 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome spia-alimentatore) (valore spenta) (certezza (* 0.5 ?CF1)) (nodo-padre ?id-p1)))
 )
 
 ;; Per dispositivi laptop ...
 
 (defrule chiedi-batteria-difettosa
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?crt1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
+  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
   ;; (ha-batteria si) dev'essere una risposta fornita dall'utente
-  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?crt1) (sorgente-info utente) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
+  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (sorgente-info utente) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   =>
   (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule inferenza-batteria-difettosa
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?crt1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
+  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
   ;; (ha-batteria si) dev'essere una risposta dedotta dal sistema
-  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?crt1) (sorgente-info sistema) (id-nodo ?id-p1)) ;; l'utente non sa se il disp. ha una batteria o meno
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
+  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (sorgente-info sistema) (id-nodo ?id-p1)) ;; l'utente non sa se il disp. ha una batteria o meno
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (bind ?crt-batteria (calcola-certezza 0.6 ?crt1 ?crt2 ?crt3))
-  (assert (nodo (nome batteria-difettosa) (valore si)(certezza ?crt-batteria)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+  (bind ?CF-batteria (calcola-certezza 0.6 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome batteria-difettosa) (valore si)(certezza ?CF-batteria)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule DIAGNOSI-batteria-difettosa-si
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome batteria-difettosa) (valore si) (certezza ?crt1) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome batteria-difettosa) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* 1.0 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* -0.5 ?crt1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* -0.5 ?crt1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* 1.0 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* -0.5 ?CF1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* -0.5 ?CF1)) (nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-spia-alimentatore-pcportatile
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
-  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
   =>
   (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
@@ -574,33 +574,33 @@
 
 (defrule DIAGNOSI-spia-alimentatore-accesa
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
-  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?crt2))
-  ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
-  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
-  ?p4 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?crt4) (id-nodo ?id-p4))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+  ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?CF2))
+  ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
+  ?p4 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza -0.3 ?crt1 ?crt2 ?crt3 ?crt4 ))
-  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4 ))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?crt-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?crt-scheda-madre-guasta)))
+  (bind ?CF-alim-guasto (calcola-certezza -0.3 ?CF1 ?CF2 ?CF3 ?CF4 ))
+  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.8 ?CF1 ?CF2 ?CF3 ?CF4 ))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
 )
 
 (defrule DIAGNOSI-spia-alimentatore-spenta
   ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt1))
-  ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
-  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?crt5))
-  ?p4 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?crt4) (id-nodo ?id-p4))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+  ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
+  ?p4 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?crt-alim-guasto (calcola-certezza 0.8 ?crt1 ?crt2 ?crt3 ?crt4))
-  (bind ?crt-scheda-madre-guasta (calcola-certezza 0.3 ?crt1 ?crt2 ?crt3 ?crt4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?crt-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?crt-scheda-madre-guasta)))
+  (bind ?CF-alim-guasto (calcola-certezza 0.8 ?CF1 ?CF2 ?CF3 ?CF4))
+  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.3 ?CF1 ?CF2 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
 )
 
 
@@ -609,38 +609,38 @@
 
 (defrule chiedi-spia-alimentatore-pcdesktop
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
-  ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?crt4) (id-nodo ?id-p4))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF4) (id-nodo ?id-p4))
   =>
   (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
 )
 
 (defrule chiedi-interruttore-alimentatore
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   =>
   (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule DIAGNOSI-interruttore-alimentatore-spento
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?crt1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?crt2) (id-nodo ?id-p2))
-  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?crt3))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?crt3) (id-nodo ?id-p3))
-  ?p4 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?crt4) (id-nodo ?id-p4))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
+  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  ?p4 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?crt-alim-spento (calcola-certezza 1.0 ?crt1 ?crt2 ?crt3 ?crt4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?crt-alim-spento)))
-  (bind ?crt-diagnosi-escluse (calcola-certezza -1.0 ?crt1 ?crt2 ?crt3 ?crt4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?crt-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?crt-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+  (bind ?CF-alim-spento (calcola-certezza 1.0 ?CF1 ?CF2 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-spento)))
+  (bind ?CF-diagnosi-escluse (calcola-certezza -1.0 ?CF1 ?CF2 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
 )
 
 
@@ -651,9 +651,9 @@
   ;(fase 2-analisi)
   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
-  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ;(not (nodo (nome problema-principale) (valore video) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2)))
-  (not (nodo (nome disturbo-video)(valore ?v)(certezza ?crt3&:(> ?crt3 0))(attivo TRUE)(id-nodo ?id-p3)))
+  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ;(not (nodo (nome problema-principale) (valore video) (certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2)))
+  (not (nodo (nome disturbo-video)(valore ?v)(certezza ?CF3&:(> ?CF3 0))(attivo TRUE)(id-nodo ?id-p3)))
   =>
   (assert (nodo (nome chiedi) (valore problema-video-dispositivo) (nodo-padre ?id-p1)))
 )
@@ -661,37 +661,37 @@
 (defrule chiedi-disturbo-video
   ;(fase 2-analisi)
   ; ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
-  ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
 
-  (not (nodo (nome disturbo-video) (valore ?v)(certezza ?crt2&:(> ?crt2 0))(attivo TRUE)(id-nodo ?id-p2)))
+  (not (nodo (nome disturbo-video) (valore ?v)(certezza ?CF2&:(> ?CF2 0))(attivo TRUE)(id-nodo ?id-p2)))
   =>
   (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?id-p1)))
 )
 
 (defrule disturbo-fasce-verticali
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore fasce-verticali)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome disturbo-video)(valore fasce-verticali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.8 ?crt1))(nodo-padre ?id-p1)
+  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
           (descrizione "E' possibile ci siano interferenze sul segnale video.")))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.8 ?crt1))(nodo-padre ?id-p1)
+  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
 )
 
 (defrule disturbo-linee-orizzontali
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore linee-orizzontali)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome disturbo-video)(valore linee-orizzontali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.9 ?crt1))(nodo-padre ?id-p1)
+  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.9 ?CF1))(nodo-padre ?id-p1)
           (descrizione "E' possibile ci siano interferenze sul segnale video.")))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.3 ?crt1))(nodo-padre ?id-p1)
+  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.3 ?CF1))(nodo-padre ?id-p1)
           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
 )
 
 (defrule chiedi-cavi-display
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
   (assert (nodo (nome chiedi) (valore cavi-display) (nodo-padre ?id-p1 ?id-p2)))
@@ -701,11 +701,11 @@
 
 (defrule disturbo-schermo-nero
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?crt1 ?crt2))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2))
+  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)
           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
 )
 
@@ -728,7 +728,7 @@
 (defrule chiedi-problema-video-all-avvio
   ;(fase 2-analisi)
   ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
-  ?p1 <- (nodo (nome disturbo-video)(valore ?v1&fasce-verticali|linee-orizzontali|schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome disturbo-video)(valore ?v1&fasce-verticali|linee-orizzontali|schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   (not (nodo (nome chiedi) (valore problema-video-all-avvio)))
   =>
   (assert (nodo (nome chiedi) (valore problema-video-all-avvio) (nodo-padre ?id-p1)))
@@ -741,22 +741,22 @@
   ?p1 <- (nodo (nome disturbo-video)(valore fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt-SW (calcola-certezza 0.75 ?c1 ?c2))
-  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?crt-SW)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-SW (calcola-certezza 0.75 ?c1 ?c2))
+  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-SW)(nodo-padre ?id-p1 ?id-p2)))
 )
 (defrule diagnosi-problema-SW-video-2
   ?p1 <- (nodo (nome disturbo-video)(valore linee-orizzontali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt-SW (calcola-certezza 0.5 ?c1 ?c2))
-  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?crt-SW)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-SW (calcola-certezza 0.5 ?c1 ?c2))
+  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-SW)(nodo-padre ?id-p1 ?id-p2)))
 )
 (defrule diagnosi-problema-SW-video-3
   ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt-SW (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?crt-SW)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-SW (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-SW)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-display-guasto
@@ -769,8 +769,8 @@
   ;   ?p5 <- (nodo (nome cavi-display-accessibili) (valore no) (id-nodo ?id-p5))
   ; )
   =>
-  (bind ?crt (calcola-certezza 0.8 ?c1 ?c2 ?c3))
-  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+  (bind ?CF (calcola-certezza 0.8 ?c1 ?c2 ?c3))
+  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule diagnosi-inverter-guasto
@@ -786,8 +786,8 @@
   ;   ?p5 <- (nodo (nome cavi-display-accessibili) (valore no) (id-nodo ?id-p5))
   ; )
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2 ?c3 ?c4))
-  (assert (nodo (nome diagnosi) (valore guasto-inverter)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2 ?c3 ?c4))
+  (assert (nodo (nome diagnosi) (valore guasto-inverter)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
 )
 
 
@@ -795,8 +795,8 @@
   ?p1 <- (nodo (nome tipo-disturbo-video)(valore interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome diagnosi) (valore interferenze-cavo)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome diagnosi) (valore interferenze-cavo)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 
@@ -809,45 +809,45 @@
   ;   ?p3 <- (nodo (nome cavi-display-accessibili) (valore no) (id-nodo ?id-p3))
   ; )
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule disturbo-macchie-con-DIAGNOSI
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome disturbo-video)(valore macchie)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome disturbo-video)(valore macchie)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (* 0.95 ?crt1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (* 0.95 ?CF1))(nodo-padre ?id-p1)))
 )
 
 (defrule cavi-display-portatile
   ;(fase 2-analisi)
-  ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop))
   =>
-  (bind ?crt-cavi-collegati (calcola-certezza 1.0 ?crt1 ?crt2))
-  ;(bind ?crt-cavi-rovinati (calcola-certezza 0.4 ?crt1 ?crt2))
-  (assert (nodo(nome cavi-display)(valore ok)(certezza ?crt-cavi-collegati)(nodo-padre ?id-p1 ?id-p2)))
-  ;(assert (nodo(nome cavi-display)(valore errore)(certezza ?crt-cavi-rovinati)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-cavi-collegati (calcola-certezza 1.0 ?CF1 ?CF2))
+  ;(bind ?CF-cavi-rovinati (calcola-certezza 0.4 ?CF1 ?CF2))
+  (assert (nodo(nome cavi-display)(valore ok)(certezza ?CF-cavi-collegati)(nodo-padre ?id-p1 ?id-p2)))
+  ;(assert (nodo(nome cavi-display)(valore errore)(certezza ?CF-cavi-rovinati)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule DIAGNOSI-cavi-video-scollegati
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display)(valore errore)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo (nome cavi-display)(valore errore)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 1.0 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore cavi-display-scollegati)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore cavi-display-scollegati)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-CMOS-corrotta
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.5 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi)(valore CMOS-corrotta)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.5 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi)(valore CMOS-corrotta)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 ;; REGOLE POST BIOS********************
@@ -858,10 +858,10 @@
   ;(fase 2-analisi)
   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
-  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
-  ?p4 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
+  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  ?p4 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?CF4)(attivo TRUE)(id-nodo ?id-p4))
   =>
   (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
@@ -870,10 +870,10 @@
   ;(fase 2-analisi)
   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
-  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
-  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?crt3)(attivo TRUE)(id-nodo ?id-p3))
-  ?p4 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?crt4)(attivo TRUE)(id-nodo ?id-p4))
+  ?p1 <- (nodo (nome stato-accensione)(valore funzionante)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ;?p2 <- (nodo (nome problema-principale) (valore analisi-guidata) (certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo (nome problema-video-dispositivo)(valore no)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  ?p4 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?CF4)(attivo TRUE)(id-nodo ?id-p4))
   =>
   (assert (nodo (nome chiedi) (valore fase-POST-ut-inesperto) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
@@ -882,8 +882,8 @@
 ;   ;(fase 2-analisi)
 ;   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 ;
-;   ;?p1 <- (nodo (nome problema-principale)(valore caricamento-SO)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+;   ;?p1 <- (nodo (nome problema-principale)(valore caricamento-SO)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
 ;   =>
 ;   (assert (nodo (nome chiedi) (valore fase-POST-ut-esperto) (nodo-padre ?id-px ?id-p1 ?id-p2)))
 ; )
@@ -892,140 +892,140 @@
 
 (defrule combina-chiedi-problema-POST
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome ?n&fase-POST-ut-esperto|fase-POST-ut-inesperto)(valore ?v)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome ?n&fase-POST-ut-esperto|fase-POST-ut-inesperto)(valore ?v)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome fase-POST) (valore ?v)(certezza ?crt1)(nodo-padre ?id-p1)))
+  (assert (nodo (nome fase-POST) (valore ?v)(certezza ?CF1)(nodo-padre ?id-p1)))
 )
 
 
 (defrule diagnosi-errore-messaggio-POST
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-messaggio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-messaggio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.85 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore errore-POST-boot)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.85 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore errore-POST-boot)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
 )
 
 (defrule diagnosi-errore-beep-code
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.85 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.85 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-installazione-nuovo-HW-SW
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
   (assert (nodo (nome chiedi) (valore conflitto-HW-SW) (nodo-padre ?id-p1)))
 )
 
 (defrule diagnosi-errore-BSOD
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore infetto-da-virus)(certezza (* 0.3 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO)(certezza (* 0.9 ?crt1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore infetto-da-virus)(certezza (* 0.3 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore problema-caricamento-SO)(certezza (* 0.9 ?CF1))(nodo-padre ?id-p1)))
 )
 
 (defrule diagnosi-errore-BSOD-conflitto-HW
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome conflitto-HW-SW)(valore si-HW)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome conflitto-HW-SW)(valore si-HW)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.95 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore conflitto-HW)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.95 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore conflitto-HW)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-errore-BSOD-conflitto-SW
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome conflitto-HW-SW)(valore ?v&si-SW|si-aggiornamenti)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome conflitto-HW-SW)(valore ?v&si-SW|si-aggiornamenti)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.8 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore conflitto-SW)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.8 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore conflitto-SW)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-errore-BSOD-conflitto-sconosciuto
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome conflitto-HW-SW)(valore non-so)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-BSOD)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome conflitto-HW-SW)(valore non-so)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.5 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi) (valore conflitto-SW)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome diagnosi) (valore conflitto-HW)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.5 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore conflitto-SW)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome diagnosi) (valore conflitto-HW)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 
 (defrule diagnosi-errore-riavvio
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore errore-riavvio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
-  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.75 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore errore-POST-boot)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore guasto-alimentatore)(certezza (* 0.5 ?crt1))(nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore guasto-scheda-madre)(certezza (* 0.2 ?crt1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (* 0.75 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore errore-POST-boot)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore guasto-alimentatore)(certezza (* 0.5 ?CF1))(nodo-padre ?id-p1)))
+  (assert (nodo (nome diagnosi) (valore guasto-scheda-madre)(certezza (* 0.2 ?CF1))(nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-inattivita-dispositivo
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   =>
   (assert (nodo (nome chiedi) (valore inattivita-dispositivo) (nodo-padre ?id-p1)))
 )
 
 (defrule diagnosi-batteria-CMOS-esausta-1
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome inattivita-dispositivo)(valore si)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome inattivita-dispositivo)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.5 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.5 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-batteria-CMOS-esausta-2
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome anni-dispositivo)(valore piu-10-anni)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome anni-dispositivo)(valore piu-10-anni)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule diagnosi-batteria-CMOS-esausta-3
   ;(fase 2-analisi)
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome anni-dispositivo)(valore 5-10-anni)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome anni-dispositivo)(valore 5-10-anni)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.7 ?crt1 ?crt2))
-  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?crt)(nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.7 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi)(valore batteria-CMOS-esausta)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)))
 )
 
 ; (defrule POST-nessun-errore-ut-esperto
 ;   ;(fase 2-analisi)
-;   ?p1 <- (nodo(nome fase-POST)(valore nessun-errore)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+;   ?p1 <- (nodo(nome fase-POST)(valore nessun-errore)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-esperto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
 ;   =>
 ;   (assert (nodo (nome chiedi) (valore fase-caricamento-SO-ut-esperto) (nodo-padre ?id-p1)))
 ; )
 ;
 ; (defrule POST-nessun-errore-ut-inesperto
 ;   ;(fase 2-analisi)
-;   ?p1 <- (nodo(nome fase-POST)(valore nessun-errore)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
-;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?crt2)(attivo TRUE)(id-nodo ?id-p2))
+;   ?p1 <- (nodo(nome fase-POST)(valore nessun-errore)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome esperienza-utente) (valore utente-inesperto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
 ;   =>
 ;   (assert (nodo (nome chiedi) (valore fase-caricamento-SO-ut-inesperto) (nodo-padre ?id-p1)))
 ; )
 ;
 ; (defrule combina-chiedi-problema-caricamento-SO
 ;   ;(fase 2-analisi)
-;   ?p1 <- (nodo(nome ?n&fase-caricamento-SO-ut-esperto|fase-caricamento-SO-ut-inesperto)(valore ?v)(certezza ?crt1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p1 <- (nodo(nome ?n&fase-caricamento-SO-ut-esperto|fase-caricamento-SO-ut-inesperto)(valore ?v)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
 ;   =>
-;   (assert (nodo (nome fase-caricamento-SO) (valore ?v)(certezza ?crt1)(nodo-padre ?id-p1)))
+;   (assert (nodo (nome fase-caricamento-SO) (valore ?v)(certezza ?CF1)(nodo-padre ?id-p1)))
 ; )
 
 
@@ -1050,8 +1050,8 @@
     ?p1 <- (nodo (nome guasto-hardware) (valore si) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
     ?p2 <- (nodo (nome garanzia) (valore si) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
     =>
-    (bind ?crt (calcola-certezza 1 ?c1 ?c2))
-    (assert (nodo (nome soluzione) (valore dispositivo-in-assistenza) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+    (bind ?CF (calcola-certezza 1 ?c1 ?c2))
+    (assert (nodo (nome soluzione) (valore dispositivo-in-assistenza) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-sostituzione-dispositivo-obsoleto
@@ -1059,8 +1059,8 @@
     ?p1 <- (nodo (nome guasto-hardware) (valore si) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
     ?p2 <- (nodo (nome anni-dispositivo) (valore piu-10-anni) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
     =>
-    (bind ?crt (calcola-certezza 0.8 ?c1 ?c2))
-    (assert (nodo (nome soluzione) (valore sostituzione-dispositivo) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+    (bind ?CF (calcola-certezza 0.8 ?c1 ?c2))
+    (assert (nodo (nome soluzione) (valore sostituzione-dispositivo) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-sostituisci-alimentatore
@@ -1075,8 +1075,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza ?crt) (nodo-padre ?id-p1)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore sostituisci-scheda-madre) (certezza ?CF) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-sostituisci-portatile
@@ -1084,8 +1084,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.75 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore sostituzione-dispositivo) (certezza ?crt) (nodo-padre ?id-p1)))
+  (bind ?CF (calcola-certezza 0.75 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore sostituzione-dispositivo) (certezza ?CF) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-riparazione-scheda-madre
@@ -1095,8 +1095,8 @@
   (not (nodo (id-nodo ?id-p3&:(> ?id-p3 ?id-p1))(attivo TRUE) (nome anni-dispositivo) (valore ?v3&meno-2-anni|2-5-anni)(certezza ?c3&:(eq ?c3 ?c1))))
   ?p4 <- (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?c4) (attivo TRUE) (id-nodo ?id-p4))
   =>
-  (bind ?crt (calcola-certezza 0.95 ?c1 ?c4))
-  (assert (nodo (nome soluzione) (valore riparazione-scheda-madre) (certezza ?crt) (nodo-padre ?id-p1 ?id-p4)))
+  (bind ?CF (calcola-certezza 0.95 ?c1 ?c4))
+  (assert (nodo (nome soluzione) (valore riparazione-scheda-madre) (certezza ?CF) (nodo-padre ?id-p1 ?id-p4)))
 )
 
 (defrule soluzione-accendi-alimentatore
@@ -1141,8 +1141,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore interferenze-cavo) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?crt) (nodo-padre ?id-p1)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?CF) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-controllo-cavi-video-portatile
@@ -1150,8 +1150,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore interferenze-cavo) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.7 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controllo-cavi-video-portatile) (certezza ?crt) (nodo-padre ?id-p1)))
+  (bind ?CF (calcola-certezza 0.7 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore controllo-cavi-video-portatile) (certezza ?CF) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-sostituisci-inverter
@@ -1166,8 +1166,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome disturbo-video)(valore linee-orizzontali) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.95 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.95 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-problema-SW-fasce-verticali
@@ -1175,8 +1175,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome disturbo-video)(valore fasce-verticali) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.95 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.95 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-problema-SW-schermo-nero
@@ -1184,12 +1184,12 @@
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome disturbo-video)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt-driver (calcola-certezza 0.75 ?c1 ?c2))
-  (bind ?crt-files  (calcola-certezza 0.5 ?c1 ?c2))
-  (bind ?crt-SO     (calcola-certezza 0.75 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?crt-driver) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome soluzione) (valore controllo-integrita-files) (certezza ?crt-files) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza ?crt-SO) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-driver (calcola-certezza 0.75 ?c1 ?c2))
+  (bind ?CF-files  (calcola-certezza 0.5 ?c1 ?c2))
+  (bind ?CF-SO     (calcola-certezza 0.75 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?CF-driver) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome soluzione) (valore controllo-integrita-files) (certezza ?CF-files) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza ?CF-SO) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-resetta-CMOS
@@ -1214,8 +1214,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome fase-POST)(valore errore-riavvio) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controlla-scheda-POST) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore controlla-scheda-POST) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-controlla-beep-code
@@ -1223,8 +1223,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome fase-POST)(valore errore-beep-code) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 1 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controlla-beep-code) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 1 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore controlla-beep-code) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-controlla-messaggio-POST
@@ -1232,8 +1232,8 @@
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome fase-POST)(valore errore-messaggio) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt (calcola-certezza 1 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controlla-messaggio-post) (certezza ?crt) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF (calcola-certezza 1 ?c1 ?c2))
+  (assert (nodo (nome soluzione) (valore controlla-messaggio-post) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-rimuovi-memorie-esterne
@@ -1256,30 +1256,30 @@
   ?p1 <- (nodo (nome diagnosi) (valore problema-caricamento-SO) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome fase-POST)(valore errore-BSOD) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (bind ?crt-ripara-file (calcola-certezza 0.7 ?c1 ?c2))
-  (bind ?crt-stop-error (calcola-certezza 1.0 ?c1 ?c2))
-  (bind ?crt-ripristina-SO (calcola-certezza 0.7 ?c1))
-  (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza ?crt-ripara-file) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome soluzione) (valore controlla-stop-error) (certezza ?crt-stop-error) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?crt-ripristina-SO) (nodo-padre ?id-p1 ?id-p2)))
+  (bind ?CF-ripara-file (calcola-certezza 0.7 ?c1 ?c2))
+  (bind ?CF-stop-error (calcola-certezza 1.0 ?c1 ?c2))
+  (bind ?CF-ripristina-SO (calcola-certezza 0.7 ?c1))
+  (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza ?CF-ripara-file) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome soluzione) (valore controlla-stop-error) (certezza ?CF-stop-error) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?CF-ripristina-SO) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-conflitto-HW
   (fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore conflitto-HW) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   =>
-  (bind ?crt-ripristina-SO (calcola-certezza 0.7 ?c1))
-  (bind ?crt-rimuovi-HW (calcola-certezza 1.0 ?c1))
-  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?crt-ripristina-SO) (nodo-padre ?id-p1)))
-  (assert (nodo (nome soluzione) (valore rimuovi-HW-installato) (certezza ?crt-rimuovi-HW) (nodo-padre ?id-p1)))
+  (bind ?CF-ripristina-SO (calcola-certezza 0.7 ?c1))
+  (bind ?CF-rimuovi-HW (calcola-certezza 1.0 ?c1))
+  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?CF-ripristina-SO) (nodo-padre ?id-p1)))
+  (assert (nodo (nome soluzione) (valore rimuovi-HW-installato) (certezza ?CF-rimuovi-HW) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-conflitto-SW
   (fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore conflitto-SW) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   =>
-  (bind ?crt-ripristina-SO (calcola-certezza 0.7 ?c1))
-  (bind ?crt-rimuovi-SW (calcola-certezza 0.9 ?c1))
-  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?crt-ripristina-SO) (nodo-padre ?id-p1)))
-  (assert (nodo (nome soluzione) (valore rimuovi-SW-installato) (certezza ?crt-rimuovi-SW) (nodo-padre ?id-p1)))
+  (bind ?CF-ripristina-SO (calcola-certezza 0.7 ?c1))
+  (bind ?CF-rimuovi-SW (calcola-certezza 0.9 ?c1))
+  (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza ?CF-ripristina-SO) (nodo-padre ?id-p1)))
+  (assert (nodo (nome soluzione) (valore rimuovi-SW-installato) (certezza ?CF-rimuovi-SW) (nodo-padre ?id-p1)))
 )

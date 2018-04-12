@@ -52,8 +52,8 @@ problemi legati all'eta'.")
 (domanda  (attributo ha-batteria)
 (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?
 ATTENZIONE: Per il corretto svolgimento dell'analisi e' necessario che il dispositivo sia connesso ad una presa elettrica.")
-          (risposte-valide si no sconosciuto)
-          (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita" "Non so")
+          (risposte-valide si no)
+          (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita")
 (spiegazione "Questa domanda permette al sistema di identificare possibili problemi relativi all'alimentazione della batteria.")
 (help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
 necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
