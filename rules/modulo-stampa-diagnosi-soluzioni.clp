@@ -58,21 +58,25 @@
 
 
 
-(defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-trovata
- (nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE))
- =>
- ;(clear-window)
- (stampa-tutte-le-diagnosi)
- (stampa-tutte-le-soluzioni)
- (chiedi-soddisfazione-utente)
-)
+   (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-trovata
+    ?f <- (fase-stampa)
+    (nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE))
+    =>
+    ;(clear-window)
+    (retract ?f)
+    (stampa-tutte-le-diagnosi)
+    (stampa-tutte-le-soluzioni)
+    (chiedi-soddisfazione-utente)
+   )
 
-(defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-non-trovata
- (not(nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE)))
- =>
- ;(clear-window)
- (printout t crlf "              *********** DIAGNOSI E SOLUZIONI TROVATE ***********" crlf crlf)
- (printout t "Purtroppo il sistema non e' stato in grado di trovare alcuna diagnosi valida." crlf)
- (printout t "E' possibile che il problema dipenda da un problema software (non diagnosticati da questo programma)." crlf)
- (chiedi-soddisfazione-utente)
-)
+   (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-non-trovata
+    (not(nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE)))
+    ?f <- (fase-stampa)
+    =>
+    ;(clear-window)
+    (retract ?f)
+    (printout t crlf "              *********** DIAGNOSI E SOLUZIONI TROVATE ***********" crlf crlf)
+    (printout t "Purtroppo il sistema non e' stato in grado di trovare alcuna diagnosi valida." crlf)
+    (printout t "E' possibile che il problema dipenda da un problema software (non diagnosticati da questo programma)." crlf)
+    (chiedi-soddisfazione-utente)
+   )

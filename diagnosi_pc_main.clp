@@ -200,6 +200,7 @@
   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
   (not (fase-cerca-soluzioni))
   =>
+  (printout t crlf "FASE SOLUZ")
   (assert (fase-cerca-soluzioni))
 )
 
@@ -209,7 +210,9 @@
   (not (domanda (attributo ?dom) (gia-chiesta FALSE)))
   ?f <- (fase-cerca-soluzioni)
   =>
+  (printout t crlf "FASE STAMPA")
   (retract ?f)
+  (assert (fase-stampa))
   (focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
 )
 
@@ -217,6 +220,7 @@
   (declare (salience ?*highest-priority*))
   (fase-ritrattazione)
   =>
+  (printout t crlf "FASE RITRATT")
   (focus MODULO-RITRATTAZIONE)
 )
 
@@ -393,6 +397,7 @@
 ;;REGOLE FASE 2 *******************************************
 
 (defrule controllo-accensione
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
@@ -401,32 +406,65 @@
   (assert (nodo (nome chiedi) (valore controllo-accensione) (nodo-padre ?id-px)))
 )
 
-; (defrule problema-video-accensione-funzionante
-;   ;(fase 2-analisi)
-;   ?p1 <- (nodo (nome problema-principale) (valore video) (certezza ?CF1) (id-nodo ?id-p1))
-;   =>
-;   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza (* 1.0 ?CF1)) (nodo-padre ?id-p1 ) (descrizione "Il dispositivo ha un problema video, quindi il dispositivo dovrebbe accendersi.")))
-; )
+(defrule chiedi-rimuovere-batteria
+  ;WRITTEN DOWN
+  ;(fase 2-analisi)
+  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+  ;; (ha-batteria si) dev'essere una risposta fornita dall'utente
+  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p3 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+  =>
+  (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?id-p1 ?id-p3)))
+)
+
+(defrule chiedi-alim-collegata
+  ;WRITTEN DOWN
+  ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
+  (or
+    ?p2 <- (nodo (nome ha-batteria) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
+    ?p2 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
+  )
+  =>
+  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?id-p1)))
+)
+
+(defrule DIAGNOSI-alimentazione-non-collegata
+  ;WRITTEN DOWN
+  ;(fase 2-analisi)
+  ?p1 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
+  =>
+  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?id-p1 ?id-p2) (certezza ?CF)))
+)
+
 
 (defrule controllo-accensione-ut-inesperto
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome esperienza-utente) (valore utente-inesperto) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (assert (nodo (nome chiedi) (valore controllo-accensione-ut-inesperto) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome chiedi) (valore controllo-accensione-ut-inesperto) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 
 (defrule stato-accensione-ut-esperto
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome esperienza-utente) (valore utente-esperto) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-esperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-esperto settato a 1
+  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2 ?id-p3) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
 )
 
 (defrule stato-accensione-funzionante
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome controllo-accensione) (valore funzionante) (certezza ?CF1) (id-nodo ?id-p1))
   =>
@@ -434,24 +472,28 @@
 )
 
 (defrule stato-accensione-ut-inesperto
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-inesperto settato a 1
+  (assert (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2 ?id-p3) (descrizione "Il dispositivo non si accende, c'e' un problema con il circuito di alimentazione.")))
   )
 
 (defrule stato-accensione-funzionante-con-schermo-nero
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome controllo-accensione) (valore possibile-non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome controllo-accensione-ut-inesperto) (valore funzionante) (certezza ?CF2) (id-nodo ?id-p2))
+  ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (bind ?CF-schermo-nero (calcola-certezza 0.9 ?CF1 ?CF2))
+  (bind ?CF-schermo-nero (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
   (assert (nodo (nome disturbo-video) (valore schermo-nero) (certezza ?CF-schermo-nero) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende ma lo schermo e nero e non sembra dare segni di vita.")))
-  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
+  (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-inesperto settato a 1
   (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
-  (bind ?CF-prob-video (calcola-certezza 1 ?CF1 ?CF2)) ;;livello CRT utente-inesperto settato a 1
+  (bind ?CF-prob-video (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-inesperto settato a 1
   (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
   ;(bind ?CF-tipo-problema (calcola-certezza 0.5 ?CF1 ?CF2))
     ;(assert (nodo (nome tipologia-problema) (valore scheda-madre) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un corto circuito sulla scheda madre.") (nodo-padre ?p1 ?p2)))
@@ -459,45 +501,37 @@
     ;(assert (nodo (nome tipologia-problema) (valore cavi-video) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto dei cavi che collegano la scheda video al display.") (nodo-padre ?p1 ?p2)))
   )
 
-(defrule alim-funzionante-no
-  ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
-  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
-  =>
-  (printout t "correct rule" crlf)
-  ;; calcola valori di certezza delle diagnosi...
-  (bind ?CF-guasto-alim (calcola-certezza 0.4 ?CF1))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-guasto-alim) (nodo-padre ?id-p1)))
-  (bind ?CF-alim-non-collegata (calcola-certezza 0.2 ?CF1))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza ?CF-alim-non-collegata) (nodo-padre ?id-p1)))
-  (bind ?CF-guasto-scheda-madre (calcola-certezza 0.1 ?CF1))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-guasto-scheda-madre) (nodo-padre ?id-p1)))
-  ;; chiedi la prossima domanda...
-  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?id-p1)))
-)
+; (defrule alimentazione-non-funzionante
+;   ;(fase 2-analisi)
+;   ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+;   ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+;   ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
+;   =>
+;   (printout t "correct rule" crlf)
+;   ;; calcola valori di certezza delle diagnosi...
+;   (bind ?CF-guasto-alim (calcola-certezza 0.4 ?CF1))
+;   (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-guasto-alim) (nodo-padre ?id-p1)))
+;   (bind ?CF-alim-non-collegata (calcola-certezza 0.2 ?CF1))
+;   (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza ?CF-alim-non-collegata) (nodo-padre ?id-p1)))
+;   (bind ?CF-guasto-scheda-madre (calcola-certezza 0.1 ?CF1))
+;   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-guasto-scheda-madre) (nodo-padre ?id-p1)))
+;
+; )
 
-(defrule alim-collegata-si
+(defrule alimentazione-collegata
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* 0.6 ?CF1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* 0.3 ?CF1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa) (certezza (* -1.0 ?CF1)) (nodo-padre ?id-p1)))
+  (bind ?CF-guasto-alim (calcola-certezza 0.6 ?CF1 ?CF2))
+  (bind ?CF-guasto-scheda-madre (calcola-certezza 0.4 ?CF1 ?CF2))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-guasto-alim) (nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-guasto-scheda-madre) (nodo-padre ?id-p1 ?id-p2)))
 )
 
-(defrule DIAGNOSI-alim-collegata-no
-  ;(fase 2-analisi)
-  ?p1 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
-  ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
-  =>
-  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
-  (assert (nodo (nome diagnosi) (valore alimentazione-disconnessa)(nodo-padre ?id-p1 ?id-p2) (certezza ?CF)))
-  (bind ?CF-diagnosi-escluse (calcola-certezza -1 ?CF1 ?CF2))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2)))
-)
+
+
 
 (defrule spia-alimentatore
   ; unifica la risposta da pc-desktop o laptop sulla spia di accensione
@@ -508,6 +542,7 @@
 )
 
 (defrule spia-alimentatore-sconosciuta
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome spia-alimentatore) (valore sconosciuto) (certezza ?CF1) (id-nodo ?id-p1))
   =>
@@ -517,90 +552,83 @@
 
 ;; Per dispositivi laptop ...
 
-(defrule chiedi-batteria-difettosa
-  ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
-  ;; (ha-batteria si) dev'essere una risposta fornita dall'utente
-  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (sorgente-info utente) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
-  =>
-  (assert (nodo (nome chiedi) (valore batteria-difettosa) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-)
 
-(defrule inferenza-batteria-difettosa
-  ;(fase 2-analisi)
-  ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
-  ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
-  ;; (ha-batteria si) dev'essere una risposta dedotta dal sistema
-  ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (sorgente-info sistema) (id-nodo ?id-p1)) ;; l'utente non sa se il disp. ha una batteria o meno
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
-  ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
-  =>
-  (bind ?CF-batteria (calcola-certezza 0.6 ?CF1 ?CF2 ?CF3))
-  (assert (nodo (nome batteria-difettosa) (valore si)(certezza ?CF-batteria)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-)
 
-(defrule DIAGNOSI-batteria-difettosa-si
+; (defrule inferenza-batteria-difettosa
+;   ;(fase 2-analisi)
+;   ;?p1 <- (nodo (nome tipologia-problema) (valore alimentazione) (certezza ?CF1))
+;   ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
+;   ;; (ha-batteria si) dev'essere una risposta dedotta dal sistema
+;   ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (sorgente-info sistema) (id-nodo ?id-p1)) ;; l'utente non sa se il disp. ha una batteria o meno
+;   ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+;   ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
+;   =>
+;   (bind ?CF-batteria (calcola-certezza 0.6 ?CF1 ?CF2 ?CF3))
+;   (assert (nodo (nome batteria-difettosa) (valore si)(certezza ?CF-batteria)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+; )
+
+(defrule DIAGNOSI-batteria-difettosa
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome batteria-difettosa) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   =>
   (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* 1.0 ?CF1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* -0.5 ?CF1)) (nodo-padre ?id-p1)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* -0.5 ?CF1)) (nodo-padre ?id-p1)))
+  ;(assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (* -0.7 ?CF1)) (nodo-padre ?id-p1)))
+  ;(assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (* -0.7 ?CF1)) (nodo-padre ?id-p1)))
 )
 
 (defrule chiedi-spia-alimentatore-pcportatile
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ?p3 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
   =>
-  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcportatile) (nodo-padre ?id-p1 ?id-p3)))
 )
 
 
 
-(defrule batteria-non-presente
-  ;(fase 2-analisi)
-  ?p1 <- (nodo (nome ha-batteria) (valore no) (certezza ?c1) (id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome batteria-difettosa) (valore no) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1) (descrizione "Il dispositivo non ha una batteria.")))
-  (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* -1.0 ?c1)) (nodo-padre ?id-p1)))
-)
+; (defrule batteria-non-presente
+;   ;(fase 2-analisi)
+;   ?p1 <- (nodo (nome ha-batteria) (valore no) (certezza ?c1) (id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome batteria-difettosa) (valore no) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1) (descrizione "Il dispositivo non ha una batteria.")))
+;   (assert (nodo (nome diagnosi) (valore batteria-difettosa) (certezza (* -1.0 ?c1)) (nodo-padre ?id-p1)))
+; )
 
 (defrule DIAGNOSI-spia-alimentatore-accesa
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
   ;?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?CF2))
   ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
   ?p4 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?CF-alim-guasto (calcola-certezza -0.3 ?CF1 ?CF2 ?CF3 ?CF4 ))
-  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.8 ?CF1 ?CF2 ?CF3 ?CF4 ))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
+  (bind ?CF-alim-guasto (calcola-certezza -0.3 ?CF1  ?CF3 ?CF4 ))
+  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.8 ?CF1 ?CF3 ?CF4 ))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
 )
 
 (defrule DIAGNOSI-spia-alimentatore-spenta
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ;?p1 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF1))
   ?p1 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
   ?p4 <- (nodo (nome spia-alimentatore) (valore spenta) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?CF-alim-guasto (calcola-certezza 0.8 ?CF1 ?CF2 ?CF3 ?CF4))
-  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.3 ?CF1 ?CF2 ?CF3 ?CF4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
+  (bind ?CF-alim-guasto (calcola-certezza 0.8 ?CF1 ?CF3 ?CF4))
+  (bind ?CF-scheda-madre-guasta (calcola-certezza 0.4 ?CF1 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
 )
 
 
@@ -608,39 +636,42 @@
 ;; Per dispositivi desktop ...
 
 (defrule chiedi-spia-alimentatore-pcdesktop
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   ?p4 <- (nodo (nome interruttore-alimentatore) (valore acceso) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+  (assert (nodo (nome chiedi) (valore spia-alimentatore-pcdesktop) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
 
 (defrule chiedi-interruttore-alimentatore
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   =>
-  (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+  (assert (nodo (nome chiedi) (valore interruttore-alimentatore) (nodo-padre ?id-p1 ?id-p3)))
 )
 
 (defrule DIAGNOSI-interruttore-alimentatore-spento
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
+  ;?p2 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF2) (id-nodo ?id-p2))
   ;?p3 <- (nodo (nome alimentatore-funzionante) (valore no) (certezza ?CF3))
   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
   ?p4 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?CF-alim-spento (calcola-certezza 1.0 ?CF1 ?CF2 ?CF3 ?CF4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4) (certezza ?CF-alim-spento)))
-  (bind ?CF-diagnosi-escluse (calcola-certezza -1.0 ?CF1 ?CF2 ?CF3 ?CF4))
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+  (bind ?CF-alim-spento (calcola-certezza 1.0 ?CF1 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-alim-spento)))
+  (bind ?CF-diagnosi-escluse (calcola-certezza -1.0 ?CF1 ?CF3 ?CF4))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza ?CF-diagnosi-escluse ) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
 )
 
 
@@ -1061,6 +1092,13 @@
     =>
     (bind ?CF (calcola-certezza 0.8 ?c1 ?c2))
     (assert (nodo (nome soluzione) (valore sostituzione-dispositivo) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule soluzione-sostituisci-batteria
+    (fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore batteria-difettosa) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    =>
+    (assert (nodo (nome soluzione) (valore sostituisci-batteria) (certezza (* 1 ?c1)) (nodo-padre ?id-p1)))
 )
 
 (defrule soluzione-sostituisci-alimentatore

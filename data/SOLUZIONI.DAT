@@ -9,6 +9,11 @@
           (descrizione "Potrebbe essere necessario sostituire la scheda madre. Assicurarsi che la nuova scheda madre sia compatibile con il resto dell'hardware.")
 )
 
+(soluzione (attributo sostituisci-batteria)
+          (titolo "Sostituire la batteria")
+          (descrizione "Potrebbe essere necessario sostituire la batteria del dispositivo.")
+)
+
 (soluzione (attributo riparazione-scheda-madre)
           (titolo "Riparare la scheda madre")
           (descrizione "Potrebbe essere possibile riparare la scheda madre se il guasto e' marginale.")
