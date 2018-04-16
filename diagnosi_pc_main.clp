@@ -708,25 +708,25 @@
   (assert (nodo (nome chiedi) (valore disturbo-video) (nodo-padre ?id-p1)))
 )
 
-(defrule disturbo-fasce-verticali
-  ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore fasce-verticali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
-          (descrizione "E' possibile ci siano interferenze sul segnale video.")))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
-          (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
-)
-
-(defrule disturbo-linee-orizzontali
-  ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore linee-orizzontali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.9 ?CF1))(nodo-padre ?id-p1)
-          (descrizione "E' possibile ci siano interferenze sul segnale video.")))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.3 ?CF1))(nodo-padre ?id-p1)
-          (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
-)
+; (defrule disturbo-fasce-verticali
+;   ;(fase 2-analisi)
+;   ?p1 <- (nodo(nome disturbo-video)(valore fasce-verticali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
+;           (descrizione "E' possibile ci siano interferenze sul segnale video.")))
+;   (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.8 ?CF1))(nodo-padre ?id-p1)
+;           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
+; )
+;
+; (defrule disturbo-linee-orizzontali
+;   ;(fase 2-analisi)
+;   ?p1 <- (nodo(nome disturbo-video)(valore linee-orizzontali)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   =>
+;   (assert (nodo (nome tipo-disturbo-video)(valore interferenza) (certezza (* 0.9 ?CF1))(nodo-padre ?id-p1)
+;           (descrizione "E' possibile ci siano interferenze sul segnale video.")))
+;   (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza (* 0.3 ?CF1))(nodo-padre ?id-p1)
+;           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
+; )
 
 (defrule chiedi-cavi-display
   ;WRITTEN DOWN
@@ -740,15 +740,15 @@
 
 
 
-(defrule disturbo-schermo-nero
-  ;(fase 2-analisi)
-  ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
-  =>
-  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2))
-  (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)
-          (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
-)
+; (defrule disturbo-schermo-nero
+;   ;(fase 2-analisi)
+;   ?p1 <- (nodo(nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome cavi-display)(valore ok)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+;   =>
+;   (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2))
+;   (assert (nodo (nome tipo-disturbo-video)(valore guasto-circuito-video)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2)
+;           (descrizione "E' possibile che qualche componente video come display o scheda video, sia guasta.")))
+; )
 
 (defrule chiedi-monitor-esterno
   ;WRITTEN DOWN
@@ -806,7 +806,8 @@
 )
 
 (defrule diagnosi-display-guasto
-  ?p1 <- (nodo (nome tipo-disturbo-video) (valore guasto-circuito-video)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome tipo-disturbo-video) (valore guasto-circuito-video)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero|fasce-verticali|linee-orizzontali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ;?p2 <- (nodo (nome riavvio-forzato) (valore no) (id-nodo ?id-p2))
   ?p2 <- (nodo (nome monitor-esterno) (valore funzionante)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome problema-video-all-avvio) (valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
@@ -820,9 +821,11 @@
 )
 
 (defrule diagnosi-inverter-guasto
-  ?p1 <- (nodo (nome tipo-disturbo-video) (valore ?v1&guasto-circuito-video|interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
-    (not (nodo (nome tipo-disturbo-video) (valore ?v2&guasto-circuito-video|interferenza)(certezza ?c1b&:(> ?c1b ?c1))(attivo TRUE)(id-nodo ?id2)))
-    (not (nodo (nome tipo-disturbo-video) (valore ?v3&guasto-circuito-video|interferenza)(certezza ?c1c&:(eq ?c1c ?c1))(attivo TRUE)(id-nodo ?id3&:(> ?id3 ?id-p1))))
+  ; ?p1 <- (nodo (nome tipo-disturbo-video) (valore ?v1&guasto-circuito-video|interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ;   (not (nodo (nome tipo-disturbo-video) (valore ?v2&guasto-circuito-video|interferenza)(certezza ?c1b&:(> ?c1b ?c1))(attivo TRUE)(id-nodo ?id2)))
+  ;   (not (nodo (nome tipo-disturbo-video) (valore ?v3&guasto-circuito-video|interferenza)(certezza ?c1c&:(eq ?c1c ?c1))(attivo TRUE)(id-nodo ?id3&:(> ?id3 ?id-p1))))
+
+  ?p1 <- (nodo (nome disturbo-video)(valore ?v&linee-orizzontali|fasce-verticali|schermo-nero)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
 
   ?p2 <- (nodo (nome monitor-esterno) (valore funzionante)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome problema-video-all-avvio) (valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
@@ -838,7 +841,8 @@
 
 
 (defrule diagnosi-interferenze-cavo
-  ?p1 <- (nodo (nome tipo-disturbo-video)(valore interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome tipo-disturbo-video)(valore interferenza)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome disturbo-video)(valore ?v&linee-orizzontali|fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
@@ -847,7 +851,8 @@
 
 
 (defrule diagnosi-guasto-vga
-  ?p1 <- (nodo (nome tipo-disturbo-video) (valore guasto-circuito-video)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome tipo-disturbo-video) (valore guasto-circuito-video)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo (nome disturbo-video)(valore ?v&schermo-nero|fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome monitor-esterno) (valore errore)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   ; (or
