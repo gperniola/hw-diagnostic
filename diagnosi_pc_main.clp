@@ -256,6 +256,7 @@
 ;; ***** FASE 1: DOMANDE DA PORRE ALL'UTENTE
 
 (defrule chiedi-tipo-dispositivo
+  ;WRITTEN DOWN
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
   (not (nodo (nome chiedi) (valore tipo-dispositivo)))
   (domanda (attributo tipo-dispositivo)(gia-chiesta FALSE))
@@ -264,6 +265,7 @@
 )
 
 (defrule chiedi-esperienza-utente
+  ;WRITTEN DOWN
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
   (not (nodo (nome chiedi) (valore esperienza-utente)))
   (domanda (attributo esperienza-utente)(gia-chiesta FALSE))
@@ -281,6 +283,7 @@
 ; )
 
 (defrule chiedi-anni-dispositivo
+  ;WRITTEN DOWN
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
   (not (nodo (nome chiedi) (valore anni-dispositivo)))
   (domanda (attributo anni-dispositivo)(gia-chiesta FALSE))
@@ -289,6 +292,7 @@
 )
 
 (defrule chiedi-garanzia
+  ;WRITTEN DOWN
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
   (not (nodo (nome chiedi) (valore garanzia)))
   (domanda (attributo garanzia)(gia-chiesta FALSE))
@@ -298,6 +302,7 @@
 )
 
 (defrule chiedi-ha-batteria
+  ;WRITTEN DOWN
   ; (or (fase 1-profilazione) ;(fase 2-analisi))
   (not  (nodo (nome chiedi) (valore ha-batteria)))
   (domanda (attributo ha-batteria)(gia-chiesta FALSE))
@@ -309,6 +314,7 @@
 ;; ***** FASE 2: DEDUZIONI DEL SISTEMA
 
 (defrule dispositivo-portatile
+  ;WRITTEN DOWN
   ; ;(fase 2-analisi)
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?c1) (id-nodo ?id-p1))
   =>
@@ -319,6 +325,7 @@
 )
 
 (defrule dispositivo-fisso
+  ;WRITTEN DOWN
   ; ;(fase 2-analisi)
   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?c1) (id-nodo ?id-p1))
   =>
@@ -679,6 +686,7 @@
 ;; DOMANDE VIDEO ***************************************************************
 
 (defrule chiedi-problema-video-dispositivo
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ;?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
 
@@ -690,6 +698,7 @@
 )
 
 (defrule chiedi-disturbo-video
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ; ?px <- (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (id-nodo ?id-px) (attivo TRUE))
   ?p1 <- (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
@@ -720,6 +729,7 @@
 )
 
 (defrule chiedi-cavi-display
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
@@ -741,6 +751,7 @@
 )
 
 (defrule chiedi-monitor-esterno
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ?p1 <- (nodo (nome disturbo-video)(valore ?v1&fasce-verticali|linee-orizzontali|schermo-nero)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   (not (nodo (nome chiedi) (valore monitor-esterno)))
@@ -757,6 +768,7 @@
 )
 
 (defrule chiedi-problema-video-all-avvio
+  ;WRITTEN DOWN
   ;(fase 2-analisi)
   ;?p1 <- (nodo (nome disturbo-video) (valore ?v&fasce|linee-oriz))
   ?p1 <- (nodo (nome disturbo-video)(valore ?v1&fasce-verticali|linee-orizzontali|schermo-nero)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
@@ -769,6 +781,7 @@
 
 
 (defrule diagnosi-problema-SW-video-1
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome disturbo-video)(valore fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
@@ -776,6 +789,7 @@
   (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-SW)(nodo-padre ?id-p1 ?id-p2)))
 )
 (defrule diagnosi-problema-SW-video-2
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome disturbo-video)(valore linee-orizzontali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
@@ -783,6 +797,7 @@
   (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-SW)(nodo-padre ?id-p1 ?id-p2)))
 )
 (defrule diagnosi-problema-SW-video-3
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome disturbo-video)(valore schermo-nero)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio) (valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
