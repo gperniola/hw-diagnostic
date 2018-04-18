@@ -1,7 +1,7 @@
 
 ;; //DIAGNOSI PROBLEMI VIDEO****************************************************
 
-    (diagnosi (attributo cavi-display-scollegati)
+    (diagnosi (attributo cavo-alimentazione-display-scollegato)
               (titolo "Cavi del display non connessi correttamente")
               (descrizione "I cavi video del display non sono connessi, oppure sono collegati male")
     )

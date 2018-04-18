@@ -17,8 +17,8 @@
 
 (domanda  (attributo anni-dispositivo)
 (testo-domanda "Quanti anni ha il dispositivo?")
-          (risposte-valide meno-2-anni 2-5-anni 5-10-anni piu-10-anni sconosciuto)
-          (descrizione-risposte "Meno di due anni" "Da due a cinque anni" "Da cinque a dieci anni" "Piu' di dieci anni" "Non so")
+          (risposte-valide 0-3-anni 4-6-anni 7-anni sconosciuto)
+          (descrizione-risposte "Fino a tre anni" "Da quattro a sei anni" "Piu' di sei anni" "Non so")
 (spiegazione "Questa domanda permette di rendere piu' precisa la ricerca di diagnosi e soluzioni sulla base di quanto il dispositivo potrebbe soffrire di determinati
 problemi legati all'eta'.")
 (help "Rispondere con l'eta' (o una stima dell'eta') del dispositivo. ")
@@ -176,7 +176,7 @@ piuttosto che ad un errore di natura software.")
 (help "Controllate il monitor al momento dell'accensione del dispositivo. Verificate se il problema appare sin da subito oppure se nelle prime schermate non c'e' nessun problema video. ")
 )
 
-(domanda  (attributo cavi-display)
+(domanda  (attributo cavo-alimentazione-display)
 (testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso.")
           (risposte-valide ok errore )
           (descrizione-risposte "I cavi sono correttamente collegati ma il display presenta comunque il problema"
