@@ -60,7 +60,7 @@
 
    (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-trovata
     ?f <- (fase-stampa)
-    (nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE))
+    (nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE))
     =>
     ;(clear-window)
     (retract ?f)
@@ -70,7 +70,7 @@
    )
 
    (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-non-trovata
-    (not(nodo (nome diagnosi)(certezza ?cer&:(> ?cer 0.70)) (attivo TRUE)))
+    (not(nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE)))
     ?f <- (fase-stampa)
     =>
     ;(clear-window)
