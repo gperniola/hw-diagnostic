@@ -427,7 +427,7 @@
     ?p2 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
   )
   =>
-  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?id-p1)))
+  (assert (nodo (nome chiedi) (valore alimentazione-collegata) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule DIAGNOSI-alimentazione-non-collegata
@@ -491,11 +491,11 @@
   ?p3 <- (nodo (nome alimentazione-collegata) (valore si) (certezza ?CF3) (id-nodo ?id-p3))
   =>
   (bind ?CF-schermo-nero (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
-  (assert (nodo (nome disturbo-video) (valore schermo-nero) (certezza ?CF-schermo-nero) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende ma lo schermo e nero e non sembra dare segni di vita.")))
+  (assert (nodo (nome disturbo-video) (valore schermo-nero) (certezza ?CF-schermo-nero) (nodo-padre ?id-p1 ?id-p2 ?id-p3) (descrizione "Il dispositivo si accende ma lo schermo e nero e non sembra dare segni di vita.")))
   (bind ?CF-accensione (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
+  (assert (nodo (nome stato-accensione) (valore funzionante) (certezza ?CF-accensione) (nodo-padre ?id-p1 ?id-p2 ?id-p3) (descrizione "Il dispositivo si accende, il circuito di alimentazione sembra funzionare.")))
   (bind ?CF-prob-video (calcola-certezza 1 ?CF1 ?CF2 ?CF3)) ;;livello CRT utente-inesperto settato a 1
-  (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF-prob-video)(nodo-padre ?id-p1 ?id-p2) (descrizione "Il dispositivo ha un problema al display.")))
+  (assert (nodo (nome problema-video-dispositivo)(valore si)(certezza ?CF-prob-video)(nodo-padre ?id-p1 ?id-p2 ?id-p3) (descrizione "Il dispositivo ha un problema al display.")))
   ;(bind ?CF-tipo-problema (calcola-certezza 0.5 ?CF1 ?CF2))
     ;(assert (nodo (nome tipologia-problema) (valore scheda-madre) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un corto circuito sulla scheda madre.") (nodo-padre ?p1 ?p2)))
     ;(assert (nodo (nome tipologia-problema) (valore scheda-video) (certezza ?CF-tipo-problema) (descrizione "Il problema potrebbe essere causato da un guasto della scheda video.") (nodo-padre ?p1 ?p2)))
@@ -610,7 +610,7 @@
   ;?p5 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF5))
   ?p4 <- (nodo (nome spia-alimentatore) (valore accesa) (certezza ?CF4) (id-nodo ?id-p4))
   =>
-  (bind ?CF-alim-guasto (calcola-certezza -0.3 ?CF1  ?CF3 ?CF4 ))
+  (bind ?CF-alim-guasto (calcola-certezza -0.3 ?CF1 ?CF3 ?CF4 ))
   (bind ?CF-scheda-madre-guasta (calcola-certezza 0.8 ?CF1 ?CF3 ?CF4 ))
   (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-alim-guasto)))
   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza ?CF-scheda-madre-guasta)))
@@ -1248,7 +1248,7 @@
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?CF) (nodo-padre ?id-p1)))
+  (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-controllo-cavi-video-portatile
@@ -1257,7 +1257,7 @@
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 0.7 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controllo-cavi-video-portatile) (certezza ?CF) (nodo-padre ?id-p1)))
+  (assert (nodo (nome soluzione) (valore controllo-cavi-video-portatile) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule soluzione-sostituisci-inverter
@@ -1303,6 +1303,7 @@
   ?p1 <- (nodo (nome diagnosi) (valore CMOS-corrotta) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   =>
   (assert (nodo (nome soluzione) (valore resetta-CMOS) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
+  (printout t crlf "kickin" crlf)
 )
 
 

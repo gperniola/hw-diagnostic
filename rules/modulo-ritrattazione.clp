@@ -9,7 +9,7 @@
     (progn$ (?x ?nodi-figli)
         (bind ?id-nodo (fact-slot-value ?x id-nodo))
         (if (neq ?id-nodo FALSE) then
-            ;(printout t "- deleting inner " ?id-nodo " - " (fact-slot-value ?x nome) " " (fact-slot-value ?x valore) crlf )
+            (printout t "- deleting inner " ?id-nodo " - " (fact-slot-value ?x nome) " " (fact-slot-value ?x valore) crlf )
             (retract ?x)
             (elimina-nodi-da ?id-nodo)
         )
