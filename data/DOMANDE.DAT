@@ -40,6 +40,14 @@ problemi legati all'eta'.")
 (help "Rispondere in base alla tipologia del dispositivo.")
 )
 
+(domanda  (attributo utente-proprietario)
+(testo-domanda "Il dispositivo e' di proprieta' dell'utente?")
+          (risposte-valide si no)
+          (descrizione-risposte "Si" "No")
+(spiegazione "Rispondendo Si a questa domanda permette al sistema di porre domande aggiuntive all'utente per rendere la diagnosi piu' precisa.")
+(help "Rispondere Si se l'utente e' il proprietario o l'utilizzatore principale del dispositivo.")
+)
+
 (domanda  (attributo esperienza-utente)
 (testo-domanda "Indicare il grado di esperienza dell'utente.")
           (risposte-valide utente-esperto utente-inesperto)
@@ -66,8 +74,8 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
 
 (domanda  (attributo controllo-accensione)
 (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
-          (risposte-valide funzionante possibile-non-funzionante)
-          (descrizione-risposte "Si" "No, il dispositivo non si accende")
+          (risposte-valide funzionante riavvio possibile-non-funzionante)
+          (descrizione-risposte "Si" "Si, ma il dispositivo si riavvia in continuazione" "No, il dispositivo non si accende")
 (spiegazione "Questa domanda permette di capire se il problema e' legato alle componenti responsabili per l'alimentazione elettrica del dispositivo.")
 (help "Nel caso di un PC Desktop, il pulsante e' posto sulla parte frontale del case. Nel caso di un PC portatile, il pulsante e' solitamente situato sopra la tastiera.
 Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda (In alcuni casi la spia e' posta sul pulsante stesso).")
@@ -208,6 +216,15 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
           (descrizione-risposte "Si" "No")
 (spiegazione "Un lungo periodo di inattività del dispositivo potrebbe velocizzare il processo con cui la batteria del BIOS si scarica, portando quindi alla necessita' di sostituirla.")
 (help "Rispondere 'Si' se il dispositivo e' inutilizzato da almeno due mesi oppure se lo si utilizza per pochissimo tempo con lunghi periodi di inattivita' nel mezzo. ")
+
+)
+
+(domanda  (attributo surriscaldamento)
+(testo-domanda "Ha notato un surriscaldamento eccessivo del dispositivo durante il suo utilizzo?")
+          (risposte-valide si no )
+          (descrizione-risposte "Si" "No")
+(spiegazione "Se il dispositivo non e' in grado di dissipare efficacemente il calore e' possibile che col tempo questo abbia causato danni ai circuiti.")
+(help "Rispondere 'Si' se l'utente crede che il dispositivo riscaldi piu' del dovuto, un indizio potrebbe essere dato dalle ventole se sono particolarmente rumorose.")
 
 )
 
