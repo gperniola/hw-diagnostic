@@ -6,20 +6,10 @@
               (descrizione "I cavi video del display non sono connessi, oppure sono collegati male")
     )
 
-    ;// (diagnosi (attributo cavi-display-non-connessi)
-    ;//           (titolo "Cavi del display non connessi correttamente")
-    ;//           (descrizione "A volte un cavo video connesso male puo' generare delle interferenze sullo schermo. Se il problema persiste e' possibile che il cavo sia danneggiato.")
-    ;// )
-
     (diagnosi (attributo guasto-display)
               (titolo "Schermo danneggiato")
               (descrizione "Lo schermo o i pixel che lo compongono potrebbero essere danneggiati o bruciati e richiedere la sostituzione completa del display.")
     )
-
-    ;// (diagnosi (attributo cavi-display-portatile-guasti)
-    ;//           (titolo "Cavi di connessione al display guasti")
-    ;//           (descrizione "I cavi che connettono il display alla scheda madre potrebbero essere danneggiati oppure connessi male.")
-    ;// )
 
     (diagnosi (attributo guasto-vga)
               (titolo "Guasto della scheda video")
@@ -42,20 +32,11 @@
               (descrizione "Il problema potrebbe essere causato da un interferenza nel collegamento tra la scheda madre e il display.")
     )
 
-    ;// (diagnosi (attributo problema-driver-video)
-    ;//           (titolo "Problema con i driver video")
-    ;//           (descrizione "Potrebbe esserci un problema con i driver della scheda video.")
-    ;// )
-
 ;; //***************************************************************************
 
 
 ;; //DIAGNOSI PROBLEMI ACCENSIONE E SO *****************************************
 
-    ;// (diagnosi (attributo problema-caricamento-SO)
-    ;//           (titolo "Caricamento del sistema operativo fallito")
-    ;//           (descrizione "Potrebbe esserci un problema con il caricamento del sistema operativo.")
-    ;// )
 
     (diagnosi (attributo alimentazione-disconnessa)
               (titolo "Alimentazione non connessa al dispositivo")

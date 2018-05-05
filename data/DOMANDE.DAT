@@ -1,24 +1,11 @@
 
 ;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
-
-
-;// (domanda  (attributo problema-principale)
-;// (testo-domanda "L'utente ha gia' un idea del tipo di problema che affligge il dispositivo?")
-;//           (risposte-valide accensione video caricamento-SO analisi-guidata)
-;//           (descrizione-risposte "Si, problema relativo all'accensione del dispositivo"
-;//                                 "Si, disturbo del segnale video o problema del display"
-;//                                 "Si, problema con il BIOS o il caricamento e funzionamento del sistema operativo"
-;//                                 "No, non conosco il problema")
-;// (spiegazione "Questa domanda permette all'utente di saltare alcune fasi di ricerca del problema per avere una risposta piu' rapida.")
-;// (help "Rispondere 1,2 o 3 se l'utente ha gia' individuato in quale fase dell'accensione si verifica il problema. Se non si conosce
-;// il problema o non si e' sicuri a quale categoria appartenga, rispondere 4.")
-;// )
-
 (domanda  (attributo anni-dispositivo)
 (testo-domanda "Quanti anni ha il dispositivo?")
           (risposte-valide 0-3-anni 4-6-anni 7-anni sconosciuto)
           (descrizione-risposte "Fino a tre anni" "Da quattro a sei anni" "Piu' di sei anni" "Non so")
+          (spiegazione-risposte "Il dispositivo ha fino a tre anni di eta'" "Il dispositivo ha tra i quattro e sei anni di eta'" "Il dispositivo ha piu' di sei anni di eta'" "L'utente non sa quanti anni ha il dispositivo")
 (spiegazione "Questa domanda permette di rendere piu' precisa la ricerca di diagnosi e soluzioni sulla base di quanto il dispositivo potrebbe soffrire di determinati
 problemi legati all'eta'.")
 (help "Rispondere con l'eta' (o una stima dell'eta') del dispositivo. ")
@@ -28,6 +15,7 @@ problemi legati all'eta'.")
 (testo-domanda "Il dispositivo e' ancora in garanzia?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si" "No" "Non so")
+          (spiegazione-risposte "Il dispositivo e' coperto da garanzia" "Il dispositivo non e' coperto da garanzia")
 (spiegazione "Questa domanda aiuta il sistema a trovare soluzioni utili per risolvere il problema. ")
 (help "Verificare se il dispositivo e' ancora coperto da garanzia.")
 )
@@ -36,6 +24,7 @@ problemi legati all'eta'.")
 (testo-domanda "A quale tipologia appartiene il dispositivo?")
           (risposte-valide pc-desktop pc-portatile)
           (descrizione-risposte "PC Desktop" "PC Portatile/Netbook")
+          (spiegazione-risposte "Il dispositivo e' un PC desktop" "Il dispositivo e' un portatile o netbook")
 (spiegazione "Alcune diagnosi, soluzioni e domande possono variare sensibilmente in base alla tipologia del dispositivo. ")
 (help "Rispondere in base alla tipologia del dispositivo.")
 )
@@ -44,6 +33,7 @@ problemi legati all'eta'.")
 (testo-domanda "Il dispositivo e' di proprieta' dell'utente?")
           (risposte-valide si no)
           (descrizione-risposte "Si" "No")
+          (spiegazione-risposte "Il dispositivo e' di proprieta' dell'utente" "Il dispositivo non e' di proprieta' dell'utente")
 (spiegazione "Rispondendo Si a questa domanda permette al sistema di porre domande aggiuntive all'utente per rendere la diagnosi piu' precisa.")
 (help "Rispondere Si se l'utente e' il proprietario o l'utilizzatore principale del dispositivo.")
 )
@@ -53,6 +43,7 @@ problemi legati all'eta'.")
           (risposte-valide utente-esperto utente-inesperto)
           (descrizione-risposte "Sono un utente esperto con competenze informatiche e conoscenza dei termini tecnici utilizzati"
                                 "Dispongo di competenze informatiche limitate o non conosco i termini tecnici utilizzati")
+          (spiegazione-risposte "L'utente e' un esperto dotato di competenze informatiche" "L'utente dispone di competenze informatiche limitate")
 (spiegazione "Questa domanda viene posta per indicare al sistema quali domande porre all'utente, in modo che risultino piu' comprensibili se l'utente e' inesperto.")
 (help "Si consiglia di rispondere come 'utente esperto' se si ha un minimo di esperienza sulle componenti del dispositivo.")
 )
@@ -62,6 +53,7 @@ problemi legati all'eta'.")
 ATTENZIONE: Per il corretto svolgimento dell'analisi e' necessario che il dispositivo sia connesso ad una presa elettrica.")
           (risposte-valide si no)
           (descrizione-risposte "Si, la batteria e' inserita" "No, il dispositivo non ha una batteria oppure non e' inserita")
+          (spiegazione-risposte "Il dispositivo ha la batteria inserita" "Il dispositivo non ha una batteria oppure non e' inserita")
 (spiegazione "Questa domanda permette al sistema di identificare possibili problemi relativi all'alimentazione della batteria.")
 (help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
 necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
@@ -76,6 +68,7 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
 (testo-domanda "E' possibile avviare il dispositivo premendo il pulsante di accensione?")
           (risposte-valide funzionante riavvio possibile-non-funzionante)
           (descrizione-risposte "Si" "Si, ma il dispositivo si riavvia in continuazione" "No, il dispositivo non si accende")
+          (spiegazione-risposte "Il dispositivo si accende" "Il dispositivo si riavvia in continuazione" "Il dispositivo non si accende")
 (spiegazione "Questa domanda permette di capire se il problema e' legato alle componenti responsabili per l'alimentazione elettrica del dispositivo.")
 (help "Nel caso di un PC Desktop, il pulsante e' posto sulla parte frontale del case. Nel caso di un PC portatile, il pulsante e' solitamente situato sopra la tastiera.
 Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda (In alcuni casi la spia e' posta sul pulsante stesso).")
@@ -86,6 +79,7 @@ Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda
 controllate se ci sono spie che si illuminano o se le ventole sembrano cominciare a girare.")
           (risposte-valide funzionante non-funzionante)
           (descrizione-risposte "Si, alcune spie si illuminano o la ventola sembra girare" "No, il dispositivo non sembra dare segni di vita")
+          (spiegazione-risposte "Il dispositivo si accende ma lo schermo resta nero" "Il dispositivo non si accende")
 (spiegazione "E' possibile che il problema possa essere causato da un guasto allo schermo e non dall'alimentazione del dispositivo.")
 (help "...")
 )
@@ -94,8 +88,8 @@ controllate se ci sono spie che si illuminano o se le ventole sembrano cominciar
 (domanda  (attributo alimentazione-collegata)
 (testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato al dispositivo e alla presa elettrica. Verificate anche che ci sia passaggio di corrente sulla presa.")
           (risposte-valide si no )
-          (descrizione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende"
-           "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
+          (descrizione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende" "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
+          (spiegazione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende" "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
 (spiegazione "E' necessario che il dispositivo sia connesso alla rete elettrica per far si che funzioni correttamente.")
 (help "Potete verificare che sulla presa ci sia passaggio di corrente collegandovi ad esempio una lampada e verificando che si accenda.
 Nel caso di un PC Desktop, la spina di alimentazione va collegata direttamente sull'alimentatore sul retro del case. La presa a tre poli e' di solito
@@ -106,8 +100,8 @@ Nel caso di un PC portatile la presa potrebbe essere posta sul retro o su uno de
 (domanda  (attributo batteria-difettosa)
 (testo-domanda "Rimuovere la batteria del dispositivo e premere nuovamente il tasto di accensione.")
           (risposte-valide si no )
-          (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria"
-           "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
+          (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
+          (spiegazione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
 (spiegazione "E' possibile che un guasto alla batteria non permetta al dispositivo di avviarsi anche se questo e' connesso alla rete elettrica domestica.")
 (help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
 necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
@@ -116,8 +110,8 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
 (domanda  (attributo interruttore-alimentatore)
 (testo-domanda "Verificare se il dispositivo possiede un interruttore di alimentazione e che questo sia acceso.")
           (risposte-valide acceso spento )
-          (descrizione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi"
-           "L'interruttore e' spento")
+          (descrizione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi" "L'interruttore dell'alimentatore e' spento")
+          (spiegazione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi" "L'interruttore dell'alimentatore e' spento")
 (spiegazione "E' necessario che l'alimentatore sia acceso per permettere al dispositivo di funzionare correttamente")
 (help "L'interruttore e' situato sull'alimentatore, accanto al cavo di alimentazione nella parte posteriore del case. Su alcuni modelli l'interruttore potrebbe non essere presente.")
 )
@@ -126,6 +120,7 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
 (testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
+      (spiegazione-risposte "La spia dell'alimentatore e' accesa" "La spia dell'alimentatore e' spenta" "Non si sa se la spia dell'alimentatore sia accesa o spenta")
 (spiegazione "Questa domanda ci permette di capire se e' piu' probabile che il guasto sia dovuto all'alimentatore o alla scheda madre")
 (help "Su alcuni modelli la spia e' presente direttamente sull'alimentatore. Su altri dispositivi la spia e' locata sulla parte frontale o
 accanto alla spina dell'alimentazione")
@@ -135,6 +130,7 @@ accanto alla spina dell'alimentazione")
 (testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
+      (spiegazione-risposte "La spia dell'alimentatore e' accesa" "La spia dell'alimentatore e' spenta" "Non si sa se la spia dell'alimentatore sia accesa o spenta")
 (spiegazione "Questa domanda ci permette di capire se e' piu' probabile che il guasto sia dovuto all'alimentatore o alla scheda madre")
 (help "Su alcuni modelli la spia e' posta sull'alimentatore, nella parte posteriore del case. Su altri modelli invece la spia potrebbe non e' presente.")
 )
@@ -148,6 +144,7 @@ accanto alla spina dell'alimentazione")
 (testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
+          (spiegazione-risposte "Il dispositivo ha un problema con il display" "Il dispositivo non soffre di problemi legati al display")
 (spiegazione "Questa domanda serve a verificare se si riscontrano problemi particolari al monitor al momento dell'accensione.")
 (help "Rispondere 'Si' se ci sono problemi al monitor durante le prime fasi d'accensione del dispositivo.")
 )
@@ -156,18 +153,20 @@ accanto alla spina dell'alimentazione")
 (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
           (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
           (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
-)
+          (spiegazione-risposte "C'e' un problema video e il monitor presenta linee o fasce colorate verticali" "C'e' un problema video e il monitor presenta linee orizzontali" "C'e' un problema video e il monitor presenta macchie nere che coprono porzioni dello schermo" "C'e' un problema video e lo schermo e' completamente nero")
 (spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o scheda video, oppure se potrebbe essere
 causato da un interferenza del segnale video.")
 (help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte (ad esempio, le fasce potrebbero essere
 intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
+)
 
 (domanda  (attributo monitor-esterno)
 (testo-domanda "E' possibile collegare un monitor esterno al dispositivo?")
           (risposte-valide funzionante errore no)
           (descrizione-risposte "Si, il monitor esterno funziona e non presenta i problemi del monitor principale"
-          "Si, ma il monitor esternopresenta lo stesso problema del monitor principale"
+          "Si, ma il monitor esterno presenta lo stesso problema del monitor principale"
           "No, non dispongo di un altro monitor")
+          (spiegazione-risposte "Il monitor esterno non presenta i problemi del monitor principale" "Il monitor esterno presenta lo stesso problema del monitor principale" "L'utente non dispone di un altro monitor")
 (spiegazione "Se in possesso di un altro monitor, questa domanda permette di capire se il problema e' dovuto ad un guasto del monitor o di qualche altro componente del dispositivo.")
 (help "Se il dispositivo e' un PC desktop allora e' possibile collegare il monitor secondario al posto di quello normalmente utilizzato e verificare se il problema persiste.
 Se il dispositivo e' un PC portatile, e' necessario verificare che sia presente una presa per poter collegare un monitor esterno. Solitamente queste prese sono posizionate sui lati del dispositivo.
@@ -179,6 +178,7 @@ ATTENZIONE: E' necessario verificare che il monitor esterno abbia una presa comp
 (testo-domanda "Il problema si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al momento del caricamento del sistema operativo?")
           (risposte-valide si no)
           (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
+          (spiegazione-risposte "Il problema video si manifesta sin dall'avvio" "Il problema video si manifesta in un secondo momento e non sin dall'accensione")
 (spiegazione "Se il problema si manifesta sin dal momento in cui il monitor si attiva, allora ci sono buone probabilita' che il problema sia dovuto ad un guasto di una componente come monitor o scheda video
 piuttosto che ad un errore di natura software.")
 (help "Controllate il monitor al momento dell'accensione del dispositivo. Verificate se il problema appare sin da subito oppure se nelle prime schermate non c'e' nessun problema video. ")
@@ -189,6 +189,7 @@ piuttosto che ad un errore di natura software.")
           (risposte-valide ok errore )
           (descrizione-risposte "I cavi sono correttamente collegati ma il display presenta comunque il problema"
           "I cavi non sono correttamente collegati oppure il display non e' acceso")
+          (spiegazione-risposte "I cavi del monitor sono correttamente collegati" "I cavi non sono correttamente collegati oppure il display non e' acceso")
 (spiegazione "Per il corretto funzionamento del monitor e' necessario che  sia il cavo di alimentazione che quello del segnale video siano correttamente collegati.")
 (help "Assicuratevi che il cavo di alimentazione del monitor sia collegato alla rete elettrica domestica. Controllate che sulla presa ci sia passaggio di corrente,
 ad esempio collegandovi una lampada e verificando che si accenda. Verificate anche che il cavo del segnale video (di solito una spina di colore blu o grigia) sia correttamente
@@ -199,6 +200,7 @@ correttametne connessa sia al monitor sia sul retro del case del PC. Infine, ass
           (testo-domanda "Verificare che la spina del cavo video sia correttamente inserita nella presa. Provate a reinserire la spina e controllate se il problema sparisce.")
           (risposte-valide risolto non-risolto )
           (descrizione-risposte "Risistemando i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
+          (spiegazione-risposte "Muovendo i cavi il problema video si risolve ""I cavi del monitor sono correttamente collegati")
 (spiegazione "A volte, se la spina del cavo video non e' saldamente collegata possono verificarsi dei disturbi sul monitor.")
 (help "Assicuratevi che la spina del cavo video sia saldamente connessa sia dietro il monitor e sia sulla parte posteriore del case (la spina e' di solito di colore blu o grigia).
 Con il PC acceso, provate a staccare e reinserire la spina e osservate se il problema sul monitor sparisce.")
@@ -214,6 +216,7 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
 (testo-domanda "Il dispositivo e' inattivo da piu' di due mesi o viene usato raramente?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
+          (spiegazione-risposte "Il dispositivo e' inattivo da oltre due mesi o viene usato raramente" "Il dispositivo viene usato costantemente e non e' inattivo da molto tempo")
 (spiegazione "Un lungo periodo di inattività del dispositivo potrebbe velocizzare il processo con cui la batteria del BIOS si scarica, portando quindi alla necessita' di sostituirla.")
 (help "Rispondere 'Si' se il dispositivo e' inutilizzato da almeno due mesi oppure se lo si utilizza per pochissimo tempo con lunghi periodi di inattivita' nel mezzo. ")
 
@@ -223,6 +226,7 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
 (testo-domanda "Ha notato un surriscaldamento eccessivo del dispositivo durante il suo utilizzo?")
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
+          (spiegazione-risposte "Il dispositivo surriscalda in modo eccessivo" "Il dispositivo non sembra surriscaldarsi eccessivamente")
 (spiegazione "Se il dispositivo non e' in grado di dissipare efficacemente il calore e' possibile che col tempo questo abbia causato danni ai circuiti.")
 (help "Rispondere 'Si' se l'utente crede che il dispositivo riscaldi piu' del dovuto, un indizio potrebbe essere dato dalle ventole se sono particolarmente rumorose.")
 
@@ -234,6 +238,7 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
           (descrizione-risposte "Si, sono state installate nuove componenti hardware (ad esempio RAM, disco fisso, stampante ecc.)"
           "Si, sono stati installati nuovi programmi software"
           "Si, sono stati installati aggiornamenti del sistema" "No" "Non so")
+          (spiegazione-risposte "Sono state installate nuove componenti hardware" "Sono stati installati nuovi programmi software" "Sono stati installati aggiornamenti del sistema" "Non sono stati installati software o componenti hardware" "L'utente non sa se sono stati installati software o componenti hardware")
 (spiegazione "Spesso una delle cause piu' comuni ai problemi del caricamento del sistema operativo e' l'installazione di nuove componenti nel sistema. Questo puo' essere causato
 da problemi su diversi livelli, ad esempio la nuova componente potrebbe non essere compatibile, oppure l'istallazione potrebbe non essere andata a buon fine.")
 (help "Indicare se sono state installate nuove componenti nel sistema. Per componenti hardware si intendono anche periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor o memorie esterne.")
@@ -245,6 +250,11 @@ da problemi su diversi livelli, ad esempio la nuova componente potrebbe non esse
 (testo-domanda "Il dispositivo manifesta problemi nella fase di controllo del BIOS? (Ovvero prima del caricamento del sistema operativo)")
           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
+                                "Il dispositivo si blocca/riavvia dopo un beep code"
+                                "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
+                                "Il dispositivo si riavvia senza mostrare errori"
+                                "Il dispositivo non manifesta nessuno dei problemi elencati")
+          (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
                                 "Il dispositivo si blocca/riavvia dopo un beep code"
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
@@ -263,25 +273,12 @@ e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indic
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
+          (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
+                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice sonoro"
+                                "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
+                                "Il dispositivo si riavvia senza mostrare errori"
+                                "Il dispositivo non manifesta nessuno dei problemi elencati")
 (spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del sistema operativo.")
 (help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare da qualche secondo fino ad un minuto ed
 e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi riscontrabili piu' comuni.")
 )
-
-;// (domanda  (attributo fase-caricamento-SO-ut-esperto)
-;//           (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
-;//           (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
-;//           (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
-;//                                 "Il dispositivo si blocca/riavvia al momento del caricamento"
-;//                                 "Il dispositivo si blocca/riavvia al momento del login"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;// )
-;//
-;// (domanda  (attributo fase-caricamento-SO-ut-inesperto)
-;//           (testo-domanda "Il dispositivo manifesta problemi durante la fase di caricamento e login del sistema operativo?")
-;//           (risposte-valide errore-BSOD errore-caricamento-SO errore-login nessun-errore )
-;//           (descrizione-risposte "Il dispositivo si riavvia dopo una schermata blu di errore"
-;//                                 "Il dispositivo si blocca/riavvia al momento del caricamento"
-;//                                 "Il dispositivo si blocca/riavvia al momento del login"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;// )

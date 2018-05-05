@@ -1,10 +1,8 @@
 (defmodule MODULO-STAMPA-DIAGNOSI-SOLUZIONI(import MAIN ?ALL)(export ?ALL))
 
 
-
   (deffunction ordinamento-per-certezza (?f1 ?f2)
     (< (fact-slot-value ?f1 certezza) (fact-slot-value ?f2 certezza)))
-
 
 
    (deffunction stampa-tutte-le-diagnosi ()
@@ -64,6 +62,7 @@
     =>
     ;(clear-window)
     (retract ?f)
+    ;(facts-without-desc)
     (stampa-tutte-le-diagnosi)
     (stampa-tutte-le-soluzioni)
     (chiedi-soddisfazione-utente)
