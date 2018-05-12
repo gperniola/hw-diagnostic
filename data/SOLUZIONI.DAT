@@ -1,43 +1,47 @@
 
 (soluzione (attributo sostituisci-alimentatore)
           (titolo "Sostituire l'alimentatore")
-          (descrizione "Si consiglia di sostituire completamente l'alimentatore.")
+          (descrizione "Si consiglia di sostituire l'alimentatore con uno nuovo della stessa potenza.")
 )
 
 (soluzione (attributo sostituisci-scheda-madre)
           (titolo "Sostituire la scheda madre")
-          (descrizione "Potrebbe essere necessario sostituire la scheda madre. Assicurarsi che la nuova scheda madre sia compatibile con il resto dell'hardware.")
+          (descrizione "Si consiglia di sostituire la scheda madre con una nuova e compatibile con il resto dell'hardware. E' consigliabile rivolgersi ad un centro
+          specializzato se l'utente non ha le competenze adeguate.")
 )
 
 (soluzione (attributo sostituisci-batteria)
           (titolo "Sostituire la batteria")
-          (descrizione "Potrebbe essere necessario sostituire la batteria del dispositivo.")
+          (descrizione "Si consiglia di sostituire la batteria del dispositivo con una compatibile.")
 )
 
 (soluzione (attributo riparazione-scheda-madre)
           (titolo "Riparare la scheda madre")
-          (descrizione "Potrebbe essere possibile riparare la scheda madre se il guasto e' marginale.")
+          (descrizione "Potrebbe essere possibile riparare la scheda madre se il guasto e' marginale. Si consiglia di rivolgersi ad un centro riparazioni specializzato per un
+             analisi del guasto approfondita.")
 )
 
 
 (soluzione (attributo accendi-alimentatore)
           (titolo "Accendere l'alimentatore")
-          (descrizione "Premere il tasto di accensione dell'alimentatore e verificare se il problema e' risolto.")
+          (descrizione "Premere il tasto di accensione dell'alimentatore e verificare se il problema e' risolto provando a riaccendere il dispositivo.")
 )
 
 (soluzione (attributo connetti-alimentazione)
           (titolo "Connettere l'alimentazione elettrica al dispositivo")
-          (descrizione "Collegare correttamente i cavi di alimentazione al dispositivo e assicurarsi che ci sia passaggio di corrente dalla presa elettrica.")
+          (descrizione "Collegare correttamente i cavi di alimentazione al dispositivo e assicurarsi che ci sia passaggio di corrente dalla presa elettrica. E' possibile
+             utilizzare un altro dispositivo elettrico per verificare che la presa elettrica funzioni, ad esempio con una lampada.")
 )
 
 (soluzione (attributo dispositivo-in-assistenza)
-          (titolo "Contattare l'assistenza tecnica")
-          (descrizione "Utilizzare la garanzia del dispositivo per sostituire il pezzo guasto.")
+          (titolo "Contattare l'assistenza clienti ed usufruire della garanzia")
+          (descrizione "Si consiglia di far uso della copertura offerta dalla garanzia se il dispositivo ne e' ancora coperto. Si consiglia inoltre di verificare che il
+             tipo di guasto sia effettivamente coperto dalle condizioni offerte dalla garanzia.")
 )
 
 (soluzione (attributo sostituzione-dispositivo)
           (titolo "Sostituire il dispositivo")
-          (descrizione "Purtroppo a causa della natura del guasto, l'eta' o il tipo di dispositivo, si consiglia l'acquisto di un nuovo dispositivo.")
+          (descrizione "A causa della natura del guasto o dell'eta' del dispositivo, si consiglia di valutare l'opzione di sostituire completamente il dispositivo.")
 )
 
 
@@ -45,52 +49,63 @@
 
 (soluzione (attributo connetti-cavi-video)
           (titolo "Connettere i cavi video e accendere il monitor")
-          (descrizione "Assicurarsi che sia il cavo del segnale video e il cavo di alimentazione siano correttamente connessi e che il monitor sia acceso.")
+          (descrizione "Assicurarsi che sia il cavo del segnale video e il cavo di alimentazione del monitors siano saldamente connessi. Assicurarsi che la presa
+             elettrica a cui e' connesso il monitor funzioni correttamente e che il monitor sia acceso.")
 )
 
 (soluzione (attributo controllo-cavi-video)
-          (titolo "Assicurarsi che il cavo del segnale video sia correttamente connesso")
-          (descrizione "Se il cavo del segnale video non e' saldamente connesso potrebbero verificarsi interferenze e disturbo dell'immagine sul display.")
+          (titolo "Connettere saldamente il cavo del segnale video del monitor")
+          (descrizione "Provare a disconnettere e riconnettere il cavo del segnale video da entrambe le estremita'. Verificare che il cavo sia agganciato saldamente.")
 )
 
 (soluzione (attributo controllo-cavi-video-portatile)
-          (titolo "Verificare che il cavo del segnale video sia saldamente connesso")
-          (descrizione "Il cavo del segnale video potrebbe essersi disconnesso, potrebbe essere necessario smontare il dispositivo per verificare che i cavi siano connessi.")
+          (titolo "Verificare l'integrita' dei cavi video del dispositivo")
+          (descrizione "Il cavo del segnale video potrebbe essere disconnesso o usurato. E' necessario smontare il dispositivo pertanto si consiglia di rivolgersi ad un
+             centro riparazioni specializzato per verificare lo stato delle componenti.")
 )
 
 (soluzione (attributo sostituisci-vga)
           (titolo "Sostituire la scheda video")
-          (descrizione "La scheda video potrebbe essere danneggiata e richiedere la sostituzione.")
+          (descrizione "Si consiglia di sostituire la scheda video con una nuova compatibile.")
 )
 
 (soluzione (attributo soluzione-SW-video)
-          (titolo "Controllo dei file e aggiornamento driver")
-          (descrizione "Il problema potrebbe essere causato da diversi problemi software. Provare ad aggiornare i driver video o controllare l'integrita' dei file sul disco fisso.")
+          (titolo "Aggiornamento dei driver video e dei files di sistema")
+          (descrizione "Il problema potrebbe essere causato da diversi problemi software. Si consiglia di aggiornare i driver video e controllare che non ci siano
+             aggiornamenti del sistema in sospeso. Si consiglia di verificare l'integrita' del disco fisso attraverso l'utilizzo di software appositi.")
 )
 
 (soluzione (attributo aggiorna-driver-video)
-          (titolo "Aggiorna driver video")
-          (descrizione "Per risolvere il problema, provare ad aggiornare o reinstallare i driver video.")
+          (titolo "Aggiornamento dei driver video")
+          (descrizione "Si consiglia di aggiornare i driver della scheda video o provare a reinstallare quelli gia' presenti.")
 )
 
 (soluzione (attributo controllo-integrita-files)
-          (titolo "Controlla integrita' files")
-          (descrizione "Per risolvere il problema, provare ad avviare un controllo di integrita' sul disco fisso.")
+          (titolo "Controllo integrita' del disco fisso")
+          (descrizione "Si consiglia di verificare l'integrita' del disco fisso attraverso l'utilizzo di software appositi.")
 )
 
 (soluzione (attributo resetta-CMOS)
-          (titolo "Resetta memoria del BIOS")
-          (descrizione "Per risolvere il problema, provare riportare il BIOS alle impostazioni di fabbrica. Su alcuni dispositivi e' presente un pulsante per tale funzione posto sul retro del dispositivo o sulla scheda madre. ")
+          (titolo "Resettare la memoria del BIOS")
+          (descrizione "Si consiglia di riportare il BIOS alle impostazioni di fabbrica. Su alcuni dispositivi e' presente un pulsante per tale funzione posto sulla parte
+             posteriore dispositivo. In alternativa e' possibile utilizzare la funzione presente nel menu del BIOS o rimuovere la piccola batteria presente sulla scheda madre.
+             Se l'utente non e' in grado di svolgere tali operazioni si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )
 
-(soluzione (attributo sostituisci-display)
+(soluzione (attributo sostituisci-display-portatile)
           (titolo "Sostituire il display")
-          (descrizione "Potrebbe essere necessario sostituire il display.")
+          (descrizione "Si consiglia di rivolgersi ad un centro riparazioni specializzato per la sostituzione del display con uno compatibile.")
+)
+
+(soluzione (attributo sostituisci-display-desktop)
+          (titolo "Sostituire il display")
+          (descrizione "Si consiglia di sostituire il monitor con uno nuovo. Controllare che la presa del segnale video sia compatibile con il dispositivo.")
 )
 
 (soluzione (attributo sostituisci-inverter)
-          (titolo "Sostituire inverter e lampade del display")
-          (descrizione "Potrebbe essere necessario sostituire l'inverter e le lampade del display.")
+          (titolo "Sostituire le componenti del display")
+          (descrizione "Potrebbe essere necessario sostituire alcune componenti legate al display, come l'inverter, lampade o i cavi che collegano la scheda video al display.
+             Si consiglia di rivolgersi ad un centro riparazioni specializzato per una diagnosi piu' approfondita sull'esatta componente guasta.")
 )
 
 ;//SOLUZIONI BOOT
@@ -102,56 +117,99 @@
 
 (soluzione (attributo controlla-messaggio-POST)
           (titolo "Controllare sul manuale della scheda madre il codice d'errore")
-          (descrizione "Il messaggio d'errore riportato dal sistema dovrebbe indicare chiaramente la causa del problema. Altrimenti potrebbe essere utile cercare sul manuale della
-          scheda madre, o in una guida online il codice d'errore trovato.")
+          (descrizione "Il messaggio d'errore riportato dal sistema dovrebbe indicare chiaramente la causa del problema. Altrimenti potrebbe essere utile cercare
+             sul manuale della scheda madre, o in una guida online il codice d'errore trovato.")
 )
 
 (soluzione (attributo controlla-beep-code)
-          (titolo "Controllare sul manuale della scheda madre a cosa corrisponde il codice sonoro")
-          (descrizione "Ogni scheda madre ha un proprio codice sonoro utilizzato per indicare il tipo di problema riscontrato. Utilizzare il manuale della propria scheda madre o una
-          guida online per identificare il problema.")
+          (titolo "Controllare sul manuale della scheda madre a cosa corrisponde il codice acustico")
+          (descrizione "Ogni produttore di schede madri adotta un proprio elenco di codici sonori per indicare il tipo di problema riscontrato. Si consiglia di utilizzare il manuale della
+             propria scheda madre o una guida online per identificare il problema. In alternativa si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )
 
 (soluzione (attributo controlla-scheda-POST)
           (titolo "Utilizzare una scheda POST per identificare il problema")
           (descrizione "Se il sistema non mostra messaggi d'errore potrebbe essere necessario utilizzare una scheda POST per identificare quale componente sta causando il problema.
-          Si consiglia di rivolgersi ad un centro assistenza specializzato per esaminare il dispositivo.")
+             Si consiglia di rivolgersi ad un centro riparazioni specializzato per esaminare il dispositivo.")
 )
 
 (soluzione (attributo sostituisci-batteria-CMOS)
           (titolo "Sostituire la batteria CMOS")
-          (descrizione "La batteria CMOS e' una piccola pila da 3V che puo' essere sostituita presso qualsiasi centro assistenza specializzato.")
+          (descrizione "La batteria CMOS e' una piccola pila presente sulla scheda madre che puo' essere sostituita presso qualsiasi centro riparazioni specializzato.")
 )
 
 
 
 (soluzione (attributo ripara-file-SO)
           (titolo "Effettuare un ripristino o riparazione del sistema")
-          (descrizione "Per risolvere il problema, provare ad avviare lo strumento di ripristino del sistema operativo. Potrebbe essere necessario accedere a windows in modalita' provvisoria o utilizzare il CD di installazione.")
+          (descrizione "Si consiglia di provare ad avviare lo strumento di ripristino del sistema operativo. Potrebbe essere necessario accedere a Windows in modalita'
+             provvisoria o utilizzare il CD di installazione. In alternativa si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )
 
 (soluzione (attributo scansione-antivirus)
           (titolo "Effettuare una scansione antivirus")
-          (descrizione "Effettuare una scansione antivirus dell'intero disco fisso. Potrebbe essere necessario avviare windows in modalita' provvisoria.")
+          (descrizione "Si consiglia di effettuare una scansione antivirus dell'intero disco fisso. Potrebbe essere necessario avviare Windows in modalita' provvisoria.")
 )
 
 (soluzione (attributo controlla-stop-error)
           (titolo "Controllare il codice di errore della schermata blu")
           (descrizione "Solitamente una schermata d'errore blu e' accompagnata da un codice d'errore, dato l'enorme numero di questi errori si consiglia di prendere nota
-          del codice e controllare il problema a cui corrisponde utilizzando il manuale sul sito windows.")
+             del codice e controllare il problema a cui corrisponde utilizzando il manuale sul sito Microsoft. In alternativa si consiglia di rivolgersi ad un centro
+             riparazioni specializzato.")
 )
 
 (soluzione (attributo ripristina-configurazione-sistema)
-          (titolo "ripristinare l'ultima configurazione di sistema funzionante")
-          (descrizione "Ripristinare l'ultima configurazione di sistema funzionante, questa opzione e' solitamente disponibile nel menu' di boot del BIOS.")
+          (titolo "Ripristinare l'ultima configurazione di sistema funzionante")
+          (descrizione "Ripristinare l'ultima configurazione di sistema funzionante, questa opzione e' solitamente disponibile nel menu' di boot del BIOS.
+              In alternativa si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )
 
 (soluzione (attributo rimuovi-HW-installato)
-          (titolo "Disinstallare e rimuovere, se possibile, le ultime componenti hardware installate")
-          (descrizione "Potrebbe essere necessario rimuovere le ultime componenti installate sul dispositivo e disinstallare i driver correlati.")
+          (titolo "Disinstallare e rimuovere  le ultime componenti hardware installate")
+          (descrizione "Si consiglia di rimuovere, se possibile, le ultime componenti installate sul dispositivo e disinstallare i driver correlati.
+              In alternativa si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )
 
-(soluzione (attributo rimuovi-HW-installato)
-          (titolo "Disinstallare, se possibile, gli ultimi programmi o aggiornamenti installati")
-          (descrizione "Potrebbe essere necessario disinstallare gli ultimi programmi o aggiornamenti di sistema installati.")
+(soluzione (attributo rimuovi-SW-installato)
+          (titolo "Disinstallare gli ultimi programmi o aggiornamenti installati")
+          (descrizione "Si consiglia di disinstallare, se possibile, gli ultimi programmi o aggiornamenti di sistema installati prima che si verificasse il problema.
+             In alternativa si consiglia di rivolgersi ad un centro riparazioni specializzato.")
+)
+
+
+
+(soluzione (attributo sostituisci-RAM)
+          (titolo "Sostituire la memoria RAM")
+          (descrizione "Si consiglia di sostituire la memoria RAM. E' possibile che la memoria sia composta da diversi banchi e solo uno di questi sia guasto.
+             E' consigliabile rimuovere un banco alla volta e verificare se il problema si risolve prima di procedere alla sostituzione.")
+)
+
+(soluzione (attributo sostituisci-CPU)
+          (titolo "Sostituire il processore")
+          (descrizione "Si consiglia di sostituire il processore con un modello compatibile.")
+)
+
+(soluzione (attributo riaggancia-RAM)
+          (titolo "Sganciare e riagganciare la memoria RAM")
+          (descrizione "Si consiglia di sganciare e riagganciare tutti i banchi di memoria RAM e verificare se il problema si risolve. Questa operazione richiede
+             l'apertura del dispositivo e quindi si consiglia di rivolgersi ad un centro riparazioni specializzato.")
+)
+
+(soluzione (attributo riaggancia-CPU)
+          (titolo "Sganciare e riagganciare il processore")
+          (descrizione "Si consiglia di sganciare e riagganciare il processore e il suo dissipatore e verificare se il problema si risolve. Questa operazione
+             richiede l'apertura del dispositivo e quindi si consiglia di rivolgersi ad un centro riparazioni specializzato.")
+)
+
+(soluzione (attributo riaggancia-VGA)
+          (titolo "Sganciare e riagganciare la scheda video")
+          (descrizione "Si consiglia di sganciare e riagganciare la scheda video e verificare se il problema si risolve. Questa operazione richiede l'apertura del
+             dispositivo e quindi si consiglia di rivolgersi ad un centro riparazioni specializzato.")
+)
+
+(soluzione (attributo manutenzione-CPU)
+          (titolo "Pulire ventole e dissipatore, riapplicare pasta termica sul processore")
+          (descrizione "Si consiglia di pulire le ventole e il dissipatore del processore verificando che quest'ultimo sia saldamente connesso sulla scheda madre.
+             Se il problema persiste allora potrebbe essere necessario riapplicare la pasta termica tra processore e dissipatore.
+             Questa operazione richiede l'apertura del dispositivo e quindi si consiglia di rivolgersi ad un centro riparazioni specializzato.")
 )

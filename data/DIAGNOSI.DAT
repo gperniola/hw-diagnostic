@@ -3,22 +3,22 @@
 
     (diagnosi (attributo cavo-alimentazione-display-scollegato)
               (titolo "Cavi del display non connessi correttamente")
-              (descrizione "I cavi video del display non sono connessi, oppure sono collegati male")
+              (descrizione "I cavi video del display non sono connessi, oppure sono collegati male.")
     )
 
     (diagnosi (attributo guasto-display)
               (titolo "Schermo danneggiato")
-              (descrizione "Lo schermo o i pixel che lo compongono potrebbero essere danneggiati o bruciati e richiedere la sostituzione completa del display.")
+              (descrizione "Lo schermo potrebbe essere irrimediabilmente danneggiato.")
     )
 
     (diagnosi (attributo guasto-vga)
               (titolo "Guasto della scheda video")
-              (descrizione "La scheda video o alcune sue componenti potrebbero essere danneggiata e richiedere la sostituzione.")
+              (descrizione "La scheda video o alcune sue componenti potrebbero essere danneggiate.")
     )
 
     (diagnosi (attributo guasto-inverter)
-              (titolo "Guasto dell'inverter o cavi video")
-              (descrizione "Alcune componenti del display quali inverter, lampade o cavi video interni potrebbero essere danneggiati.")
+              (titolo "Guasto componenti del display")
+              (descrizione "Alcune componenti del display come inverter, lampade o cavi video interni potrebbero essere danneggiati o connessi male.")
     )
 
     (diagnosi (attributo problema-SW-video)
@@ -26,10 +26,9 @@
               (descrizione "Il problema potrebbe essere di natura software, ad esempio problemi nel caricamento del sistema operativo o dei driver video.")
     )
 
-
     (diagnosi (attributo interferenze-cavo)
               (titolo "Interferenze nel segnale video")
-              (descrizione "Il problema potrebbe essere causato da un interferenza nel collegamento tra la scheda madre e il display.")
+              (descrizione "Il problema potrebbe essere causato da un interferenza nel collegamento dei cavi tra la scheda madre e il display.")
     )
 
 ;; //***************************************************************************
@@ -40,27 +39,27 @@
 
     (diagnosi (attributo alimentazione-disconnessa)
               (titolo "Alimentazione non connessa al dispositivo")
-              (descrizione "Collegare correttamente i cavi d'alimentazione e assicurarsi che ci sia passaggio di corrente.")
+              (descrizione "I cavi di alimentazione non sono correttamente connessi oppure non c'e' passaggio di corrente sulla presa elettrica.")
     )
 
     (diagnosi (attributo batteria-difettosa)
               (titolo "Guasto alla batteria del dispositivo")
-              (descrizione "La batteria potrebbe essere danneggiata.")
+              (descrizione "La batteria potrebbe essere danneggiata o esausta.")
     )
 
-    (diagnosi (attributo alimentatore-spento) ;; riconducibile ad alimentazione-disconnessa
+    (diagnosi (attributo alimentatore-spento)
               (titolo "Alimentatore spento")
-              (descrizione "Accendere l'alimentatore e verificare che il dispositivo funzioni correttamente.")
+              (descrizione " ")
     )
 
     (diagnosi (attributo alimentatore-guasto)
               (titolo "Guasto all'alimentatore")
-              (descrizione "L'alimentatore potrebbe essere guasto a causa di un corto circuito.")
+              (descrizione "L'alimentatore o alcune delle sue componenti interne potrebbero essere guaste.")
     )
 
     (diagnosi (attributo scheda-madre-guasta)
               (titolo "Guasto alla scheda madre")
-              (descrizione "La scheda madre potrebbe essere guasta a causa di un corto circuito.")
+              (descrizione "La scheda madre o alcune delle sue componenti interne potrebbero essere guaste.")
     )
 
 ;; //***************************************************************************
@@ -72,36 +71,57 @@
 
 (diagnosi (attributo batteria-CMOS-esausta)
           (titolo "Batteria CMOS esausta")
-          (descrizione "E' possibile che la batteria che alimenta il BIOS potrebbe essere esausta a causa dell'eta' o o di un lungo periodo di inattivita' del dispositivo.")
+          (descrizione "E' possibile che la batteria che alimenta il BIOS potrebbe essere esausta a causa dell'eta' o o di un lungo periodo di inattivita'
+             del dispositivo.")
 )
 
 (diagnosi (attributo errore-POST-hardware)
           (titolo "Guasto di una o piu' componenti hardware del dispositivo")
-          (descrizione "La cause che portano a questo errore possono essere innumerevoli, e' probabile che ci sia un guasto in una delle componenti hardware del dispositivo.")
+          (descrizione "E' probabile che ci sia un guasto in una delle componenti hardware del dispositivo. Come ad esempio memoria RAM, scheda video,
+             processore, disco fisso o scheda madre.")
 )
 
 (diagnosi (attributo errore-POST-boot)
           (titolo "Errore nel caricamento del sistema operativo nella fase di boot")
-          (descrizione "E' possibile che il sistema stia cercando di caricare il sistema operativo dalla memoria sbagliata (ad esempio memoria USB, CD o disco fisso secondario).")
+          (descrizione "E' possibile che il sistema stia cercando di caricare il sistema operativo dalla memoria sbagliata (ad esempio memoria USB,
+             CD o disco fisso secondario).")
 )
 
 
 (diagnosi (attributo infetto-da-virus)
           (titolo "Sistema infetto da virus o malware")
-          (descrizione "Il problema potrebbe essere causato da virus o malware che hanno compromesso alcune funzionalità critiche del sistema.")
+          (descrizione "Il problema potrebbe essere causato da virus o malware che hanno compromesso alcune funzionalita' critiche del sistema.")
 )
 
 (diagnosi (attributo problema-caricamento-SO)
           (titolo "Caricamento del sistema operativo fallito")
-          (descrizione "Le cause che possono portare a questo problema possono essere tante, e' probabile che alcuni file critici per il sistema operativo siano corrotti, oppure che possa esserci un guasto nella memoria RAM.")
+          (descrizione "Le cause che possono portare a questo problema possono essere tante, e' probabile che alcuni file critici per il sistema operativo siano
+             corrotti.")
 )
 
 (diagnosi (attributo conflitto-HW)
           (titolo "Conflitto con l'ultima componente hardware installata")
-          (descrizione "Il problema potrebbe essere causato da un incompatibilita' con il sistema dell'ultima componente hardware installata, oppure dell'installazione dei driver non andata a buon fine.")
+          (descrizione "Il problema potrebbe essere causato da un incompatibilita' con il sistema dell'ultima componente hardware installata, oppure
+             dell'installazione dei driver non andata a buon fine.")
 )
 
 (diagnosi (attributo conflitto-SW)
           (titolo "Conflitto con gli ultimi aggiornamenti o programmi installati")
-          (descrizione "Il problema potrebbe essere causato da un incompatibilita' del sistema con gli ultimi aggiornamenti o programmi installati, oppure di un aggiornamento non andato a buon fine.")
+          (descrizione "Il problema potrebbe essere causato da un incompatibilita' del sistema con gli ultimi aggiornamenti o programmi installati,
+             oppure di un aggiornamento non andato a buon fine.")
+)
+
+(diagnosi (attributo guasto-RAM)
+          (titolo "Guasto della memoria RAM")
+          (descrizione "Il problema potrebbe essere causato da un guasto localizzato nella memoria RAM.")
+)
+
+(diagnosi (attributo guasto-CPU)
+          (titolo "Guasto del processore")
+          (descrizione "Il problema potrebbe essere causato da un guasto localizzato nell processore.")
+)
+
+(diagnosi (attributo surriscaldamento-CPU)
+          (titolo "Surriscaldamento del processore")
+          (descrizione "Il problema potrebbe essere causato dal surriscaldamento eccessivo del processore.")
 )

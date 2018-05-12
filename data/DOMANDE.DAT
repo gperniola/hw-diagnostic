@@ -70,8 +70,8 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
           (descrizione-risposte "Si" "Si, ma il dispositivo si riavvia in continuazione" "No, il dispositivo non si accende")
           (spiegazione-risposte "Il dispositivo si accende" "Il dispositivo si riavvia in continuazione" "Il dispositivo non si accende")
 (spiegazione "Questa domanda permette di capire se il problema e' legato alle componenti responsabili per l'alimentazione elettrica del dispositivo.")
-(help "Nel caso di un PC Desktop, il pulsante e' posto sulla parte frontale del case. Nel caso di un PC portatile, il pulsante e' solitamente situato sopra la tastiera.
-Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda (In alcuni casi la spia e' posta sul pulsante stesso).")
+(help "Nel caso di un PC Desktop, il pulsante e' posto sulla parte frontale del case. Nel caso di un PC portatile, il pulsante e' solitamente situato sopra la
+tastiera. Verificate che dopo aver premuto il pulsante la spia di alimentazione si accenda (In alcuni casi la spia e' posta sul pulsante stesso).")
 )
 
 (domanda  (attributo controllo-accensione-ut-inesperto)
@@ -86,7 +86,8 @@ controllate se ci sono spie che si illuminano o se le ventole sembrano cominciar
 
 
 (domanda  (attributo alimentazione-collegata)
-(testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato al dispositivo e alla presa elettrica. Verificate anche che ci sia passaggio di corrente sulla presa.")
+(testo-domanda "Assicurarsi che il cavo di alimentazione sia correttamente collegato al dispositivo e alla presa elettrica. Verificate anche che ci sia passaggio di
+corrente sulla presa.")
           (risposte-valide si no )
           (descrizione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende" "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
           (spiegazione-risposte "Il cavo e' collegato correttamente ma il dispositivo non si accende" "Il cavo non e' collegato oppure non c'e' alimentazione elettrica sulla presa")
@@ -100,8 +101,8 @@ Nel caso di un PC portatile la presa potrebbe essere posta sul retro o su uno de
 (domanda  (attributo batteria-difettosa)
 (testo-domanda "Rimuovere la batteria del dispositivo e premere nuovamente il tasto di accensione.")
           (risposte-valide si no )
-          (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
-          (spiegazione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria è stata rimossa ma il dispositivo continua a non accendersi")
+          (descrizione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria e' stata rimossa ma il dispositivo continua a non accendersi")
+          (spiegazione-risposte "Il dispositivo si accende correttamente senza la batteria" "La batteria e' stata rimossa ma il dispositivo continua a non accendersi")
 (spiegazione "E' possibile che un guasto alla batteria non permetta al dispositivo di avviarsi anche se questo e' connesso alla rete elettrica domestica.")
 (help "Solitamente la batteria e' locata nella parte inferiore ed e' necessario capovolgere il dispositivo per accedervi. Per sganciarla potrebbe essere
 necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare il manuale del dispositivo.")
@@ -113,11 +114,13 @@ necessario premere uno o piu' tasti. In caso di dubbi si consiglia di consultare
           (descrizione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi" "L'interruttore dell'alimentatore e' spento")
           (spiegazione-risposte "L'interrutore e' correttamente acceso ma il dispositivo continua a non accendersi" "L'interruttore dell'alimentatore e' spento")
 (spiegazione "E' necessario che l'alimentatore sia acceso per permettere al dispositivo di funzionare correttamente")
-(help "L'interruttore e' situato sull'alimentatore, accanto al cavo di alimentazione nella parte posteriore del case. Su alcuni modelli l'interruttore potrebbe non essere presente.")
+(help "L'interruttore e' situato sull'alimentatore, accanto al cavo di alimentazione nella parte posteriore del case. Su alcuni modelli l'interruttore potrebbe
+non essere presente.")
 )
 
 (domanda  (attributo spia-alimentatore-pcportatile)
-(testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
+(testo-domanda "Sull'alimentatore esterno o sul portatile stesso dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione
+elettrica. La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
       (spiegazione-risposte "La spia dell'alimentatore e' accesa" "La spia dell'alimentatore e' spenta" "Non si sa se la spia dell'alimentatore sia accesa o spenta")
@@ -127,7 +130,8 @@ accanto alla spina dell'alimentazione")
 )
 
 (domanda  (attributo spia-alimentatore-pcdesktop)
-(testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica. La spia e' accesa? ")
+(testo-domanda "Sulla parte posteriore del case dovrebbe esserci una spia che si accende quando il dispositivo e' collegato all'alimentazione elettrica.
+La spia e' accesa? ")
       (risposte-valide accesa spenta sconosciuto )
       (descrizione-risposte "Si, la spia e' accesa" "No, la spia non e' accesa" "Non so / Non riesco a localizzare la spia")
       (spiegazione-risposte "La spia dell'alimentatore e' accesa" "La spia dell'alimentatore e' spenta" "Non si sa se la spia dell'alimentatore sia accesa o spenta")
@@ -154,10 +158,10 @@ accanto alla spina dell'alimentazione")
           (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
           (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
           (spiegazione-risposte "C'e' un problema video e il monitor presenta linee o fasce colorate verticali" "C'e' un problema video e il monitor presenta linee orizzontali" "C'e' un problema video e il monitor presenta macchie nere che coprono porzioni dello schermo" "C'e' un problema video e lo schermo e' completamente nero")
-(spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o scheda video, oppure se potrebbe essere
-causato da un interferenza del segnale video.")
-(help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte (ad esempio, le fasce potrebbero essere
-intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
+(spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o
+scheda video, oppure se potrebbe essere causato da un interferenza del segnale video.")
+(help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte
+(ad esempio, le fasce potrebbero essere intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
 )
 
 (domanda  (attributo monitor-esterno)
@@ -167,21 +171,25 @@ intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicin
           "Si, ma il monitor esterno presenta lo stesso problema del monitor principale"
           "No, non dispongo di un altro monitor")
           (spiegazione-risposte "Il monitor esterno non presenta i problemi del monitor principale" "Il monitor esterno presenta lo stesso problema del monitor principale" "L'utente non dispone di un altro monitor")
-(spiegazione "Se in possesso di un altro monitor, questa domanda permette di capire se il problema e' dovuto ad un guasto del monitor o di qualche altro componente del dispositivo.")
-(help "Se il dispositivo e' un PC desktop allora e' possibile collegare il monitor secondario al posto di quello normalmente utilizzato e verificare se il problema persiste.
-Se il dispositivo e' un PC portatile, e' necessario verificare che sia presente una presa per poter collegare un monitor esterno. Solitamente queste prese sono posizionate sui lati del dispositivo.
-ATTENZIONE: E' necessario verificare che il monitor esterno abbia una presa compatibile a quella del dispositivo. In caso di dubbi si consiglia di verificare sul manuale del PC e del monitor.")
+(spiegazione "Se in possesso di un altro monitor, questa domanda permette di capire se il problema e' dovuto ad un guasto del monitor o di qualche altro
+componente del dispositivo.")
+(help "Se il dispositivo e' un PC desktop allora e' possibile collegare il monitor secondario al posto di quello normalmente utilizzato e verificare se il
+problema persiste. Se il dispositivo e' un PC portatile, e' necessario verificare che sia presente una presa per poter collegare un monitor esterno. Solitamente
+queste prese sono posizionate sui lati del dispositivo. E' necessario verificare che il monitor esterno abbia una presa compatibile a quella del dispositivo.
+In caso di dubbi si consiglia di verificare sul manuale del PC e del monitor.")
 )
 
 
 (domanda  (attributo problema-video-all-avvio)
-(testo-domanda "Il problema si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al momento del caricamento del sistema operativo?")
+(testo-domanda "Il problema si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al
+momento del caricamento del sistema operativo?")
           (risposte-valide si no)
           (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
           (spiegazione-risposte "Il problema video si manifesta sin dall'avvio" "Il problema video si manifesta in un secondo momento e non sin dall'accensione")
-(spiegazione "Se il problema si manifesta sin dal momento in cui il monitor si attiva, allora ci sono buone probabilita' che il problema sia dovuto ad un guasto di una componente come monitor o scheda video
-piuttosto che ad un errore di natura software.")
-(help "Controllate il monitor al momento dell'accensione del dispositivo. Verificate se il problema appare sin da subito oppure se nelle prime schermate non c'e' nessun problema video. ")
+(spiegazione "Se il problema si manifesta sin dal momento in cui il monitor si attiva, allora ci sono buone probabilita' che il problema sia dovuto ad un guasto di
+una componente come monitor o scheda video piuttosto che ad un errore di natura software.")
+(help "Controllate il monitor al momento dell'accensione del dispositivo. Verificate se il problema appare sin da subito oppure se nelle prime schermate non c'e'
+nessun problema video. ")
 )
 
 (domanda  (attributo cavo-alimentazione-display)
@@ -192,19 +200,20 @@ piuttosto che ad un errore di natura software.")
           (spiegazione-risposte "I cavi del monitor sono correttamente collegati" "I cavi non sono correttamente collegati oppure il display non e' acceso")
 (spiegazione "Per il corretto funzionamento del monitor e' necessario che  sia il cavo di alimentazione che quello del segnale video siano correttamente collegati.")
 (help "Assicuratevi che il cavo di alimentazione del monitor sia collegato alla rete elettrica domestica. Controllate che sulla presa ci sia passaggio di corrente,
-ad esempio collegandovi una lampada e verificando che si accenda. Verificate anche che il cavo del segnale video (di solito una spina di colore blu o grigia) sia correttamente
-correttametne connessa sia al monitor sia sul retro del case del PC. Infine, assicuratevi che il monitor sia acceso.")
+ad esempio collegandovi una lampada e verificando che si accenda. Verificate anche che il cavo del segnale video (di solito una spina di colore blu o grigia)
+sia correttamente correttamente connessa sia al monitor sia sul retro del case del PC. Infine, assicuratevi che il monitor sia acceso.")
 )
 
-(domanda  (attributo muovere-cavi-display)
-          (testo-domanda "Verificare che la spina del cavo video sia correttamente inserita nella presa. Provate a reinserire la spina e controllate se il problema sparisce.")
-          (risposte-valide risolto non-risolto )
-          (descrizione-risposte "Risistemando i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
-          (spiegazione-risposte "Muovendo i cavi il problema video si risolve ""I cavi del monitor sono correttamente collegati")
-(spiegazione "A volte, se la spina del cavo video non e' saldamente collegata possono verificarsi dei disturbi sul monitor.")
-(help "Assicuratevi che la spina del cavo video sia saldamente connessa sia dietro il monitor e sia sulla parte posteriore del case (la spina e' di solito di colore blu o grigia).
-Con il PC acceso, provate a staccare e reinserire la spina e osservate se il problema sul monitor sparisce.")
-)
+; // (domanda  (attributo muovere-cavi-display)
+; //           (testo-domanda "Verificare che la spina del cavo video sia correttamente inserita nella presa. Provate a reinserire la spina e controllate se il
+; //           problema sparisce.")
+; //           (risposte-valide risolto non-risolto )
+; //           (descrizione-risposte "Risistemando i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
+; //           (spiegazione-risposte "Muovendo i cavi il problema video si risolve ""I cavi del monitor sono correttamente collegati")
+; // (spiegazione "A volte, se la spina del cavo video non e' saldamente collegata possono verificarsi dei disturbi sul monitor.")
+; // (help "Assicuratevi che la spina del cavo video sia saldamente connessa sia dietro il monitor e sia sulla parte posteriore del case (la spina e' di solito di colore blu o grigia).
+; // Con il PC acceso, provate a staccare e reinserire la spina e osservate se il problema sul monitor sparisce.")
+; // )
 
 ;; //***************************************************************************
 
@@ -217,7 +226,8 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
           (risposte-valide si no )
           (descrizione-risposte "Si" "No")
           (spiegazione-risposte "Il dispositivo e' inattivo da oltre due mesi o viene usato raramente" "Il dispositivo viene usato costantemente e non e' inattivo da molto tempo")
-(spiegazione "Un lungo periodo di inattività del dispositivo potrebbe velocizzare il processo con cui la batteria del BIOS si scarica, portando quindi alla necessita' di sostituirla.")
+(spiegazione "Un lungo periodo di inattivita' del dispositivo potrebbe velocizzare il processo con cui la batteria del BIOS si scarica, portando quindi alla
+necessita' di sostituirla.")
 (help "Rispondere 'Si' se il dispositivo e' inutilizzato da almeno due mesi oppure se lo si utilizza per pochissimo tempo con lunghi periodi di inattivita' nel mezzo. ")
 
 )
@@ -239,9 +249,11 @@ Con il PC acceso, provate a staccare e reinserire la spina e osservate se il pro
           "Si, sono stati installati nuovi programmi software"
           "Si, sono stati installati aggiornamenti del sistema" "No" "Non so")
           (spiegazione-risposte "Sono state installate nuove componenti hardware" "Sono stati installati nuovi programmi software" "Sono stati installati aggiornamenti del sistema" "Non sono stati installati software o componenti hardware" "L'utente non sa se sono stati installati software o componenti hardware")
-(spiegazione "Spesso una delle cause piu' comuni ai problemi del caricamento del sistema operativo e' l'installazione di nuove componenti nel sistema. Questo puo' essere causato
-da problemi su diversi livelli, ad esempio la nuova componente potrebbe non essere compatibile, oppure l'istallazione potrebbe non essere andata a buon fine.")
-(help "Indicare se sono state installate nuove componenti nel sistema. Per componenti hardware si intendono anche periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor o memorie esterne.")
+(spiegazione "Spesso una delle cause piu' comuni ai problemi del caricamento del sistema operativo e' l'installazione di nuove componenti nel sistema. Questo puo'
+essere causato da problemi su diversi livelli, ad esempio la nuova componente potrebbe non essere compatibile, oppure l'istallazione potrebbe non essere andata a
+buon fine.")
+(help "Indicare se sono state installate nuove componenti nel sistema. Per componenti hardware si intendono anche periferiche connesse ad esempio tramite USB o cavi,
+come stampanti, monitor o memorie esterne.")
 )
 
 
@@ -250,35 +262,101 @@ da problemi su diversi livelli, ad esempio la nuova componente potrebbe non esse
 (testo-domanda "Il dispositivo manifesta problemi nella fase di controllo del BIOS? (Ovvero prima del caricamento del sistema operativo)")
           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-                                "Il dispositivo si blocca/riavvia dopo un beep code"
+                                "Il dispositivo si blocca/riavvia dopo un codice acustico"
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
           (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-                                "Il dispositivo si blocca/riavvia dopo un beep code"
+                                "Il dispositivo si blocca/riavvia dopo un codice acustico"
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del sistema operativo.")
-(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare da qualche secondo fino ad un minuto ed
-e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi riscontrabili piu' comuni.")
+(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
+sistema operativo.")
+(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
+durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i
+problemi riscontrabili piu' comuni.")
 )
 
 (domanda  (attributo fase-POST-ut-inesperto)
-(testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere.
-          Questa fase e' caratterizzata da diverse schermate con testo bianco su sfondo nero che si susseguono fino a quando il logo di Windows appare sullo schermo. Si verificano errori in questa fase?")
+(testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere. Questa fase e' caratterizzata da diverse
+schermate con testo bianco su sfondo nero che si susseguono fino a quando il logo di Windows appare sullo schermo. Si verificano errori in questa fase?")
           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice sonoro"
+                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice acustico"
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
           (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice sonoro"
+                                "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice acustico"
                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
                                 "Il dispositivo si riavvia senza mostrare errori"
                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del sistema operativo.")
-(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare da qualche secondo fino ad un minuto ed
-e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi riscontrabili piu' comuni.")
+(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
+sistema operativo.")
+(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare
+da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi
+riscontrabili piu' comuni.")
+)
+
+
+
+
+(domanda  (attributo versione-bios)
+(testo-domanda "Si conosce il nome del produttore della scheda madre o del BIOS? Se si, e' presente nella seguente lista?")
+          (risposte-valide ami-bios award-bios asus asrock intel sconosciuto)
+          (descrizione-risposte "AMI (American Megatrends) BIOS" "AWARD BIOS" "Asus" "ASRock" "Intel" "Non so / Non e' presente in lista")
+          (spiegazione-risposte "Il BIOS del dispositivo e' prodotto dalla AMI (American Megatrends)" "Il BIOS del dispositivo e' prodotto dalla AWARD" "La scheda madre e' prodotta dalla Asus" "La scheda madre e' prodotta dalla ASRock" "La scheda madre e' prodotta dalla Intel" "L'utente non conosce il produttore della scheda madre oppure non e' presente tra quelli elencati")
+(spiegazione "Ogni produttore di schede madri adotta un proprio insieme di codici acustici per indicare il tipo di problema che affligge il dispositivo, questa
+domanda ci aiuta a stabilire quale potrebbe essere il significato del codice acustico trovato dall'utente")
+(help "Il nome del produttore della scheda madre e' indicato sul manuale, in alternativa il nome del produttore dovrebbe apparire sullo schermo subito dopo aver
+acceso il dispositivo.")
+)
+
+(domanda  (attributo ami-beep-codes)
+(testo-domanda "Ascoltate attentamente il codice acustico prodotto dal dispositivo. Verificate se il codice e' presente nella seguente lista.")
+          (risposte-valide ami-1-4S ami-5S ami-6-7S ami-8S ami-9S ami-1L2S ami-1L3S altro)
+          (descrizione-risposte "Da uno a quattro beep brevi" "Cinque beep brevi" "Da sei a sette beep brevi" "otto beep brevi" "nove beep brevi" "ue beep brevi" "Un beep lungo seguito da tre beep brevi" "Il codice ascoltato non e' presente in questa lista")
+          (spiegazione-risposte "Il dispositivo emana da uno a quattro beep brevi" "Il dispositivo emana cinque beep brevi" "Il dispositivo emana da sei a sette beep brevi" "Il dispositivo emana otto beep brevi" "Il dispositivo emana nove beep brevi"
+          "Il dispositivo emana un beep lungo seguito da due beep brevi" "Il dispositivo emana un beep lungo seguito da tre beep brevi" "Il codice acustico ascoltato dall'utente non e' presente nella lista presentata")
+(spiegazione "Ogni produttore di schede madri adotta un proprio insieme di codici acustici per indicare il tipo di problema che affligge il dispositivo, questa
+domanda ci permette di identificare meglio il problema che affligge il dispositivo se il codice e' presente nella lista")
+(help "Una volta avviato il dispositivo ascoltate attentamente il codice acustico, facendo attenzione alla presenza di segnali piu' brevi e altri piu' lunghi.
+E' possibile riavviare il dispositivo per riascoltare il codice piu' volte.")
+)
+
+(domanda  (attributo award-beep-codes)
+(testo-domanda "Ascoltate attentamente il codice acustico prodotto dal dispositivo. Verificate se il codice e' presente nella seguente lista.")
+          (risposte-valide award-1L2S award-1L3S award-beep-ripetuto award-hi-lo award-beep-costante altro)
+          (descrizione-risposte "Un beep lungo seguito da due beep brevi" "Un beep lungo seguito da tre beep brevi" "Un beep breve che si ripete in continuazione" "Due beep di diversa tonalita' che si alternano" "Un beep costante che dura fino allo spegnimento del dispositivo" "Il codice ascoltato non e' presente in questa lista")
+          (spiegazione-risposte "Il dispositivo emana un beep lungo seguito da due beep brevi" "Il dispositivo emana un beep lungo seguito da tre beep brevi" "Il dispositivo emana un beep che si ripete in continuazione"
+          "Il dispositivo emana due beep di diversa tonalita' che si alternano" "Il dispositivo emana un beep costante che dura fino allo spegnimento del dispositivo" "Il codice acustico ascoltato dall'utente non e' presente nella lista presentata")
+(spiegazione "Ogni produttore di schede madri adotta un proprio insieme di codici acustici per indicare il tipo di problema che affligge il dispositivo, questa
+domanda ci permette di identificare meglio il problema che affligge il dispositivo se il codice e' presente nella lista")
+(help "Una volta avviato il dispositivo ascoltate attentamente il codice acustico, facendo attenzione alla presenza di segnali piu' brevi e altri piu' lunghi.
+E' possibile riavviare il dispositivo per riascoltare il codice piu' volte.")
+)
+
+(domanda  (attributo asus-beep-codes)
+(testo-domanda "Ascoltate attentamente il codice acustico prodotto dal dispositivo. Verificate se il codice e' presente nella seguente lista.")
+          (risposte-valide asus-1L2S asus-1L3S asus-1L4S altro)
+          (descrizione-risposte "Un beep lungo seguito da due beep brevi" "Un beep lungo seguito da tre beep brevi" "Un beep lungo seguito da quattro beep brevi" "Il codice ascoltato non e' presente in questa lista")
+          (spiegazione-risposte "Il dispositivo emana un beep lungo seguito da due beep brevi" "Il dispositivo emana un beep lungo seguito da tre beep brevi" "Il dispositivo emana un beep lungo seguito da quattro beep brevi"
+          "Il codice acustico ascoltato dall'utente non e' presente nella lista presentata")
+(spiegazione "Ogni produttore di schede madri adotta un proprio insieme di codici acustici per indicare il tipo di problema che affligge il dispositivo, questa
+domanda ci permette di identificare meglio il problema che affligge il dispositivo se il codice e' presente nella lista")
+(help "Una volta avviato il dispositivo ascoltate attentamente il codice acustico, facendo attenzione alla presenza di segnali piu' brevi e altri piu' lunghi.
+E' possibile riavviare il dispositivo per riascoltare il codice piu' volte.")
+)
+
+(domanda  (attributo intel-beep-codes)
+(testo-domanda "Ascoltate attentamente il codice acustico prodotto dal dispositivo. Verificate se il codice e' presente nella seguente lista.")
+          (risposte-valide intel-2S intel-3S intel-hi-lo altro)
+          (descrizione-risposte "Due beep brevi" "Tre beep brevi" "Due beep di diversa tonalita' che si alternano" "Il codice ascoltato non e' presente in questa lista")
+          (spiegazione-risposte "Il dispositivo emana due beep brevi" "Il dispositivo emana tre beep brevi" "Il dispositivo emana due beep di diversa tonalita' che si alternano"
+          "Il codice acustico ascoltato dall'utente non e' presente nella lista presentata")
+(spiegazione "Ogni produttore di schede madri adotta un proprio insieme di codici acustici per indicare il tipo di problema che affligge il dispositivo,
+questa domanda ci permette di identificare meglio il problema che affligge il dispositivo se il codice e' presente nella lista")
+(help "Una volta avviato il dispositivo ascoltate attentamente il codice acustico, facendo attenzione alla presenza di segnali piu' brevi e altri piu' lunghi.
+E' possibile riavviare il dispositivo per riascoltare il codice piu' volte.")
 )

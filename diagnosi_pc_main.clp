@@ -66,7 +66,7 @@
   (bind ?aiuto (fact-slot-value ?nodo-domanda help))
   (bind ?descrizioni (fact-slot-value ?nodo-domanda descrizione-risposte))
 
-  ;(clear-window)
+  (clear-window)
   (printout t crlf crlf)
   (printout t   "***                                                 ***" crlf
                 "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
@@ -166,7 +166,7 @@
   (load "rules/modulo-stampa-diagnosi-soluzioni.clp")
   (load "rules/modulo-soluzione.clp")
   (load "rules/modulo-ritrattazione.clp")
-  ;(clear-window)
+  (clear-window)
   (assert (contatore-domande 0))
   (set-strategy random)
 )
@@ -315,6 +315,7 @@
 )
 
 (defrule eta-dispositivo-sconosciuta-1
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
@@ -324,13 +325,15 @@
 )
 
 (defrule eta-dispositivo-sconosciuta-2
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome garanzia) (valore si) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (assert (nodo (nome anni-dispositivo) (valore 0-3-anni) (certezza (* 1 ?CF1)) (descrizione "Il dispositivo potrebbe avere fino a tre anni di eta'") (nodo-padre ?id-p1)))
+  (assert (nodo (nome anni-dispositivo) (valore 0-3-anni) (certezza (* 0.9 ?CF1)) (descrizione "Il dispositivo potrebbe avere fino a tre anni di eta'") (nodo-padre ?id-p1)))
 )
 
 (defrule eta-dispositivo-sconosciuta-3
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome garanzia) (valore no) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
@@ -340,6 +343,7 @@
 )
 
 (defrule garanzia-3-anni
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore 0-3-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
@@ -348,6 +352,7 @@
 )
 
 (defrule garanzia-4-anni-piu
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore  ?val&4-6-anni|7-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   =>
   (bind ?CF (calcola-certezza 1.0 ?CF1))
@@ -356,6 +361,7 @@
 
 
 (defrule garanzia-anni-sconosciuti
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore sconosciuto) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
@@ -375,7 +381,7 @@
 )
 
 (defrule chiedi-rimuovere-batteria
-  ;***************  MODIFIED
+  ;WRITTEN DOWN
   (not (nodo (nome chiedi) (valore batteria-difettosa)))
   ?p1 <- (nodo (nome ha-batteria) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   ?p3 <- (nodo (nome controllo-accensione) (valore ?v&possibile-non-funzionante|riavvio) (certezza ?CF3) (id-nodo ?id-p3))
@@ -402,7 +408,6 @@
     ?p2 <- (nodo (nome batteria-difettosa) (valore no) (certezza ?CF2) (id-nodo ?id-p2))
   )
   =>
-  (printout t crlf FIREFIRE crlf)
   (assert (nodo (nome stato-accensione) (valore riavvio) (certezza (calcola-certezza 1 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2 ) (descrizione "Il dispositivo si riavvia da solo in continuazione")))
   (assert (nodo (nome problema-video-dispositivo) (valore no) (certezza (calcola-certezza 1 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2 ) (descrizione "Il dispositivo non soffre di problemi al display")))
 )
@@ -694,7 +699,7 @@
 
 
 (defrule diagnosi-interferenze-cavo-1
-  ;***************** EDITED
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome disturbo-video)(valore ?v&linee-orizzontali|fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
@@ -704,7 +709,7 @@
 )
 
 (defrule diagnosi-interferenze-cavo-2
-  ;***************** ADDED
+  ;WRITTEN DOWN
   ?p1 <- (nodo (nome disturbo-video)(valore ?v&linee-orizzontali|fasce-verticali)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
@@ -872,12 +877,117 @@
   (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza ?CF-diagnosi)(nodo-padre ?id-p1 ?id-p2)))
 )
 
-(defrule diagnosi-errore-beep-code
-  ;WRITTEN DOWN
+
+
+(defrule chiedi-versione-bios
   ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
-  ?p2 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (calcola-certezza 0.8 ?CF1 ?CF2))(nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome chiedi) (valore versione-bios) (nodo-padre ?id-p1)))
+)
+
+(defrule chiedi-ami-beep-codes
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ami-bios)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome chiedi) (valore ami-beep-codes) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule chiedi-award-beep-codes
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore award-bios)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome chiedi) (valore award-beep-codes) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule chiedi-asus-beep-codes
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore asus)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome chiedi) (valore asus-beep-codes) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule chiedi-intel-beep-codes
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore intel)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome chiedi) (valore intel-beep-codes) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule chiedi-asrock-beep-codes
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore asrock)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome chiedi) (valore ami-beep-codes) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule unisci-beep-codes
+  ?p1 <- (nodo(nome ?n&ami-beep-codes|award-beep-codes|asus-beep-codes|intel-beep-codes)(valore ?v)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1)(descrizione ?d))
+  =>
+  (assert (nodo (nome beep-code) (valore ?v) (certezza ?CF1) (attivo TRUE) (nodo-padre ?id-p1) (descrizione ?d)))
+)
+
+(defrule diagnosi-guasto-RAM-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&ami-1-4S|ami-1L3S|award-beep-ripetuto|asus-1L2S|intel-3S)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore guasto-RAM)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-guasto-CPU-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&ami-5S|award-hi-lo)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore guasto-CPU)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-guasto-VGA-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&ami-8S|ami-1L2S|award-1L2S|award-1L3S|asus-1L3S|intel-2S)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-surriscaldamento-CPU-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&award-beep-costante|intel-hi-lo)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore surriscaldamento-CPU)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-guasto-scheda-madre-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&ami-9S)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-errore-generico-beepcode
+  ?p1 <- (nodo(nome beep-code)(valore ?v&ami-6-7S|asus-1L4S)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome versione-bios)(valore ?x&~sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  =>
+  (bind ?CF (calcola-certezza 0.9 ?CF1 ?CF2 ?CF3))
+  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza ?CF)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
+)
+
+(defrule diagnosi-errore-beepcode
+  ;****MODDED
+  ?p1 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  (or ?p2 <- (nodo(nome versione-bios)(valore sconosciuto)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+      ?p2 <- (nodo(nome beep-code)(valore altro)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  )
+  =>
+  (assert (nodo (nome diagnosi) (valore errore-POST-hardware)(certezza (calcola-certezza 0.9 ?CF1 ?CF2))(nodo-padre ?id-p1 ?id-p2)))
   (assert (nodo (nome diagnosi) (valore CMOS-corrotta)(certezza (calcola-certezza 0.7 ?CF1 ?CF2))(nodo-padre ?id-p1 ?id-p2)))
 )
 
@@ -942,7 +1052,7 @@
 
 (defrule chiedi-inattivita-dispositivo
   ;WRITTEN DOWN
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome utente-proprietario)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
   (assert (nodo (nome chiedi) (valore inattivita-dispositivo) (nodo-padre ?id-p1 ?id-p2)))
@@ -950,7 +1060,7 @@
 
 (defrule diagnosi-batteria-CMOS-esausta-1
   ;WRITTEN DOWN
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome inattivita-dispositivo)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
   =>
@@ -960,7 +1070,7 @@
 
 (defrule diagnosi-batteria-CMOS-esausta-2
   ;WRITTEN DOWN
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome anni-dispositivo)(valore 7-anni)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
   =>
@@ -970,7 +1080,7 @@
 
 (defrule diagnosi-batteria-CMOS-esausta-3
   ;WRITTEN DOWN
-  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-beep-code|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p1 <- (nodo(nome fase-POST)(valore ?v&errore-messaggio|errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome anni-dispositivo)(valore 4-6-anni)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
   =>

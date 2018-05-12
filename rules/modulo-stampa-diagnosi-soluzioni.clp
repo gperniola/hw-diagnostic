@@ -41,7 +41,7 @@
    (deffunction chiedi-soddisfazione-utente ()
      (printout t crlf crlf "L'utente e' soddisfatto del risultato ottenuto?")
      (printout t crlf "1. Si")
-     (printout t crlf "2. No" crlf crlf)
+     (printout t crlf "2. No, voglio visualizzare una spiegazione alle diagnosi e le domande a cui ho risposto" crlf crlf)
      (printout t "Inserire risposta: ")
      (bind ?answer (read))
      (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -51,7 +51,12 @@
          (bind ?answer (read))
          (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
      )
-     (if (= ?answer 1) then (halt) else (assert (fase-ritrattazione)))
+     (if (= ?answer 1) then
+         (printout t crlf crlf "Premere INVIO per riavviare il programma..." crlf)
+         (readline)
+         (reset)
+         (run)
+     else (assert (fase-ritrattazione)))
    )
 
 
@@ -60,7 +65,7 @@
     ?f <- (fase-stampa)
     (nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE))
     =>
-    ;(clear-window)
+    (clear-window)
     (retract ?f)
     ;(facts-without-desc)
     (stampa-tutte-le-diagnosi)
@@ -72,7 +77,7 @@
     (not(nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE)))
     ?f <- (fase-stampa)
     =>
-    ;(clear-window)
+    (clear-window)
     (retract ?f)
     (printout t crlf "              *********** DIAGNOSI E SOLUZIONI TROVATE ***********" crlf crlf)
     (printout t "Purtroppo il sistema non e' stato in grado di trovare alcuna diagnosi valida." crlf)

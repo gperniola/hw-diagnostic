@@ -4,11 +4,11 @@
 
 (defrule MODULO-SOLUZIONE::guasto-hardware-si
   ;(fase-cerca-soluzioni)
-  ?p1 <- (nodo (id-nodo ?id-p1) (attivo TRUE) (nome diagnosi) (valore ?v1&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|errore-POST-hardware) (certezza ?c1))
+  ?p1 <- (nodo (id-nodo ?id-p1) (attivo TRUE) (nome diagnosi) (valore ?v1&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|guasto-RAM|guasto-CPU|errore-POST-hardware) (certezza ?c1))
       ;; assicura che p1 sia il nodo con certezza piu' alta
-  (not (nodo (id-nodo ?id-p2) (attivo TRUE) (nome diagnosi) (valore ?v2&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|errore-POST-hardware) (certezza ?c2&:(> ?c2 ?c1))))
+  (not (nodo (id-nodo ?id-p2) (attivo TRUE) (nome diagnosi) (valore ?v2&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|guasto-RAM|guasto-CPU|errore-POST-hardware) (certezza ?c2&:(> ?c2 ?c1))))
       ;; se abbiamo due o piu' nodi con la stessa certezza massima, prendiamo sempre il nodo con id piu' alto per evitare di attivare la stessa regola piu' volte
-  (not (nodo (id-nodo ?id-p3&:(> ?id-p3 ?id-p1))(attivo TRUE) (nome diagnosi) (valore ?v3&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|errore-POST-hardware)(certezza ?c3&:(eq ?c3 ?c1))))
+  (not (nodo (id-nodo ?id-p3&:(> ?id-p3 ?id-p1))(attivo TRUE) (nome diagnosi) (valore ?v3&batteria-difettosa|alimentatore-guasto|scheda-madre-guasta|guasto-display|guasto-vga|guasto-inverter|guasto-RAM|guasto-CPU|errore-POST-hardware)(certezza ?c3&:(eq ?c3 ?c1))))
   =>
   (assert (nodo (nome guasto-hardware) (valore si) (certezza (* 1 ?c1)) (nodo-padre ?id-p1) (descrizione "Almeno una componente hardware del dispositivo e' guasta.")))
 )
@@ -43,6 +43,51 @@
     ?p1 <- (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
     =>
     (assert (nodo (nome soluzione) (valore sostituisci-alimentatore) (certezza (* 1 ?c1)) (nodo-padre ?id-p1)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-sostituisci-RAM
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore guasto-RAM) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    =>
+    (assert (nodo (nome soluzione) (valore sostituisci-RAM) (certezza (* 1 ?c1)) (nodo-padre ?id-p1)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-riaggancia-RAM
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore guasto-RAM) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    =>
+    (assert (nodo (nome soluzione) (valore riaggancia-RAM) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-sostituisci-CPU
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore guasto-CPU) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    =>
+    (assert (nodo (nome soluzione) (valore sostituisci-CPU) (certezza (* 1 ?c1)) (nodo-padre ?id-p1)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-riaggancia-CPU
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore guasto-CPU) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    =>
+    (assert (nodo (nome soluzione) (valore riaggancia-CPU) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-riaggancia-VGA
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore guasto-vga) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    =>
+    (assert (nodo (nome soluzione) (valore riaggancia-VGA) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-manutenzione-CPU
+    ;(fase-cerca-soluzioni)
+    ?p1 <- (nodo (nome diagnosi) (valore surriscaldamento-CPU) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+    =>
+    (assert (nodo (nome soluzione) (valore manutenzione-CPU) (certezza (* 1 ?c1)) (nodo-padre ?id-p1)))
 )
 
 (defrule MODULO-SOLUZIONE::soluzione-sostituisci-scheda-madre
@@ -86,11 +131,22 @@
   (assert (nodo (nome soluzione) (valore connetti-cavi-video) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
 )
 
-(defrule MODULO-SOLUZIONE::soluzione-sostituisci-display
+(defrule MODULO-SOLUZIONE::soluzione-sostituisci-display-1
   ;(fase-cerca-soluzioni)
+  ;;******MODIFIED
   ?p1 <- (nodo (nome diagnosi) (valore guasto-display) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
-  (assert (nodo (nome soluzione) (valore sostituisci-display) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
+  (assert (nodo (nome soluzione) (valore sostituisci-display-portatile) (certezza (calcola-certezza 1.0 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-sostituisci-display-2
+  ;(fase-cerca-soluzioni)
+    ;;******ADDED
+  ?p1 <- (nodo (nome diagnosi) (valore guasto-display) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  =>
+  (assert (nodo (nome soluzione) (valore sostituisci-display-desktop) (certezza (calcola-certezza 1.0 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule MODULO-SOLUZIONE::soluzione-sostituisci-vga
