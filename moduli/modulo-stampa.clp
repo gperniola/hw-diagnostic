@@ -1,4 +1,4 @@
-(defmodule MODULO-STAMPA-DIAGNOSI-SOLUZIONI(import MAIN ?ALL)(export ?ALL))
+(defmodule MODULO-STAMPA(import MAIN ?ALL)(export ?ALL))
 
 
   (deffunction ordinamento-per-certezza (?f1 ?f2)
@@ -61,7 +61,7 @@
 
 
 
-   (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-trovata
+   (defrule MODULO-STAMPA::diagnosi-trovata
     ?f <- (fase-stampa)
     (nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE))
     =>
@@ -73,7 +73,7 @@
     (chiedi-soddisfazione-utente)
    )
 
-   (defrule MODULO-STAMPA-DIAGNOSI-SOLUZIONI::diagnosi-non-trovata
+   (defrule MODULO-STAMPA::diagnosi-non-trovata
     (not(nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE)))
     ?f <- (fase-stampa)
     =>

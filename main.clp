@@ -163,7 +163,7 @@
   (load-facts "data/DOMANDE.DAT")
   (load-facts "data/DIAGNOSI.DAT")
   (load-facts "data/SOLUZIONI.DAT")
-  (load "rules/modulo-stampa-diagnosi-soluzioni.clp")
+  (load "rules/modulo-stampa.clp")
   (load "rules/modulo-soluzione.clp")
   (load "rules/modulo-ritrattazione.clp")
   (clear-window)
@@ -203,7 +203,7 @@
   =>
   (retract ?f)
   (assert (fase-stampa))
-  (focus  MODULO-STAMPA-DIAGNOSI-SOLUZIONI)
+  (focus  MODULO-STAMPA)
 )
 
 (defrule MAIN::passa-a-modulo-ritrattazione

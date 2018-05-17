@@ -1,4 +1,4 @@
-(load "diagnosi_pc_main.clp")
+(load "main.clp")
 (reset)
 (run)
 
