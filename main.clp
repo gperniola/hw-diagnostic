@@ -6,10 +6,16 @@
 (defglobal ?*lowest-priority* = -1000)
 
 (defglobal ?*id* = 0)
+(defglobal ?*num-domande-chieste* = 0)
 
 (deffunction next-id ()
    (bind ?*id* (+ ?*id* 1))
    (return ?*id*)
+)
+
+(deffunction next-num-domanda ()
+   (bind ?*num-domande-chieste* (+ ?*num-domande-chieste* 1))
+   (return ?*num-domande-chieste*)
 )
 
 ;;******************
@@ -177,11 +183,11 @@
   (nodo (nome anni-dispositivo) (id-nodo ?id-p3) (attivo TRUE))
   (nodo (nome garanzia) (id-nodo ?id-p4) (attivo TRUE))
   (nodo (nome tipo-dispositivo) (id-nodo ?id-p5) (attivo TRUE))
-  (nodo (nome ha-batteria) (id-nodo ?id-p6) (attivo TRUE))
+  ;(nodo (nome ha-batteria) (id-nodo ?id-p6) (attivo TRUE))
   (nodo (nome utente-proprietario) (id-nodo ?id-p7) (attivo TRUE))
   =>
-  (set-strategy depth)
-  (assert (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (nodo-padre ?id-p1 ?id-p3 ?id-p4 ?id-p5 ?id-p6 ?id-p7)))
+  (set-strategy complexity)
+  (assert (nodo (nome nodo-di-collegamento) (valore avvia-ricerca-diagnosi) (nodo-padre ?id-p1 ?id-p3 ?id-p4 ?id-p5 ?id-p7)))
   )
 
 
@@ -234,6 +240,68 @@
   (assert (nodo (nome ?attr) (valore (nth$ ?risposta ?risposte)) (descrizione (nth$ ?risposta ?sp-risposte)) (sorgente-info utente) (nodo-padre ?id-ask)))
 )
 
+(deffunction get-descrizione-risposta(?attributo ?risposta)
+    (bind ?dom (find-fact ((?d domanda))(eq ?d:attributo ?attributo)))
+    (bind ?domanda (nth$ 1 ?dom))
+
+    (bind ?risposte-valide (fact-slot-value ?domanda risposte-valide))
+    (bind ?spiegazioni-valide (fact-slot-value ?domanda spiegazione-risposte))
+
+    (loop-for-count (?cnt1 1 (length ?risposte-valide)) do
+        (if (eq ?risposta (nth$ ?cnt1 ?risposte-valide)) then (return (nth$ ?cnt1 ?spiegazioni-valide)))
+    )
+)
+
+(deffunction chiedi-domanda-fnz(?attributo)
+    (bind ?dom (find-fact ((?d domanda))(eq ?d:attributo ?attributo)))
+    (bind ?domanda (nth$ 1 ?dom))
+
+    ;(bind ?num-domanda (fact-slot-value ?domanda num-domanda))
+    (bind ?testo-domanda (fact-slot-value ?domanda testo-domanda))
+    (bind ?risposte-valide (fact-slot-value ?domanda risposte-valide))
+    (bind ?descrizioni (fact-slot-value ?domanda descrizione-risposte))
+    (bind ?spiegazioni-valide (fact-slot-value ?domanda spiegazione-risposte))
+    (bind ?spiegazione (fact-slot-value ?domanda spiegazione))
+    (bind ?aiuto (fact-slot-value ?domanda help))
+
+    (bind ?num-domanda (next-num-domanda))
+
+    (clear-window)
+    (printout t crlf crlf)
+    (printout t   "***                                                 ***" crlf
+                  "**  SISTEMA DIAGNOSTICO PER DISPOSITIVI ELETTRONICI  **" crlf
+                  "*                         ***                          *" crlf
+                  "*     Rispondere alle domande inserendo il numero     *" crlf
+                  "**       corrispondente alla risposta corretta.      **" crlf
+                  "***                                                 ***" crlf crlf)
+
+    (printout t "***** DOMANDA N." ?num-domanda " *****" crlf)
+    (format t "%s%n%n" ?testo-domanda)
+    (loop-for-count (?cnt1 1 (length ?descrizioni)) do
+        (printout t ?cnt1 ". " (nth$ ?cnt1 ?descrizioni) crlf)
+    )
+    (printout t crlf "9. Perche' questa domanda?")
+    (printout t crlf "0. Aiutami a rispondere a questa domanda." crlf crlf)
+    (printout t "Inserire risposta: ")
+    (bind ?answer (read))
+    (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+
+    (while (not (and (>= ?answer 1) (<= ?answer (length ?descrizioni))))
+        (if (= ?answer 0) then (printout t ?aiuto crlf crlf))
+        (if (= ?answer 9) then (printout t ?spiegazione crlf crlf))
+        (printout t "Inserire risposta: ")
+        (bind ?answer (read))
+        (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+    )
+    (printout t crlf crlf)
+
+    (modify ?domanda (num-domanda ?*num-domande-chieste*) (gia-chiesta TRUE) (risposta-selezionata ?answer))
+
+    (return (nth$ ?answer ?risposte-valide))
+
+
+)
+
 ;;******************************************************************************
 ;;*    REGOLE PER CHIDERE DOMANDE ALL'UTENTE                                   *
 ;;******************************************************************************
@@ -246,10 +314,13 @@
 
 (defrule chiedi-tipo-dispositivo
   ;WRITTEN DOWN
-  (not (nodo (nome chiedi) (valore tipo-dispositivo)))
-  (domanda (attributo tipo-dispositivo)(gia-chiesta FALSE))
+  ;(not (nodo (nome chiedi) (valore tipo-dispositivo)))
+  (domanda (attributo ?attr&tipo-dispositivo)(gia-chiesta FALSE))
   =>
-  (assert (nodo (nome chiedi) (valore tipo-dispositivo)))
+  (bind ?val (chiedi-domanda-fnz ?attr))
+  (bind ?desc (get-descrizione-risposta ?attr ?val))
+  (assert (nodo (nome ?attr) (valore ?val) (sorgente-info utente) (descrizione ?desc)))
+  ;(assert (nodo (nome chiedi) (valore tipo-dispositivo)))
 )
 
 (defrule chiedi-utente-proprietario
@@ -257,7 +328,9 @@
   (not (nodo (nome chiedi) (valore utente-proprietario)))
   (domanda (attributo utente-proprietario)(gia-chiesta FALSE))
   =>
-  (assert (nodo (nome chiedi) (valore utente-proprietario)))
+  ;(assert (nodo (nome chiedi) (valore utente-proprietario)))
+  (bind ?f (chiedi-domanda-fnz utente-proprietario))
+  (assert (nodo (nome utente-proprietario) (valore ?f)))
 )
 
 (defrule chiedi-esperienza-utente
@@ -265,7 +338,9 @@
   (not (nodo (nome chiedi) (valore esperienza-utente)))
   (domanda (attributo esperienza-utente)(gia-chiesta FALSE))
   =>
-  (assert (nodo (nome chiedi) (valore esperienza-utente)))
+  ;(assert (nodo (nome chiedi) (valore esperienza-utente)))
+  (bind ?f (chiedi-domanda-fnz esperienza-utente))
+  (assert (nodo (nome esperienza-utente) (valore ?f)))
 )
 
 (defrule chiedi-anni-dispositivo
@@ -273,26 +348,23 @@
   (not (nodo (nome chiedi) (valore anni-dispositivo)))
   (domanda (attributo anni-dispositivo)(gia-chiesta FALSE))
   =>
-  (assert (nodo (nome chiedi) (valore anni-dispositivo)))
+  ;(assert (nodo (nome chiedi) (valore anni-dispositivo)))
+  (bind ?f (chiedi-domanda-fnz anni-dispositivo))
+  (assert (nodo (nome anni-dispositivo) (valore ?f)))
 )
 
 (defrule chiedi-garanzia
   ;WRITTEN DOWN
   (not (nodo (nome chiedi) (valore garanzia)))
   (domanda (attributo garanzia)(gia-chiesta FALSE))
-  ?p1 <- (nodo (nome anni-dispositivo) (valore ?v&0-3-anni|sconosciuto) (id-nodo ?id-p1))
+  ;?p1 <- (nodo (nome anni-dispositivo) (valore ?v&0-3-anni|sconosciuto) (id-nodo ?id-p1))
   =>
-  (assert (nodo (nome chiedi) (valore garanzia) (nodo-padre ?id-p1)))
+  ;(assert (nodo (nome chiedi) (valore garanzia) (nodo-padre ?id-p1)))
+  (bind ?f (chiedi-domanda-fnz garanzia))
+  (assert (nodo (nome garanzia) (valore ?f)))
 )
 
-(defrule chiedi-ha-batteria
-  ;WRITTEN DOWN
-  (not  (nodo (nome chiedi) (valore ha-batteria)))
-  (domanda (attributo ha-batteria)(gia-chiesta FALSE))
-  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (id-nodo ?id-p1))
-  =>
-  (assert (nodo (nome chiedi) (valore ha-batteria) (nodo-padre ?id-p1)))
-)
+
 
 ;; ***** FASE 2: DEDUZIONI DEL SISTEMA
 
@@ -354,9 +426,10 @@
 (defrule garanzia-4-anni-piu
   ;WRITTEN DOWN
   ?p1 <- (nodo (nome anni-dispositivo) (valore  ?val&4-6-anni|7-anni) (sorgente-info utente) (certezza ?CF1) (id-nodo ?id-p1))
+  ?p2 <- (nodo (nome garanzia) (valore sconosciuto) (sorgente-info utente) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (bind ?CF (calcola-certezza 1.0 ?CF1))
-  (assert (nodo (nome garanzia) (valore no) (certezza ?CF) (descrizione "Il dispositivo non e' coperto da garanzia'") (nodo-padre ?id-p1)))
+  (bind ?CF (calcola-certezza 1.0 ?CF1 ?CF2))
+  (assert (nodo (nome garanzia) (valore no) (certezza ?CF) (descrizione "Il dispositivo non e' coperto da garanzia'") (nodo-padre ?id-p1 ?id-p2)))
 )
 
 
@@ -371,6 +444,15 @@
 )
 
 ;;REGOLE FASE 2 *******************************************
+
+(defrule chiedi-ha-batteria
+  ;WRITTEN DOWN
+  (not  (nodo (nome chiedi) (valore ha-batteria)))
+  (domanda (attributo ha-batteria)(gia-chiesta FALSE))
+  ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-portatile) (id-nodo ?id-p1))
+  =>
+  (assert (nodo (nome chiedi) (valore ha-batteria) (nodo-padre ?id-p1)))
+)
 
 (defrule controllo-accensione
   ;WRITTEN DOWN

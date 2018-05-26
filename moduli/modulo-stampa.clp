@@ -1,8 +1,74 @@
 (defmodule MODULO-STAMPA(import MAIN ?ALL)(export ?ALL))
 
 
-  (deffunction ordinamento-per-certezza (?f1 ?f2)
-    (< (fact-slot-value ?f1 certezza) (fact-slot-value ?f2 certezza)))
+
+
+(deffunction count$ (?list ?value)
+   (bind ?count 0)
+   (foreach ?l ?list
+      (if (eq ?l ?value)
+         then
+         (bind ?count (+ ?count 1))))
+   (return ?count))
+
+   (deffunction delete-duplicates$ (?list ?value)
+      (bind ?count (count$ ?list ?value))
+      (if (<= ?count 1)
+         then
+         (return ?list))
+      (loop-for-count (- ?count 1)
+         (bind ?pos (member$ ?value ?list))
+         (bind ?list (delete$ ?list ?pos ?pos)))
+      (return ?list))
+
+
+    (deffunction delete-duplicates-val$ (?list)
+       (foreach ?v ?list
+         (bind ?list (delete-duplicates$ ?list ?v))
+       )
+       (bind ?list (sort > ?list))
+       (bind ?list (delete$ ?list 1 1))
+      (return ?list)
+    )
+
+
+    (deffunction ordinamento-per-certezza (?f1 ?f2)
+      (< (fact-slot-value ?f1 certezza) (fact-slot-value ?f2 certezza)))
+
+    (deffunction spiega(?n)
+      (bind ?diagnosi-da-spiegare (find-fact ((?d nodo))(eq ?d:id-nodo ?n)))
+      (bind ?diag (nth$ 1 ?diagnosi-da-spiegare))
+      (bind ?nome-nodo (fact-slot-value ?diag nome))
+      (bind ?valore-nodo (fact-slot-value ?diag valore))
+      (bind ?nodi-padre (fact-slot-value ?diag nodo-padre))
+      (bind ?list 0)
+      (loop-for-count (?cnt1 1 (length$ ?nodi-padre)) do
+        (bind ?id-nodo-padre (nth$ ?cnt1 ?nodi-padre))
+        (bind ?n-padre (find-fact ((?d nodo))(eq ?d:id-nodo ?id-nodo-padre)))
+        (bind ?nodo-padre (nth$ 1 ?n-padre))
+        (bind ?nome-nodo-padre (fact-slot-value ?nodo-padre nome))
+        (bind ?valore-nodo-padre (fact-slot-value ?nodo-padre valore))
+        (if (and (eq ?nome-nodo ?nome-nodo-padre) (eq ?valore-nodo ?valore-nodo-padre)) then
+            (bind ?list  ?list (spiega ?id-nodo-padre))
+            else
+              (bind ?list ?list ?id-nodo-padre)
+        )
+      )
+      (return ?list)
+    )
+
+    (deffunction stampa-spiega(?titolo-diagnosi ?lista-id)
+      (printout t crlf "             MOTIVAZIONI: " crlf)
+      (progn$ (?id ?lista-id)
+        (bind ?nodo-da-spiegare (find-fact ((?d nodo))(eq ?d:id-nodo ?id)))
+        (bind ?nodo (nth$ 1 ?nodo-da-spiegare))
+        (bind ?descrizione (fact-slot-value ?nodo descrizione))
+        (printout t "              -  " ?descrizione crlf)
+      )
+    )
+
+
+
 
 
    (deffunction stampa-tutte-le-diagnosi ()
@@ -16,7 +82,12 @@
              (bind ?data-diagnosi (find-all-facts ((?d diagnosi))(eq (fact-slot-value ?x valore) ?d:attributo)))
              (progn$ (?y ?data-diagnosi)
                  (format t "   %2d/10  -  %-60s %n" (integer (* (fact-slot-value ?x certezza) 10)) (fact-slot-value ?y titolo) )
-                 (format t "             %-60s %n%n" (fact-slot-value ?y descrizione))
+                 (format t "             %-60s %n" (fact-slot-value ?y descrizione))
+
+                 (bind ?lista (spiega (fact-slot-value ?x id-nodo)))
+                 (bind ?lista (delete-duplicates-val$ ?lista))
+                 (stampa-spiega (fact-slot-value ?y titolo) ?lista)
+                 (printout t crlf crlf)
              )
      )
    )
@@ -39,9 +110,9 @@
    )
 
    (deffunction chiedi-soddisfazione-utente ()
-     (printout t crlf crlf "L'utente e' soddisfatto del risultato ottenuto?")
+     (printout t crlf crlf "L'utente vuole rivedere le domande a cui ha gia' risposto?")
      (printout t crlf "1. Si")
-     (printout t crlf "2. No, voglio visualizzare una spiegazione alle diagnosi e le domande a cui ho risposto" crlf crlf)
+     (printout t crlf "2. No" crlf crlf)
      (printout t "Inserire risposta: ")
      (bind ?answer (read))
      (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
@@ -51,7 +122,7 @@
          (bind ?answer (read))
          (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
      )
-     (if (= ?answer 1) then
+     (if (= ?answer 2) then
          (printout t crlf crlf "Premere INVIO per riavviare il programma..." crlf)
          (readline)
          (reset)
