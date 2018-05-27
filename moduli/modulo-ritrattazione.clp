@@ -94,6 +94,7 @@
         (if (neq ?id-nodo FALSE) then
             (retract ?x)
             (elimina-nodi-da ?id-nodo)
+            (printout t crlf "Deleting " ?id-nodo crlf)
         )
     )
 )
@@ -104,27 +105,45 @@
     (bind ?dom1 (nth$ 1 ?domanda-ritratt))
     (bind ?attr (fact-slot-value ?dom1 attributo))
     (bind ?risposte-valide (fact-slot-value ?dom1 risposte-valide))
+    (bind ?risposta-utente (nth (fact-slot-value ?dom1 risposta-selezionata) ?risposte-valide)) ;ADDED
+
+    (printout t crlf "Risposta: " ?risposta-utente crlf)
+
     (bind ?descrizioni-valide (fact-slot-value ?dom1 descrizione-risposte))
     (bind ?spiegazioni-valide (fact-slot-value ?dom1 spiegazione-risposte))
-    (bind ?nodo-chiedi1 (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr) (eq ?c:attivo TRUE))))
-    (bind ?id-nodo-chiedi1 (fact-slot-value (nth$ 1 ?nodo-chiedi1) id-nodo))
-    (elimina-nodi-da ?id-nodo-chiedi1)
+    ;(bind ?nodo-chiedi1 (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr) (eq ?c:attivo TRUE))))
+    (bind ?nodo-domanda-da-ritrattare (find-fact ((?c nodo)) (and (eq ?c:nome ?attr) (eq ?c:valore ?risposta-utente) (eq ?c:sorgente-info utente))))
+    (bind ?id-nodo-domanda-da-ritrattare (fact-slot-value (nth$ 1 ?nodo-domanda-da-ritrattare) id-nodo))
+    (elimina-nodi-da ?id-nodo-domanda-da-ritrattare)
 
     (bind ?domande (find-all-facts ((?d domanda))(> ?d:num-domanda ?n)))
     (progn$ (?x ?domande)
       (bind ?attr2 (fact-slot-value ?x attributo))
+      (bind ?risposte-valide2 (fact-slot-value ?x risposte-valide))
+      (bind ?risposta-utente2 (nth (fact-slot-value ?x risposta-selezionata) ?risposte-valide2)) ;ADDED
+
+      (printout t crlf "Risposta: " ?risposta-utente2 crlf)
+
       (modify ?x (num-domanda 0) (gia-chiesta FALSE) (risposta-selezionata 0))
-      (bind ?nodo-chiedi (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr2) (eq ?c:attivo TRUE))))
-      (if (> (length$ ?nodo-chiedi) 0) then
-          (bind ?id-nodo-chiedi (fact-slot-value (nth$ 1 ?nodo-chiedi) id-nodo))
-          (retract (nth$ 1 ?nodo-chiedi))
-          (elimina-nodi-da ?id-nodo-chiedi)
+      ;(bind ?nodo-chiedi (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr2) (eq ?c:attivo TRUE))))
+      (bind ?nodo-domanda-da-eliminare (find-fact ((?c nodo)) (and (eq ?c:nome ?attr2) (eq ?c:valore ?risposta-utente2) (eq ?c:sorgente-info utente))))
+      (if (> (length$ ?nodo-domanda-da-eliminare) 0) then
+          (bind ?id-nodo-domanda-da-eliminare (fact-slot-value (nth$ 1 ?nodo-domanda-da-eliminare) id-nodo))
+          (retract (nth$ 1 ?nodo-domanda-da-eliminare))
+          (printout t crlf "Deleting main " ?id-nodo-domanda-da-eliminare crlf)
+          (elimina-nodi-da ?id-nodo-domanda-da-eliminare)
       )
     )
 
-    (bind ?nuova-risposta (ask-question ?n ?dom1))
-    (modify ?dom1 (risposta-selezionata ?nuova-risposta))
-    (assert (nodo (nome ?attr) (valore (nth$ ?nuova-risposta ?risposte-valide)) (descrizione (nth$ ?nuova-risposta ?spiegazioni-valide)) (sorgente-info utente) (nodo-padre ?id-nodo-chiedi1)))
+    (bind ?*num-domande-chieste* (- ?n 1))
+    (bind ?nuovo-val (chiedi-domanda-fnz ?attr))
+    (bind ?desc (get-descrizione-risposta ?attr ?nuovo-val))
+    ;(modify (nth$ 1 ?nodo-domanda-da-ritrattare) (valore ?nuovo-val) (descrizione ?desc))
+    (retract (nth$ 1 ?nodo-domanda-da-ritrattare))
+    (assert (nodo (nome ?attr) (valore ?nuovo-val) (descrizione ?desc) (sorgente-info utente)))
+    ; (bind ?nuova-risposta (ask-question ?n ?dom1))
+    ; (modify ?dom1 (risposta-selezionata ?nuova-risposta))
+    ; (assert (nodo (nome ?attr) (valore (nth$ ?nuova-risposta ?risposte-valide)) (descrizione (nth$ ?nuova-risposta ?spiegazioni-valide)) (sorgente-info utente) (nodo-padre ?id-nodo-chiedi1)))
 )
 
 
@@ -156,22 +175,48 @@
     (return ?answer)
 )
 
+(deffunction MODULO-RITRATTAZIONE::chiedi-soddisfazione-utente ()
+  (printout t crlf crlf "L'utente vuole rivedere le domande a cui ha gia' risposto?")
+  (printout t crlf "1. Si")
+  (printout t crlf "2. No" crlf crlf)
+  (printout t "Inserire risposta: ")
+  (bind ?answer (read))
+  (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+
+  (while (not (and(>= ?answer 1) (<= ?answer 2)))
+      (printout t "Valore non riconosciuto, riprovare: ")
+      (bind ?answer (read))
+      (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
+  )
+  (if (= ?answer 2) then
+      (printout t crlf crlf "Premere INVIO per riavviare il programma..." crlf)
+      (readline)
+      (reset)
+      (run)
+  else
+    (bind ?punto-di-riavvio (stampa-tutte-le-domande ?*num-domande-chieste*))
+    (ritratta-da-domanda ?punto-di-riavvio)
+    )
+)
 
 
 
 (defrule MODULO-RITRATTAZIONE::avvia-ritrattazione
-  ?c <- (contatore-domande ?n-dom-chieste)
-  ?fase <- (fase-ritrattazione)
+  ;?c <- (contatore-domande ?n-dom-chieste)
+  ?f <- (in-esecuzione)
   =>
+  (printout t "IN RITRATT" crlf)
   ;(clear-window)
   ;(stampa-spiegaz-diagnosi)
   ;(printout t crlf crlf "Premere INVIO per modificare le domande a cui l'utente ha risposto..." crlf)
   ;(readline)
-  (bind ?punto-di-riavvio (stampa-tutte-le-domande ?n-dom-chieste))
-  (retract ?c)
-  (assert (contatore-domande ?punto-di-riavvio))
-  (ritratta-da-domanda ?punto-di-riavvio)
-  (retract ?fase)
+  (chiedi-soddisfazione-utente)
+  (retract ?f)
+  ;(bind ?punto-di-riavvio (stampa-tutte-le-domande ?*num-domande-chieste*))
+  ;(retract ?c)
+  ;(assert (contatore-domande ?punto-di-riavvio))
+  ;(ritratta-da-domanda ?punto-di-riavvio)
+  ;(retract ?fase)
 )
 
 
