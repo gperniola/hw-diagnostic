@@ -137,7 +137,7 @@
     (nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE))
     =>
     (clear-window)
-    (printout t "IN STAMPA" crlf)
+    ;(printout t "IN STAMPA" crlf)
     ;(retract ?f)
     ;(facts-without-desc)
     (stampa-tutte-le-diagnosi)

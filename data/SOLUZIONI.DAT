@@ -1,8 +1,9 @@
 
 (soluzione (attributo sostituisci-alimentatore)
           (titolo "Sostituire l'alimentatore")
-          (descrizione "Si consiglia di sostituire l'alimentatore con uno nuovo della stessa potenza.")
+          (descrizione "Si consiglia di sostituire l'alimentatore con uno nuovo compatibile con il dispositivo.")
 )
+
 
 (soluzione (attributo sostituisci-scheda-madre)
           (titolo "Sostituire la scheda madre")
@@ -44,6 +45,18 @@
           (descrizione "A causa della natura del guasto o dell'eta' del dispositivo, si consiglia di valutare l'opzione di sostituire completamente il dispositivo.")
 )
 
+;// NEW...........................
+
+(soluzione (attributo controllare-impianto-elettrico)
+          (titolo "Controllare l'impianto elettrico")
+          (descrizione "Si consiglia di controllare con le dovute precauzioni se la mancanza di corrente e' dovuta ad una presa difettosa o ad un problema piu' serio
+          sull'impianto elettrico.")
+)
+
+(soluzione (attributo sostituzione-cavo-alimentatore)
+          (titolo "Sostituire il cavo di alimentazione")
+          (descrizione "Si consiglia di sostituire il cavo di alimentazione che connette l'alimentatore alla presa elettrica.")
+)
 
 ; // SOLUZIONI VIDEO
 

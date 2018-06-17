@@ -62,6 +62,34 @@
               (descrizione "La scheda madre o alcune delle sue componenti interne potrebbero essere guaste.")
     )
 
+    ; // NEW.....................................
+
+    (diagnosi (attributo cavo-alimentatore-pcdesktop-guasto)
+              (titolo "Guasto al cavo  dell'alimentatore ")
+              (descrizione "Il cavo che collega l'alimentatore alla presa di corrente potrebbe essere danneggiato o usurato.")
+    )
+
+    (diagnosi (attributo cavo-alimentatore-pcportatile-guasto)
+              (titolo "Guasto allo spinotto o al cavo dell'alimentatore")
+              (descrizione "Lo spinotto che collega l'alimentatore al dispositivo o il cavo potrebbero essere danneggiati.")
+    )
+
+    ; //(diagnosi (attributo cavo-alimentatore-guasto)
+    ; //          (titolo "Guasto del cavo di alimentazione")
+    ; //          (descrizione "Il cavo che connette l'alimentatore alla presa elettrica potrebbe essere usurato.")
+    ; //)
+
+    ; //(diagnosi (attributo spinotto-alimentatore-guasto)
+    ; //         (titolo "Guasto allo spinotto del cavo di alimentazione")
+    ; //         (descrizione "Lo spinotto del cavo di alimentazione potrebbe essere danneggiato.")
+    ; //)
+
+    (diagnosi (attributo corrente-assente)
+              (titolo "Assenza di corrente sulla presa elettrica")
+              (descrizione "Non c'e' passaggio di corrente sulla presa elettrica e pertanto il dispositivo non si accende.")
+    )
+
+
 ;; //***************************************************************************
 
 (diagnosi (attributo CMOS-corrotta)

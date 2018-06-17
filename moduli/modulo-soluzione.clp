@@ -122,6 +122,29 @@
   (assert (nodo (nome soluzione) (valore connetti-alimentazione) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
 )
 
+; NEW.........................................
+(defrule MODULO-SOLUZIONE::soluzione-controllare-impianto-elettrico
+  ;(fase-cerca-soluzioni)
+  ?p1 <- (nodo (nome diagnosi) (valore corrente-assente) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  =>
+  (assert (nodo (nome soluzione) (valore controllare-impianto-elettrico) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-sostituzione-cavo-alimentatore
+  ;(fase-cerca-soluzioni)
+  ?p1 <- (nodo (nome diagnosi) (valore cavo-alimentatore-pcdesktop-guasto) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  =>
+  (assert (nodo (nome soluzione) (valore sostituzione-cavo-alimentatore) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
+)
+
+(defrule MODULO-SOLUZIONE::soluzione-sostituzione-cavo-alimentatore-2
+  ;(fase-cerca-soluzioni)
+  ?p1 <- (nodo (nome diagnosi) (valore cavo-alimentatore-pcportatile-guasto) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  =>
+  (assert (nodo (nome soluzione) (valore sostituzione-cavo-alimentatore) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
+)
+
+
 ;;SOLUZIONI VIDEO
 
 (defrule MODULO-SOLUZIONE::soluzione-connetti-cavi-video

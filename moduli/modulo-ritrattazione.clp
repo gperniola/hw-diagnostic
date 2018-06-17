@@ -114,7 +114,12 @@
     ;(bind ?nodo-chiedi1 (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr) (eq ?c:attivo TRUE))))
     (bind ?nodo-domanda-da-ritrattare (find-fact ((?c nodo)) (and (eq ?c:nome ?attr) (eq ?c:valore ?risposta-utente) (eq ?c:sorgente-info utente))))
     (bind ?id-nodo-domanda-da-ritrattare (fact-slot-value (nth$ 1 ?nodo-domanda-da-ritrattare) id-nodo))
+
+    ;(printout t "Here it is one: " ?nodo-domanda-da-ritrattare  crlf)
+    ;(printout t "Here it is one: "(nth$ 1 ?nodo-domanda-da-ritrattare) crlf)
     (elimina-nodi-da ?id-nodo-domanda-da-ritrattare)
+
+
 
     (bind ?domande (find-all-facts ((?d domanda))(> ?d:num-domanda ?n)))
     (progn$ (?x ?domande)
@@ -129,9 +134,12 @@
       (bind ?nodo-domanda-da-eliminare (find-fact ((?c nodo)) (and (eq ?c:nome ?attr2) (eq ?c:valore ?risposta-utente2) (eq ?c:sorgente-info utente))))
       (if (> (length$ ?nodo-domanda-da-eliminare) 0) then
           (bind ?id-nodo-domanda-da-eliminare (fact-slot-value (nth$ 1 ?nodo-domanda-da-eliminare) id-nodo))
+          (printout t "Here it is" crlf)
           (retract (nth$ 1 ?nodo-domanda-da-eliminare))
-          (printout t crlf "Deleting main " ?id-nodo-domanda-da-eliminare crlf)
+          ; (printout t crlf "Deleting main " ?id-nodo-domanda-da-eliminare crlf)
+          (printout t "Here is done is" crlf)
           (elimina-nodi-da ?id-nodo-domanda-da-eliminare)
+          (printout t "Here is done" crlf)
       )
     )
 
@@ -139,7 +147,9 @@
     (bind ?nuovo-val (chiedi-domanda-fnz ?attr))
     (bind ?desc (get-descrizione-risposta ?attr ?nuovo-val))
     ;(modify (nth$ 1 ?nodo-domanda-da-ritrattare) (valore ?nuovo-val) (descrizione ?desc))
+    ;(printout t "Here it is 2: "(nth$ 1 ?nodo-domanda-da-ritrattare) crlf)
     (retract (nth$ 1 ?nodo-domanda-da-ritrattare))
+    ;(printout t "Here is done 2" crlf)
     (assert (nodo (nome ?attr) (valore ?nuovo-val) (descrizione ?desc) (sorgente-info utente)))
     ; (bind ?nuova-risposta (ask-question ?n ?dom1))
     ; (modify ?dom1 (risposta-selezionata ?nuova-risposta))
@@ -205,7 +215,7 @@
   ;?c <- (contatore-domande ?n-dom-chieste)
   ?f <- (in-esecuzione)
   =>
-  (printout t "IN RITRATT" crlf)
+  ;(printout t "IN RITRATT" crlf)
   ;(clear-window)
   ;(stampa-spiegaz-diagnosi)
   ;(printout t crlf crlf "Premere INVIO per modificare le domande a cui l'utente ha risposto..." crlf)
