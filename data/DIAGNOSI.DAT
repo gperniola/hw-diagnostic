@@ -3,7 +3,7 @@
 
     (diagnosi (attributo cavo-alimentazione-display-scollegato)
               (titolo "Cavi del display non connessi correttamente")
-              (descrizione "I cavi video del display non sono connessi, oppure sono collegati male.")
+              (descrizione "I cavi di alimentazione o del segnale del monitor non sono connessi, oppure sono connessi male causando un disturbo video.")
     )
 
     (diagnosi (attributo guasto-display)
@@ -29,6 +29,11 @@
     (diagnosi (attributo interferenze-cavo)
               (titolo "Interferenze nel segnale video")
               (descrizione "Il problema potrebbe essere causato da un interferenza nel collegamento dei cavi tra la scheda madre e il display.")
+    )
+
+    (diagnosi (attributo monitor-spento)
+              (titolo "Il monitor e' spento")
+              (descrizione "Il problema e' causato dal monitor che risulta spento.")
     )
 
 ;; //***************************************************************************

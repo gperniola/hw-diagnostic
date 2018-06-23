@@ -61,15 +61,19 @@
 ; // SOLUZIONI VIDEO
 
 (soluzione (attributo connetti-cavi-video)
-          (titolo "Connettere i cavi video e accendere il monitor")
-          (descrizione "Assicurarsi che sia il cavo del segnale video e il cavo di alimentazione del monitors siano saldamente connessi. Assicurarsi che la presa
-             elettrica a cui e' connesso il monitor funzioni correttamente e che il monitor sia acceso.")
+          (titolo "Connettere correttamente i cavi video al monitorr")
+          (descrizione "Assicurarsi che sia il cavo del segnale video e il cavo di alimentazione del monitor siano correttamente connessi.")
 )
 
-(soluzione (attributo controllo-cavi-video)
-          (titolo "Connettere saldamente il cavo del segnale video del monitor")
-          (descrizione "Provare a disconnettere e riconnettere il cavo del segnale video da entrambe le estremita'. Verificare che il cavo sia agganciato saldamente.")
+(soluzione (attributo accendi-monitor)
+          (titolo "Accendere il monitor premendo il tasto di accensione")
+          (descrizione " ")
 )
+
+; // (soluzione (attributo controllo-cavi-video)
+; //           (titolo "Staccare e riconnettere saldamente il cavo del segnale video del monitor")
+; //           (descrizione "Provare a disconnettere e riconnettere il cavo del segnale video da entrambe le estremita'. Verificare che il cavo sia agganciato saldamente.")
+; // )
 
 (soluzione (attributo controllo-cavi-video-portatile)
           (titolo "Verificare l'integrita' dei cavi video del dispositivo")
@@ -111,7 +115,7 @@
 )
 
 (soluzione (attributo sostituisci-display-desktop)
-          (titolo "Sostituire il display")
+          (titolo "Sostituire il monitor")
           (descrizione "Si consiglia di sostituire il monitor con uno nuovo. Controllare che la presa del segnale video sia compatibile con il dispositivo.")
 )
 

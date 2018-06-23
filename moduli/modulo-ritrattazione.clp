@@ -94,7 +94,7 @@
         (if (neq ?id-nodo FALSE) then
             (retract ?x)
             (elimina-nodi-da ?id-nodo)
-            (printout t crlf "Deleting " ?id-nodo crlf)
+            ;(printout t crlf "Deleting " ?id-nodo crlf)
         )
     )
 )
@@ -107,7 +107,7 @@
     (bind ?risposte-valide (fact-slot-value ?dom1 risposte-valide))
     (bind ?risposta-utente (nth (fact-slot-value ?dom1 risposta-selezionata) ?risposte-valide)) ;ADDED
 
-    (printout t crlf "Risposta: " ?risposta-utente crlf)
+    ;(printout t crlf "Risposta: " ?risposta-utente crlf)
 
     (bind ?descrizioni-valide (fact-slot-value ?dom1 descrizione-risposte))
     (bind ?spiegazioni-valide (fact-slot-value ?dom1 spiegazione-risposte))
@@ -127,19 +127,19 @@
       (bind ?risposte-valide2 (fact-slot-value ?x risposte-valide))
       (bind ?risposta-utente2 (nth (fact-slot-value ?x risposta-selezionata) ?risposte-valide2)) ;ADDED
 
-      (printout t crlf "Risposta: " ?risposta-utente2 crlf)
+      ;(printout t crlf "Risposta: " ?risposta-utente2 crlf)
 
       (modify ?x (num-domanda 0) (gia-chiesta FALSE) (risposta-selezionata 0))
       ;(bind ?nodo-chiedi (find-fact ((?c nodo)) (and (eq ?c:nome chiedi) (eq ?c:valore ?attr2) (eq ?c:attivo TRUE))))
       (bind ?nodo-domanda-da-eliminare (find-fact ((?c nodo)) (and (eq ?c:nome ?attr2) (eq ?c:valore ?risposta-utente2) (eq ?c:sorgente-info utente))))
       (if (> (length$ ?nodo-domanda-da-eliminare) 0) then
           (bind ?id-nodo-domanda-da-eliminare (fact-slot-value (nth$ 1 ?nodo-domanda-da-eliminare) id-nodo))
-          (printout t "Here it is" crlf)
+          ;(printout t "Here it is" crlf)
           (retract (nth$ 1 ?nodo-domanda-da-eliminare))
           ; (printout t crlf "Deleting main " ?id-nodo-domanda-da-eliminare crlf)
-          (printout t "Here is done is" crlf)
+          ;(printout t "Here is done is" crlf)
           (elimina-nodi-da ?id-nodo-domanda-da-eliminare)
-          (printout t "Here is done" crlf)
+          ;(printout t "Here is done" crlf)
       )
     )
 

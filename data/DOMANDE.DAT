@@ -193,16 +193,16 @@ La spia e' accesa? ")
 (help "Rispondere 'Si' se ci sono problemi al monitor durante le prime fasi d'accensione del dispositivo.")
 )
 
-(domanda  (attributo disturbo-video)
-(testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
-          (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
-          (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
-          (spiegazione-risposte "C'e' un problema video e il monitor presenta linee o fasce colorate verticali" "C'e' un problema video e il monitor presenta linee orizzontali" "C'e' un problema video e il monitor presenta macchie nere che coprono porzioni dello schermo" "C'e' un problema video e lo schermo e' completamente nero")
-(spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o
-scheda video, oppure se potrebbe essere causato da un interferenza del segnale video.")
-(help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte
-(ad esempio, le fasce potrebbero essere intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
-)
+; // (domanda  (attributo disturbo-video)
+; // (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
+; //           (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
+; //           (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
+; //           (spiegazione-risposte "C'e' un problema video e il monitor presenta linee o fasce colorate verticali" "C'e' un problema video e il monitor presenta linee orizzontali" "C'e' un problema video e il monitor presenta macchie nere che coprono porzioni dello schermo" "C'e' un problema video e lo schermo e' completamente nero")
+; // (spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o
+; // scheda video, oppure se potrebbe essere causato da un interferenza del segnale video.")
+; // (help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte
+; // (ad esempio, le fasce potrebbero essere intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
+; // )
 
 (domanda  (attributo schermo-nero)
 (testo-domanda "Lo schermo rimane nero indefinitivamente una volta avviato il dispositivo?")
@@ -260,7 +260,7 @@ In caso di dubbi si consiglia di verificare sul manuale del PC e del monitor.")
 
 
 (domanda  (attributo problema-video-all-avvio)
-(testo-domanda "Il problema si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al
+(testo-domanda "Il problema video si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al
 momento del caricamento del sistema operativo?")
           (risposte-valide si no)
           (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
@@ -272,15 +272,25 @@ nessun problema video. ")
 )
 
 (domanda  (attributo cavo-alimentazione-display)
-(testo-domanda "Assicurarsi che il cavo di alimentazione e il cavo video del monitor siano saldamente collegati. Assicurarsi che il monitor sia acceso.")
+(testo-domanda "Assicuratevi che sia il cavo di alimentazione che quello del segnale video del monitor siano correttamente collegati. Si consiglia comunque di
+staccare e riconnettere il cavo del segnale video.")
           (risposte-valide ok errore )
           (descrizione-risposte "I cavi sono correttamente collegati ma il display presenta comunque il problema"
-          "I cavi non sono correttamente collegati oppure il display non e' acceso")
-          (spiegazione-risposte "I cavi del monitor sono correttamente collegati" "I cavi non sono correttamente collegati oppure il display non e' acceso")
+          "I cavi non sono collegati")
+          (spiegazione-risposte "I cavi del monitor sono correttamente collegati" "I cavi del monitor non sono correttamente collegati")
 (spiegazione "Per il corretto funzionamento del monitor e' necessario che  sia il cavo di alimentazione che quello del segnale video siano correttamente collegati.")
-(help "Assicuratevi che il cavo di alimentazione del monitor sia collegato alla rete elettrica domestica. Controllate che sulla presa ci sia passaggio di corrente,
-ad esempio collegandovi una lampada e verificando che si accenda. Verificate anche che il cavo del segnale video (di solito una spina di colore blu o grigia)
-sia correttamente correttamente connessa sia al monitor sia sul retro del case del PC. Infine, assicuratevi che il monitor sia acceso.")
+(help "Assicuratevi che il cavo di alimentazione del monitor sia collegato alla rete elettrica domestica. Verificate anche che il cavo del segnale video (di solito
+una spina di colore blu o grigia) sia correttamente correttamente connessa sia al monitor sia sul retro del case del PC.")
+)
+
+(domanda  (attributo monitor-acceso)
+(testo-domanda "Controllate che il monitor sia correttamente acceso.")
+          (risposte-valide acceso spento )
+          (descrizione-risposte "Il monitor e' acceso" "Il monitor e' spento")
+          (spiegazione-risposte "Il monitor e' correttamente acceso" "Il monitor risulta spento")
+(spiegazione "Per utilizzare correttamente il dispositivo e' necessario che il monitor sia acceso.")
+(help "Verificate che il monitor sia acceso premendo il suo pulsante di accensione. Una spia presente su di esso vi indichera' se risulta acceso, di solito la spia
+e' di colore blu o verde.")
 )
 
 ; // (domanda  (attributo muovere-cavi-display)
@@ -349,7 +359,7 @@ sia periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor 
 )
 
 (domanda  (attributo installazione-sw)
-(testo-domanda "Sono state installati nuovi programmi o aggiornamenti di sistema prima che il problema si verificasse?")
+(testo-domanda "Sono stati installati nuovi programmi o aggiornamenti di sistema prima del verificarsi del problema?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si" "No" "Non so")
           (spiegazione-risposte "Sono stati installati nuovi programmi o aggiornamenti" "Non sono stati installati nuovi programmi o aggiornamenti" "Non si sa se sono stati installati nuovi programmi o aggiornamenti")
@@ -363,29 +373,28 @@ sia periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor 
 
 
 (domanda  (attributo messaggio-di-errore)
-(testo-domanda "Dopo l'accensione, il dispositivo si blocca o riavvia mostrando un messaggio di errore?")
+(testo-domanda "Ha notato la presenza di un messaggio di errore sullo schermo subito dopo l'accensione del dispositivo?")
 (risposte-valide si no )
 (descrizione-risposte "Si" "No")
 (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
                       "Il dispositivo non mostra alcun messaggio di errore")
 (spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
 sistema operativo.")
-(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
+(help "Al momento dell'accensione il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
 durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Se l'utente nota o sospetta la presenza di un messaggio
-d'errore prima del riavvio, rispondere si.")
+d'errore in questa fase, rispondere si.")
 )
 
 (domanda  (attributo codice-acustico)
-(testo-domanda "Dopo l'accensione, il dispositivo si blocca o riavvia dopo aver riprodotto un codice acustico?")
+(testo-domanda "Dopo l'accensione ha notato se il dispositivo riproduce un codice acustico?")
 (risposte-valide si no )
 (descrizione-risposte "Si" "No")
 (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice acustico"
                       "Il dispositivo si blocca/riavvia senza riprodurre alcun codice acustico")
-(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
-sistema operativo.")
-(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
-durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Se l'utente durante questa fase ascolta un codice
-acustico prima del riavvio, rispondere si.")
+(spiegazione "Questa domanda serve a stabilire se si verifica un problema durante la prima fase di controllo delle componenti hardware del sistema.")
+(help "Al momento dell'accensione il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
+durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Se l'utente durante questa fase ascolta quello che sembra
+ un codice acustico prima del riavvio, rispondere si.")
 )
 
 (domanda  (attributo blue-screen)
@@ -394,11 +403,9 @@ acustico prima del riavvio, rispondere si.")
 (descrizione-risposte "Si" "No")
 (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato una schermata blu"
                       "Il dispositivo si blocca/riavvia senza mostrare schermate blu di errore")
-(spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
-sistema operativo.")
-(help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
-durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Se l'utente durante questa fase ascolta un codice
-acustico prima del riavvio, rispondere si.")
+(spiegazione "Questa domanda serve a stabilire se si e' verificato un problema durante la fase di caricamento del sistema operativo.")
+(help "Dopo l'accensione il sistema controlla che tutte le componenti funzionino e quindi avvia il caricamento del sistema operativo. Questa fase puo'
+durare anche fino a qualche minuto. Se l'utente nota che il sistema si blocca su una schermata blu che sembra descrivere un errore, rispondere si.")
 )
 
 

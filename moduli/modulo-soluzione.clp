@@ -55,7 +55,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-RAM
     ;(fase-cerca-soluzioni)
     ?p1 <- (nodo (nome diagnosi) (valore guasto-RAM) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-RAM) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -70,7 +70,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-CPU
     ;(fase-cerca-soluzioni)
     ?p1 <- (nodo (nome diagnosi) (valore guasto-CPU) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-CPU) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -78,7 +78,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-VGA
     ;(fase-cerca-soluzioni)
     ?p1 <- (nodo (nome diagnosi) (valore guasto-vga) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore errore-beep-code)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-VGA) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -147,6 +147,13 @@
 
 ;;SOLUZIONI VIDEO
 
+(defrule MODULO-SOLUZIONE::soluzione-accendi-monitor
+  ;(fase-cerca-soluzioni)
+  ?p1 <- (nodo (nome diagnosi) (valore monitor-spento) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  =>
+  (assert (nodo (nome soluzione) (valore accendi-monitor) (certezza (calcola-certezza 1 ?c1)) (nodo-padre ?id-p1)))
+)
+
 (defrule MODULO-SOLUZIONE::soluzione-connetti-cavi-video
   ;(fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore cavo-alimentazione-display-scollegato) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
@@ -179,21 +186,21 @@
   (assert (nodo (nome soluzione) (valore sostituisci-vga) (certezza (* 1.0 ?c1)) (nodo-padre ?id-p1)))
 )
 
-(defrule MODULO-SOLUZIONE::soluzione-controllo-cavi-video
-  ;(fase-cerca-soluzioni)
-  ?p1 <- (nodo (nome diagnosi) (valore interferenze-cavo) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
-  =>
-  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
-  (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
-)
+; (defrule MODULO-SOLUZIONE::soluzione-controllo-cavi-video
+;   ;(fase-cerca-soluzioni)
+;   ?p1 <- (nodo (nome diagnosi) (valore interferenze-cavo) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+;   ?p2 <- (nodo (nome cavi-display-accessibili)(valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+;   =>
+;   (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
+;   (assert (nodo (nome soluzione) (valore controllo-cavi-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
+; )
 
 (defrule MODULO-SOLUZIONE::soluzione-controllo-cavi-video-portatile
   ;(fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore interferenze-cavo) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   =>
-  (bind ?CF (calcola-certezza 0.8 ?c1 ?c2))
+  (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
   (assert (nodo (nome soluzione) (valore controllo-cavi-video-portatile) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
 )
 
@@ -207,7 +214,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-SW-1
   ;(fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome disturbo-video)(valore ?v&linee-orizzontali|fasce-verticali) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome disturbo-video)(valore ?v&fasce-schermo) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 0.9 ?c1 ?c2))
   (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
@@ -255,7 +262,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-controlla-beep-code
   ;(fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-beep-code) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome fase-POST)(valore codice-acustico) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 1 ?c1 ?c2))
   (assert (nodo (nome soluzione) (valore controlla-beep-code) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
@@ -264,7 +271,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-controlla-messaggio-POST
   ;(fase-cerca-soluzioni)
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-messaggio) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome fase-POST)(valore messaggio-di-errore) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (bind ?CF (calcola-certezza 1 ?c1 ?c2))
   (assert (nodo (nome soluzione) (valore controlla-messaggio-post) (certezza ?CF) (nodo-padre ?id-p1 ?id-p2)))
