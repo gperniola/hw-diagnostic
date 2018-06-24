@@ -1,5 +1,4 @@
 
-;; //DIAGNOSI PROBLEMI VIDEO****************************************************
 
     (diagnosi (attributo cavo-alimentazione-display-scollegato)
               (titolo "Cavi del display non connessi correttamente")
@@ -36,11 +35,6 @@
               (descrizione "Il problema e' causato dal monitor che risulta spento.")
     )
 
-;; //***************************************************************************
-
-
-;; //DIAGNOSI PROBLEMI ACCENSIONE E SO *****************************************
-
 
     (diagnosi (attributo alimentazione-disconnessa)
               (titolo "Alimentazione non connessa al dispositivo")
@@ -67,7 +61,6 @@
               (descrizione "La scheda madre o alcune delle sue componenti interne potrebbero essere guaste.")
     )
 
-    ; // NEW.....................................
 
     (diagnosi (attributo cavo-alimentatore-pcdesktop-guasto)
               (titolo "Guasto al cavo  dell'alimentatore ")
@@ -79,23 +72,12 @@
               (descrizione "Lo spinotto che collega l'alimentatore al dispositivo o il cavo potrebbero essere danneggiati.")
     )
 
-    ; //(diagnosi (attributo cavo-alimentatore-guasto)
-    ; //          (titolo "Guasto del cavo di alimentazione")
-    ; //          (descrizione "Il cavo che connette l'alimentatore alla presa elettrica potrebbe essere usurato.")
-    ; //)
-
-    ; //(diagnosi (attributo spinotto-alimentatore-guasto)
-    ; //         (titolo "Guasto allo spinotto del cavo di alimentazione")
-    ; //         (descrizione "Lo spinotto del cavo di alimentazione potrebbe essere danneggiato.")
-    ; //)
 
     (diagnosi (attributo corrente-assente)
               (titolo "Assenza di corrente sulla presa elettrica")
               (descrizione "Non c'e' passaggio di corrente sulla presa elettrica e pertanto il dispositivo non si accende.")
     )
 
-
-;; //***************************************************************************
 
 (diagnosi (attributo CMOS-corrotta)
           (titolo "Impostazioni di memoria del BIOS non corrette")

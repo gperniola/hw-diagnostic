@@ -1,15 +1,15 @@
 (defmodule MODULO-STAMPA(import MAIN ?ALL)(export ?ALL))
 
 
+  (deffunction count$ (?list ?value)
+     (bind ?count 0)
+     (foreach ?l ?list
+        (if (eq ?l ?value)
+           then
+           (bind ?count (+ ?count 1))))
+     (return ?count))
 
 
-(deffunction count$ (?list ?value)
-   (bind ?count 0)
-   (foreach ?l ?list
-      (if (eq ?l ?value)
-         then
-         (bind ?count (+ ?count 1))))
-   (return ?count))
 
    (deffunction delete-duplicates$ (?list ?value)
       (bind ?count (count$ ?list ?value))
@@ -22,6 +22,7 @@
       (return ?list))
 
 
+
     (deffunction delete-duplicates-val$ (?list)
        (foreach ?v ?list
          (bind ?list (delete-duplicates$ ?list ?v))
@@ -32,8 +33,12 @@
     )
 
 
+
     (deffunction ordinamento-per-certezza (?f1 ?f2)
       (< (fact-slot-value ?f1 certezza) (fact-slot-value ?f2 certezza)))
+
+
+
 
     (deffunction spiega(?n)
       (bind ?diagnosi-da-spiegare (find-fact ((?d nodo))(eq ?d:id-nodo ?n)))
@@ -57,6 +62,8 @@
       (return ?list)
     )
 
+
+
     (deffunction stampa-spiega(?titolo-diagnosi ?lista-id)
       (printout t crlf "             MOTIVAZIONI: " crlf)
       (progn$ (?id ?lista-id)
@@ -66,8 +73,6 @@
         (printout t "              -  " ?descrizione crlf)
       )
     )
-
-
 
 
 
@@ -93,6 +98,7 @@
    )
 
 
+
    (deffunction stampa-tutte-le-soluzioni ()
      (printout t crlf crlf)
      (printout t "  CERTEZZA         SOLUZIONE                                        " crlf)
@@ -109,27 +115,6 @@
      )
    )
 
-   ; (deffunction chiedi-soddisfazione-utente ()
-   ;   (printout t crlf crlf "L'utente vuole rivedere le domande a cui ha gia' risposto?")
-   ;   (printout t crlf "1. Si")
-   ;   (printout t crlf "2. No" crlf crlf)
-   ;   (printout t "Inserire risposta: ")
-   ;   (bind ?answer (read))
-   ;   (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-   ;
-   ;   (while (not (and(>= ?answer 1) (<= ?answer 2)))
-   ;       (printout t "Valore non riconosciuto, riprovare: ")
-   ;       (bind ?answer (read))
-   ;       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-   ;   )
-   ;   (if (= ?answer 2) then
-   ;       (printout t crlf crlf "Premere INVIO per riavviare il programma..." crlf)
-   ;       (readline)
-   ;       (reset)
-   ;       (run)
-   ;   else (assert (fase-ritrattazione)))
-   ; )
-
 
 
    (defrule MODULO-STAMPA::diagnosi-trovata
@@ -137,12 +122,8 @@
     (nodo (nome diagnosi)(certezza ?cer&:(>= ?cer 0.70)) (attivo TRUE))
     =>
     (clear-window)
-    ;(printout t "IN STAMPA" crlf)
-    ;(retract ?f)
-    ;(facts-without-desc)
     (stampa-tutte-le-diagnosi)
     (stampa-tutte-le-soluzioni)
-    ;(chiedi-soddisfazione-utente)
    )
 
    (defrule MODULO-STAMPA::diagnosi-non-trovata
@@ -150,9 +131,7 @@
     ?f <- (in-esecuzione)
     =>
     (clear-window)
-    ;(retract ?f)
     (printout t crlf "              *********** DIAGNOSI E SOLUZIONI TROVATE ***********" crlf crlf)
     (printout t "Purtroppo il sistema non e' stato in grado di trovare alcuna diagnosi valida." crlf)
     (printout t "E' possibile che il problema dipenda da un problema software (non diagnosticati da questo programma)." crlf)
-    ;(chiedi-soddisfazione-utente)
    )

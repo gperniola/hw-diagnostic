@@ -1,5 +1,4 @@
 
-;; // DOMANDE GENERICHE (RANDOM) ***********************************************
 
 (domanda  (attributo anni-dispositivo)
 (testo-domanda "Quanti anni ha il dispositivo?")
@@ -49,10 +48,8 @@ problemi legati all'eta'.")
 )
 
 
-;; //***************************************************************************
 
 
-;; // DOMANDE ACCENSIONE PC ****************************************************
 
 (domanda  (attributo ha-batteria)
 (testo-domanda "Il dispositivo ha la batteria di alimentazione inserita?
@@ -86,7 +83,6 @@ controllate se ci sono spie che si illuminano o se le ventole sembrano cominciar
 (help "...")
 )
 
-; //NEW........................................
 (domanda  (attributo alimentatore-di-riserva)
 (testo-domanda "Se l'utente ha a disposizione un alimentatore compatibile di riserva, provate ad usarlo e controllate se il problema si risolve.")
           (risposte-valide funzionante non-funzionante non-disponibile )
@@ -105,15 +101,6 @@ controllate se ci sono spie che si illuminano o se le ventole sembrano cominciar
 (help "Utilizzate il cavo di alimentazione di riserva collegandolo correttamente alla presa elettrica e al dispositivo.")
 )
 
-
-; // (domanda  (attributo cavo-alimentazione-danneggiato)
-; // (testo-domanda "Verificate con attenzione che sia il cavo che lo spinotto dell'alimentatore non siano in alcun modo danneggiati.")
-; //           (risposte-valide si no )
-; //           (descrizione-risposte "Il cavo o lo spinotto sono danneggiati" "Non sembrano esserci danni")
-; //           (spiegazione-risposte "Il cavo o lo spinotto del cavo di alimentazione sono danneggiati" "Non sembrano esserci danni sul cavo di alimentazione")
-; // (spiegazione "Il cavo di alimentazione danneggiato potrebbe causare problemi durante la fase di accensione.")
-; // (help "Verificate con cura che il cavo sia integro e non presenti tagli nella guaina. Verificate che lo spinotto aderisca perfettamente alla presa del dispositivo.")
-; // )
 
 (domanda  (attributo corrente-su-presa-elettrica)
 (testo-domanda "Verificate che ci sia passaggio di corrente sulla presa elettrica dove il dispositivo e' connesso. Ad esempio collegandovi una lampada.")
@@ -136,7 +123,6 @@ che si accenda.")
 posta in basso (sui dispositivi piu' datati e' invece posta in alto).
 Nel caso di un PC portatile la presa potrebbe essere posta sul retro o su uno dei lati del dispositivo.")
 )
-; // ...................................
 
 (domanda  (attributo batteria-difettosa)
 (testo-domanda "Rimuovere la batteria del dispositivo e premere nuovamente il tasto di accensione.")
@@ -179,10 +165,6 @@ La spia e' accesa? ")
 (help "Su alcuni modelli la spia e' posta sull'alimentatore, nella parte posteriore del case. Su altri modelli invece la spia potrebbe non e' presente.")
 )
 
-;; //***************************************************************************
-
-
-;; // DOMANDE VIDEO ************************************************************
 
 (domanda  (attributo problema-video-dispositivo)
 (testo-domanda "Si riscontrano problemi allo schermo o disturbi del video al momento dell'avvio del dispositivo?")
@@ -192,17 +174,6 @@ La spia e' accesa? ")
 (spiegazione "Questa domanda serve a verificare se si riscontrano problemi particolari al monitor al momento dell'accensione.")
 (help "Rispondere 'Si' se ci sono problemi al monitor durante le prime fasi d'accensione del dispositivo.")
 )
-
-; // (domanda  (attributo disturbo-video)
-; // (testo-domanda "Quale di queste opzioni identifica meglio il problema video riscontrato?")
-; //           (risposte-valide fasce-verticali linee-orizzontali macchie schermo-nero )
-; //           (descrizione-risposte "Linee o fasce colorate verticali" "Linee orizzontali" "Una o piu' macchie nere o bianche che coprono porzioni dello schermo" "Schermo completamente nero, come se spento")
-; //           (spiegazione-risposte "C'e' un problema video e il monitor presenta linee o fasce colorate verticali" "C'e' un problema video e il monitor presenta linee orizzontali" "C'e' un problema video e il monitor presenta macchie nere che coprono porzioni dello schermo" "C'e' un problema video e lo schermo e' completamente nero")
-; // (spiegazione "Questa domanda permette di capire di quale natura potrebbe essere il problema: Se dipende da un guasto di qualche componente come monitor o
-; // scheda video, oppure se potrebbe essere causato da un interferenza del segnale video.")
-; // (help "Le risposte riportano i problemi video piu' comuni, e' possibile che il problema riscontrato dall'utente non sia quello esattamente descritto dalle risposte
-; // (ad esempio, le fasce potrebbero essere intermittenti). Si consiglia comunque di scegliere l'opzione che piu' si avvicina al disturbo riscontrato.")
-; // )
 
 (domanda  (attributo schermo-nero)
 (testo-domanda "Lo schermo rimane nero indefinitivamente una volta avviato il dispositivo?")
@@ -236,11 +207,6 @@ scheda video, oppure se potrebbe essere causato da un interferenza del segnale v
 (help "Per rispondere correttamente a questa domanda, controllate se una volta acceso il dispositivo lo schermo presenta una o piu linee raggruppate in fasce che
 coprono parte dello schermo. Le fasce possono essere anche di diverso colore e apparire sia in verticale che in orizzontale.")
 )
-
-
-
-
-
 
 
 (domanda  (attributo monitor-esterno)
@@ -293,22 +259,6 @@ una spina di colore blu o grigia) sia correttamente correttamente connessa sia a
 e' di colore blu o verde.")
 )
 
-; // (domanda  (attributo muovere-cavi-display)
-; //           (testo-domanda "Verificare che la spina del cavo video sia correttamente inserita nella presa. Provate a reinserire la spina e controllate se il
-; //           problema sparisce.")
-; //           (risposte-valide risolto non-risolto )
-; //           (descrizione-risposte "Risistemando i cavi il problema si risolve" "I cavi sono correttamente collegati ma il problema persiste")
-; //           (spiegazione-risposte "Muovendo i cavi il problema video si risolve ""I cavi del monitor sono correttamente collegati")
-; // (spiegazione "A volte, se la spina del cavo video non e' saldamente collegata possono verificarsi dei disturbi sul monitor.")
-; // (help "Assicuratevi che la spina del cavo video sia saldamente connessa sia dietro il monitor e sia sulla parte posteriore del case (la spina e' di solito di colore blu o grigia).
-; // Con il PC acceso, provate a staccare e reinserire la spina e osservate se il problema sul monitor sparisce.")
-; // )
-
-;; //***************************************************************************
-
-
-
-;; // **************POST AND SO
 
 (domanda  (attributo inattivita-dispositivo)
 (testo-domanda "Il dispositivo e' inattivo da piu' di due mesi o viene usato raramente?")
@@ -331,19 +281,6 @@ necessita' di sostituirla.")
 
 )
 
-; // (domanda  (attributo conflitto-HW-SW)
-; // (testo-domanda "Sono state installate nuove componenti, programmi o aggiornamenti del sistema subito prima che il problema si verificasse?")
-; //           (risposte-valide si-HW si-SW si-aggiornamenti no non-so )
-; //           (descrizione-risposte "Si, sono state installate nuove componenti hardware (ad esempio RAM, disco fisso, stampante ecc.)"
-; //           "Si, sono stati installati nuovi programmi software"
-; //           "Si, sono stati installati aggiornamenti del sistema" "No" "Non so")
-; //           (spiegazione-risposte "Sono state installate nuove componenti hardware" "Sono stati installati nuovi programmi software" "Sono stati installati aggiornamenti del sistema" "Non sono stati installati software o componenti hardware" "L'utente non sa se sono stati installati software o componenti hardware")
-; // (spiegazione "Spesso una delle cause piu' comuni ai problemi del caricamento del sistema operativo e' l'installazione di nuove componenti nel sistema. Questo puo'
-; // essere causato da problemi su diversi livelli, ad esempio la nuova componente potrebbe non essere compatibile, oppure l'istallazione potrebbe non essere andata a
-; // buon fine.")
-; // (help "Indicare se sono state installate nuove componenti nel sistema. Per componenti hardware si intendono anche periferiche connesse ad esempio tramite USB o cavi,
-; // come stampanti, monitor o memorie esterne.")
-; // )
 
 
 (domanda  (attributo installazione-hw)
@@ -366,9 +303,6 @@ sia periferiche connesse ad esempio tramite USB o cavi, come stampanti, monitor 
 (spiegazione "Tra le cause piu' comuni ai problemi del caricamento del sistema operativo c'e' l'installazione di nuovi programmi o aggiornamenti non andati a buon fine.")
 (help "Indicare se sono stati installati programmi o se l'utente e' a conoscenza se il sistema ha effettuato degli aggiornamenti prima che il problema si verificasse. ")
 )
-
-
-
 
 
 
@@ -407,50 +341,6 @@ durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse sch
 (help "Dopo l'accensione il sistema controlla che tutte le componenti funzionino e quindi avvia il caricamento del sistema operativo. Questa fase puo'
 durare anche fino a qualche minuto. Se l'utente nota che il sistema si blocca su una schermata blu che sembra descrivere un errore, rispondere si.")
 )
-
-
-;// (domanda  (attributo fase-POST-ut-esperto)
-;//           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
-;// (testo-domanda "Il dispositivo manifesta problemi nella fase di controllo del BIOS? (Ovvero prima del caricamento del sistema operativo)")
-;//           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-;//                                 "Il dispositivo si blocca/riavvia dopo un codice acustico"
-;//                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
-;//                                 "Il dispositivo si riavvia senza mostrare errori"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;//           (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-;//                                 "Il dispositivo si blocca/riavvia dopo un codice acustico"
-;//                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
-;//                                 "Il dispositivo si riavvia senza mostrare errori"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;// (spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
-;// sistema operativo.")
-;// (help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo'
-;// durare da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i
-;// problemi riscontrabili piu' comuni.")
-;// )
-;//
-;// (domanda  (attributo fase-POST-ut-inesperto)
-;// (testo-domanda "Subito dopo l'accensione il sistema controlla che tutte le componenti del dispositivo funzionino a dovere. Questa fase e' caratterizzata da diverse
-;// schermate con testo bianco su sfondo nero che si susseguono fino a quando il logo di Windows appare sullo schermo. Si verificano errori in questa fase?")
-;//           (risposte-valide errore-messaggio errore-beep-code errore-BSOD errore-riavvio nessun-errore )
-;//           (descrizione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-;//                                 "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice acustico"
-;//                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
-;//                                 "Il dispositivo si riavvia senza mostrare errori"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;//           (spiegazione-risposte "Il dispositivo si blocca/riavvia dopo aver mostrato un messaggio di errore"
-;//                                 "Il dispositivo si blocca/riavvia dopo aver riprodotto un codice acustico"
-;//                                 "Il dispositivo si riavvia dopo aver mostrato una schermata blu di errore"
-;//                                 "Il dispositivo si riavvia senza mostrare errori"
-;//                                 "Il dispositivo non manifesta nessuno dei problemi elencati")
-;// (spiegazione "Questa domande serve a stabilire se si verifica un problema durante la prima fase di controllo del sistema del BIOS e il caricamento del
-;// sistema operativo.")
-;// (help "In questa fase il sistema controlla che tutte le componenti funzionino prima di avviare la fase di caricamento del sistema operativo. Questa fase puo' durare
-;// da qualche secondo fino ad un minuto ed e' contraddistinta da diverse schermate nero con testo bianco. Le risposte indicano quali potrebbero essere i problemi
-;// riscontrabili piu' comuni.")
-;// )
-
-
 
 
 (domanda  (attributo versione-bios)
