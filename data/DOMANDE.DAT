@@ -14,9 +14,9 @@ problemi legati all'eta'.")
 (testo-domanda "Il dispositivo e' ancora in garanzia?")
           (risposte-valide si no sconosciuto)
           (descrizione-risposte "Si" "No" "Non so")
-          (spiegazione-risposte "Il dispositivo e' coperto da garanzia" "Il dispositivo non e' coperto da garanzia")
+          (spiegazione-risposte "Il dispositivo e' coperto da garanzia" "Il dispositivo non e' coperto da garanzia" "Non si sa se il dispositivo e' coperto da garanzia")
 (spiegazione "Questa domanda aiuta il sistema a trovare soluzioni utili per risolvere il problema. ")
-(help "Verificare se il dispositivo e' ancora coperto da garanzia.")
+(help "Verificate se il dispositivo e' ancora coperto da garanzia.")
 )
 
 (domanda  (attributo tipo-dispositivo)
@@ -209,7 +209,7 @@ coprono parte dello schermo. Le fasce possono essere anche di diverso colore e a
 )
 
 
-(domanda  (attributo monitor-esterno)
+(domanda  (attributo monitor-secondario)
 (testo-domanda "E' possibile collegare un monitor esterno al dispositivo?")
           (risposte-valide funzionante errore no)
           (descrizione-risposte "Si, il monitor esterno funziona e non presenta i problemi del monitor principale"
@@ -227,9 +227,9 @@ In caso di dubbi si consiglia di verificare sul manuale del PC e del monitor.")
 
 (domanda  (attributo problema-video-all-avvio)
 (testo-domanda "Il problema video si manifesta immediatamente sin dall'accensione del monitor oppure in un secondo momento? Ad esempio dopo le prime schermate o al
-momento del caricamento del sistema operativo?")
+momento del caricamento del sistema operativo.")
           (risposte-valide si no)
-          (descrizione-risposte "Il problema appare sin dall'avvio" "Il problema si manifesta in un secondo momento")
+          (descrizione-risposte "Il problema appare sin dal momento dell'accensione" "Il problema si manifesta in un secondo momento")
           (spiegazione-risposte "Il problema video si manifesta sin dall'avvio" "Il problema video si manifesta in un secondo momento e non sin dall'accensione")
 (spiegazione "Se il problema si manifesta sin dal momento in cui il monitor si attiva, allora ci sono buone probabilita' che il problema sia dovuto ad un guasto di
 una componente come monitor o scheda video piuttosto che ad un errore di natura software.")
@@ -237,7 +237,7 @@ una componente come monitor o scheda video piuttosto che ad un errore di natura 
 nessun problema video. ")
 )
 
-(domanda  (attributo cavo-alimentazione-display)
+(domanda  (attributo cavi-monitor)
 (testo-domanda "Assicuratevi che sia il cavo di alimentazione che quello del segnale video del monitor siano correttamente collegati. Si consiglia comunque di
 staccare e riconnettere il cavo del segnale video.")
           (risposte-valide ok errore )

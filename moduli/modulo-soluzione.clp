@@ -52,7 +52,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-RAM
 
     ?p1 <- (nodo (nome diagnosi) (valore guasto-RAM) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome problema-principale)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-RAM) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -67,7 +67,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-CPU
 
     ?p1 <- (nodo (nome diagnosi) (valore guasto-CPU) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome problema-principale)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-CPU) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -75,7 +75,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-riaggancia-VGA
 
     ?p1 <- (nodo (nome diagnosi) (valore guasto-vga) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-    ?p2 <- (nodo(nome fase-POST)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
+    ?p2 <- (nodo(nome problema-principale)(valore codice-acustico)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
     =>
     (assert (nodo (nome soluzione) (valore riaggancia-VGA) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -147,7 +147,7 @@
 
 (defrule MODULO-SOLUZIONE::soluzione-connetti-cavi-video
 
-  ?p1 <- (nodo (nome diagnosi) (valore cavo-alimentazione-display-scollegato) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
+  ?p1 <- (nodo (nome diagnosi) (valore cavi-monitor-scollegati) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
   =>
   (assert (nodo (nome soluzione) (valore connetti-cavi-video) (certezza (calcola-certezza 1.0 ?c1)) (nodo-padre ?id-p1)))
 )
@@ -193,7 +193,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-SW-1
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome disturbo-video)(valore ?v&fasce-schermo) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore fasce-schermo) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza (calcola-certezza 0.9 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -201,7 +201,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-SW-2
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome disturbo-video)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore aggiorna-driver-video) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -209,7 +209,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-SW-3
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome disturbo-video)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore controllo-integrita-files) (certezza (calcola-certezza 0.9 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -217,7 +217,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-SW-4
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-SW-video) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome disturbo-video)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore schermo-nero) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza (calcola-certezza 0.9 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -239,7 +239,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-controlla-scheda-POST
 
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-riavvio) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore errore-riavvio) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore controlla-scheda-POST) (certezza (calcola-certezza 1 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -247,7 +247,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-controlla-beep-code
 
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore codice-acustico) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore codice-acustico) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore controlla-beep-code) (certezza (calcola-certezza 1 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -255,7 +255,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-controlla-messaggio-POST
 
   ?p1 <- (nodo (nome diagnosi) (valore errore-POST-hardware) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore messaggio-di-errore) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore messaggio-di-errore) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore controlla-messaggio-post) (certezza (calcola-certezza 1 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -277,7 +277,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-caricamento-SO-BSOD-1
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-caricamento-SO) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-BSOD) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore blue-screen) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore ripara-file-SO) (certezza (calcola-certezza 0.8 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -285,7 +285,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-caricamento-SO-BSOD-2
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-caricamento-SO) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-BSOD) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore blue-screen) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore controlla-stop-error) (certezza (calcola-certezza 1.0 ?c1 ?c2)) (nodo-padre ?id-p1 ?id-p2)))
 )
@@ -293,7 +293,7 @@
 (defrule MODULO-SOLUZIONE::soluzione-problema-caricamento-SO-BSOD-3
 
   ?p1 <- (nodo (nome diagnosi) (valore problema-caricamento-SO) (certezza ?c1) (attivo TRUE) (id-nodo ?id-p1))
-  ?p2 <- (nodo (nome fase-POST)(valore errore-BSOD) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
+  ?p2 <- (nodo (nome problema-principale)(valore blue-screen) (certezza ?c2) (attivo TRUE) (id-nodo ?id-p2))
   =>
   (assert (nodo (nome soluzione) (valore ripristina-configurazione-sistema) (certezza (calcola-certezza 0.8 ?c1)) (nodo-padre ?id-p1 ?id-p2)))
 )

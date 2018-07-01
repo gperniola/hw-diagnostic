@@ -1,6 +1,6 @@
 
 
-    (diagnosi (attributo cavo-alimentazione-display-scollegato)
+    (diagnosi (attributo cavi-monitor-scollegati)
               (titolo "Cavi del display non connessi correttamente")
               (descrizione "I cavi di alimentazione o del segnale del monitor non sono connessi, oppure sono connessi male causando un disturbo video.")
     )
@@ -16,8 +16,8 @@
     )
 
     (diagnosi (attributo guasto-inverter)
-              (titolo "Guasto componenti del display")
-              (descrizione "Alcune componenti del display come inverter, lampade o cavi video interni potrebbero essere danneggiati o connessi male.")
+              (titolo "Guasto alle componenti del display")
+              (descrizione "Alcune componenti propri di un dispositivo portatile come inverter, lampade o cavi video interni potrebbero essere danneggiate.")
     )
 
     (diagnosi (attributo problema-SW-video)
@@ -26,8 +26,8 @@
     )
 
     (diagnosi (attributo interferenze-cavo)
-              (titolo "Interferenze nel segnale video")
-              (descrizione "Il problema potrebbe essere causato da un interferenza nel collegamento dei cavi tra la scheda madre e il display.")
+              (titolo "Interferenze del segnale video")
+              (descrizione "Il problema potrebbe essere causato da un interferenza del segnale video causato dal mal collegamento o usura dei cavi che connettono la scheda madre al display.")
     )
 
     (diagnosi (attributo monitor-spento)
@@ -86,7 +86,7 @@
 
 (diagnosi (attributo batteria-CMOS-esausta)
           (titolo "Batteria CMOS esausta")
-          (descrizione "E' possibile che la batteria che alimenta il BIOS potrebbe essere esausta a causa dell'eta' o o di un lungo periodo di inattivita'
+          (descrizione "E' possibile che la batteria che alimenta il BIOS potrebbe essere esausta a causa dell'eta' o di un lungo periodo di inattivita'
              del dispositivo.")
 )
 

@@ -89,8 +89,8 @@
 )
 
 (soluzione (attributo controllo-integrita-files)
-          (titolo "Controllo integrita' del disco fisso")
-          (descrizione "Si consiglia di verificare l'integrita' del disco fisso attraverso l'utilizzo di software appositi.")
+          (titolo "Controllo integrita' files del disco fisso")
+          (descrizione "Si consiglia di verificare l'integrita' dei files legati al sistema operativo attraverso l'utilizzo di software appositi.")
 )
 
 (soluzione (attributo resetta-CMOS)
