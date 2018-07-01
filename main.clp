@@ -29,7 +29,7 @@
     (slot valore  (type SYMBOL))
     (slot certezza (type FLOAT) (default 1.0))
     (slot sorgente-info (type SYMBOL) (default sistema))
-    (multislot nodo-padre (type FACT-ADDRESS))
+    (multislot nodo-padre (type INTEGER))
     (slot descrizione (type STRING))
   )
 
@@ -915,14 +915,14 @@
   ?p1 <- (nodo  (nome corrente-su-alimentatore) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (calcola-certezza 0.7 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2))) ;**
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (calcola-certezza 0.7 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule scheda-madre-guasta-1
   ?p1 <- (nodo  (nome corrente-su-alimentatore) (valore si) (certezza ?CF1) (id-nodo ?id-p1))
   ?p2 <- (nodo (nome stato-accensione) (valore non-funzionante) (certezza ?CF2) (id-nodo ?id-p2))
   =>
-  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (calcola-certezza 0.7 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2))) ;**
+  (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (calcola-certezza 0.7 ?CF1 ?CF2)) (nodo-padre ?id-p1 ?id-p2)))
 )
 
 (defrule alimentatore-riserva-non-disponibile
@@ -966,21 +966,6 @@
   (assert (nodo (nome diagnosi) (valore alimentatore-spento)(nodo-padre ?id-p1 ?id-p3 ?id-p4) (certezza (calcola-certezza 1.0 ?CF1 ?CF3 ?CF4))))
 )
 
-; (defrule alimentatore-funzionante
-;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
-;   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
-;   ?p4 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?CF4) (id-nodo ?id-p4))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore alimentatore-guasto) (certezza (calcola-certezza -1.0 ?CF1 ?CF3 ?CF4)) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
-; )
-;
-; (defrule scheda-madre-funzionante
-;   ?p1 <- (nodo (nome tipo-dispositivo) (valore pc-desktop) (certezza ?CF1) (id-nodo ?id-p1))
-;   ?p3 <- (nodo (nome stato-accensione) (valore  non-funzionante) (certezza ?CF3) (id-nodo ?id-p3))
-;   ?p4 <- (nodo (nome interruttore-alimentatore) (valore spento) (certezza ?CF4) (id-nodo ?id-p4))
-;   =>
-;   (assert (nodo (nome diagnosi) (valore scheda-madre-guasta) (certezza (calcola-certezza -1.0 ?CF1 ?CF3 ?CF4)) (nodo-padre ?id-p1 ?id-p3 ?id-p4)))
-; )
 
 (defrule problema-principale-trovato
   ?p1 <- (nodo (nome ?att&schermo-nero|macchie-schermo|fasce-schermo) (valore si) (certezza ?CF1) (attivo TRUE) (id-nodo ?id-p1) (descrizione ?d))
@@ -1004,7 +989,6 @@
     ?p1 <- (nodo (nome problema-principale)(valore ?v&fasce-schermo|macchie-schermo)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
     ?p1 <- (nodo (nome cavi-display-accessibili)(valore no)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
     )
-  ;(not (nodo (nome cavi-monitor)(attivo TRUE)))
   =>
   (assert (nodo(nome monitor-acceso)(valore acceso)(certezza (calcola-certezza 1.0 ?CF1))(nodo-padre ?id-p1) (descrizione "Il display mostra un problema al segnale video, quindi il monitor e' acceso.")))
 )
@@ -1027,7 +1011,7 @@
   ?p1 <- (nodo (nome problema-principale)(valore schermo-nero|fasce-schermo)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p3 <- (nodo (nome problema-video-all-avvio) (valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (calcola-certezza 0.5 ?c1 ?c3))(nodo-padre ?id-p1 ?id-p3))) ;**
+  (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (calcola-certezza 0.5 ?c1 ?c3))(nodo-padre ?id-p1 ?id-p3)))
 )
 
 (defrule monitor-spento-1
@@ -1051,7 +1035,7 @@
   ?p1 <- (nodo (nome problema-principale)(valore ?v&schermo-nero|fasce-schermo)(certezza ?c1)(attivo TRUE)(id-nodo ?id-p1))
   ?p3 <- (nodo (nome problema-video-all-avvio)(valore si)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza (calcola-certezza 0.5 ?c1 ?c3))(nodo-padre ?id-p1 ?id-p3))) ;**
+  (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza (calcola-certezza 0.5 ?c1 ?c3))(nodo-padre ?id-p1 ?id-p3)))
 )
 
 (defrule interferenze-cavo-1
@@ -1095,12 +1079,7 @@
   ?p2 <- (nodo (nome guasto-monitor-principale) (valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome tipo-dispositivo) (valore pc-desktop)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  ; (bind ?CF-display-guasto (calcola-certezza 0.9 ?c1 ?c2 ?c3))
-  ; (bind ?CF-vga-guasta (calcola-certezza -1.0 ?c1 ?c2 ?c3))
-  ; (bind ?CF-problema-sw (calcola-certezza -0.5 ?c1 ?c2 ?c3))
   (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (calcola-certezza 0.9 ?c1 ?c2 ?c3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-  ;(assert (nodo (nome diagnosi) (valore guasto-vga)(certezza ?CF-vga-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-  ;(assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-problema-sw)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule guasto-vga-1
@@ -1108,10 +1087,6 @@
   ?p2 <- (nodo (nome guasto-circuito-interno-video) (valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome tipo-dispositivo) (valore pc-desktop)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  ; (bind ?CF-display-guasto (calcola-certezza -1.0 ?c1 ?c2 ?c3))
-  ; (bind ?CF-vga-guasta (calcola-certezza 0.8 ?c1 ?c2 ?c3))
-  ; (bind ?CF-problema-sw (calcola-certezza 0.5 ?c1 ?c2 ?c3))
-  ;(assert (nodo (nome diagnosi) (valore guasto-display)(certezza ?CF-display-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
   (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza (calcola-certezza 0.8 ?c1 ?c2 ?c3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
@@ -1128,13 +1103,7 @@
   ?p2 <- (nodo (nome guasto-monitor-principale) (valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome tipo-dispositivo) (valore pc-portatile)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  ; (bind ?CF-display-guasto (calcola-certezza 0.8 ?c1 ?c2 ?c3))
-  ; (bind ?CF-inverter-guasto (calcola-certezza 0.8 ?c1 ?c2 ?c3))
-  ; (bind ?CF-vga-guasta (calcola-certezza -1.0 ?c1 ?c2 ?c3))
-  ; (bind ?CF-problema-sw (calcola-certezza -0.5 ?c1 ?c2 ?c3))
   (assert (nodo (nome diagnosi) (valore guasto-display)(certezza (calcola-certezza 0.8 ?c1 ?c2 ?c3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-  ;(assert (nodo (nome diagnosi) (valore guasto-vga)(certezza ?CF-vga-guasta)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-  ;(assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza ?CF-problema-sw)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule inverter-guasto-2
@@ -1150,12 +1119,6 @@
   ?p2 <- (nodo (nome guasto-circuito-interno-video) (valore si)(certezza ?c2)(attivo TRUE)(id-nodo ?id-p2))
   ?p3 <- (nodo (nome tipo-dispositivo) (valore pc-portatile)(certezza ?c3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  ; (bind ?CF-display-guasto (calcola-certezza -1.0 ?c1 ?c2 ?c3))
-  ; (bind ?CF-inverter-guasto (calcola-certezza -1.0 ?c1 ?c2 ?c3))
-  ; (bind ?CF-vga-guasta (calcola-certezza 0.8 ?c1 ?c2 ?c3))
-  ; (bind ?CF-problema-sw (calcola-certezza 0.5 ?c1 ?c2 ?c3))
-  ;(assert (nodo (nome diagnosi) (valore guasto-display)(certezza ?CF-display-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
-  ;(assert (nodo (nome diagnosi) (valore guasto-inverter)(certezza ?CF-inverter-guasto)(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
   (assert (nodo (nome diagnosi) (valore guasto-vga)(certezza (calcola-certezza 0.8 ?c1 ?c2 ?c3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
@@ -1166,7 +1129,6 @@
   =>
   (assert (nodo (nome diagnosi)(valore problema-SW-video)(certezza (calcola-certezza 0.5 ?c1 ?c2 ?c3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
-
 
 (defrule disturbo-macchie-schermo
   ?p1 <- (nodo (nome problema-principale)(valore macchie-schermo)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1187,8 +1149,6 @@
   =>
   (assert (nodo (nome diagnosi)(valore CMOS-corrotta)(certezza (calcola-certezza 0.5 ?CF1 ?CF2))(nodo-padre ?id-p1 ?id-p2)))
 )
-
-
 
 (defrule problema-principale-trovato-2
   ?p1 <- (nodo(nome ?n&messaggio-di-errore|codice-acustico|blue-screen)(valore si) (descrizione ?d)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
@@ -1413,11 +1373,21 @@
 (defrule errore-riavvio-4
   ?p1 <- (nodo(nome problema-principale)(valore errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome tipo-dispositivo)(valore pc-desktop)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
   =>
-  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(certezza (calcola-certezza 0.7 ?CF1 ?CF2))(nodo-padre ?id-p1 ?id-p2)))
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(certezza (calcola-certezza 0.7 ?CF1 ?CF2 ?CF3))(nodo-padre ?id-p1 ?id-p2 ?id-p3)))
 )
 
 (defrule errore-riavvio-5
+  ?p1 <- (nodo(nome problema-principale)(valore errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
+  ?p2 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
+  ?p3 <- (nodo(nome tipo-dispositivo)(valore pc-portatile)(certezza ?CF3)(attivo TRUE)(id-nodo ?id-p3))
+  ?p4 <- (nodo(nome alimentatore-di-riserva)(valore non-disponibile)(certezza ?CF4)(attivo TRUE)(id-nodo ?id-p4))
+  =>
+  (assert (nodo (nome diagnosi) (valore alimentatore-guasto)(certezza (calcola-certezza 0.7 ?CF1 ?CF2 ?CF3 ?CF4))(nodo-padre ?id-p1 ?id-p2 ?id-p3 ?id-p4)))
+)
+
+(defrule errore-riavvio-6
   ?p1 <- (nodo(nome problema-principale)(valore errore-riavvio)(certezza ?CF1)(attivo TRUE)(id-nodo ?id-p1))
   ?p2 <- (nodo(nome problema-fase-boot)(valore si)(certezza ?CF2)(attivo TRUE)(id-nodo ?id-p2))
   =>
